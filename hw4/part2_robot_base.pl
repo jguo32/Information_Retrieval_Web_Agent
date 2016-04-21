@@ -327,6 +327,9 @@ sub grab_urls {
                 #
                 # compute some relevancy function here
                 #
+                # We know that @search_urls will sort the url from the one with smallest rel value to the one with the largest rel value. 
+                # Since the url which is the more likely to contain email, phone, and address information should be searched first and 
+                # therefore we give such url smaller rel value, such as “~\w+” (which is included in faculties’ homepage url).
                 
               if ($link =~ /~\w+$/){
                   $rel = 1;
@@ -337,11 +340,17 @@ sub grab_urls {
               if ($link =~ /homepage/ or $reg_text =~ /homepage/){
                   $rel = 3;
               }
-              if ($link =~ /people/ and $reg_text =~ /people/){
+              if ($link =~ /faculty/ and $reg_text =~ /faculty/){
                   $rel = 4;
               }
-              if ($link =~ /people/ or $reg_text =~ /people/){
+              if ($link =~ /faculty/ or $reg_text =~ /faculty/){
                   $rel = 5;
+              }
+              if ($link =~ /people/ and $reg_text =~ /people/){
+                  $rel = 6;
+              }
+              if ($link =~ /people/ or $reg_text =~ /people/){
+                  $rel = 7;
               }
           
           }

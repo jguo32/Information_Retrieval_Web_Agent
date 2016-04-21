@@ -1,0 +1,47 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf340
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Menlo-Regular;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww17320\viewh11860\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 Qing Cai (qcai3) and Jinyi Guo (jguo32) did HW4 together.\
+\
+To see the result of part 2 , please run the code as\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\f1\fs22 \cf0 \CocoaLigature0 perl part2_robot_base.pl mylogfile.log content.txt http://www.cs.jhu.edu/ & tail -f mylogfile.log
+\f0\fs24 \CocoaLigature1 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \
+\
+\
+The relevance function we used is as follows:\
+\
+                #\
+                # compute some relevancy function here\
+                #\
+                \
+              if ($link =~ /~\\w+$/)\{\
+                  $rel = 1;\
+              \}\
+              if ($link =~ /homepage/ and $reg_text =~ /homepage/)\{\
+                  $rel = 2;\
+              \}\
+              if ($link =~ /homepage/ or $reg_text =~ /homepage/)\{\
+                  $rel = 3;\
+              \}\
+              if ($link =~ /faculty/ and $reg_text =~ /faculty/)\{\
+                  $rel = 4;\
+              \}\
+              if ($link =~ /faculty/ or $reg_text =~ /faculty/)\{\
+                  $rel = 5;\
+              \}\
+              if ($link =~ /people/ and $reg_text =~ /people/)\{\
+                  $rel = 6;\
+              \}\
+              if ($link =~ /people/ or $reg_text =~ /people/)\{\
+                  $rel = 7;\
+              \}\
+ \
+\
+We know that @search_urls will sort the url from the one with smallest rel value to the one with the largest rel value. Since the url which is the more likely to contain email, phone, and address information should be searched first and therefore we give such url smaller rel value, such as \'93~\\w+\'94 (which is included in faculties\'92 homepage url).}
