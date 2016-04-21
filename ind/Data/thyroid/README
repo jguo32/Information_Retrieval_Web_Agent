@@ -1,0 +1,175 @@
+
+              USING IND FOR ASSIGNMENT #1
+              ===========================
+
+The following is a brief description of the decision tree software package IND 
+and how it may be used for assignment #1. Detailed documentation can be found
+in the "/home/1/yarowsky/cs466/ind/Doc" subdirectory.
+
+If you would like to have a dataset analyzed by IND, two files must be created:
+
+(1) A set of training data, 1 per line, with the true classification of the
+      data in the first column and attribute values in the remaining  columns.
+
+(2) A file describing what the columns should be called and what range of 
+    values each may take.
+    
+For example, sample data for diagnosing hypothyroid problems may be found in
+the data directory "/home/1/yarowsky/cs466/ind/Data/thyroid".
+
+
+The attribute description file (hypo.attr) is below, specifying that
+the data has one of 4 classes (compensated_hypothyroid,negative,etc.),
+followed by a continuous (numeric) age value (between 0 and 100),
+followed by 'sex' (which can be M,F or ? - unknown), followed by
+some boolean (t/f) attributes (e.g. on_thyroxine), and so on.
+
+hypo.attr:
+############################################################################### 
+class : compensated_hypothyroid,negative,
+        primary_hypothyroid,secondary_hypothyroid.
+age:            cont 0..100.
+ 
+sex:            M,F,?.
+ 
+on_thyroxine query_on_thyroxine on_antithyroid_medication sick pregnant
+thyroid_surgery I131_treatment query_hypothyroid query_hyperthyroid:  f,t.
+ 
+lithium goitre tumor hypopituitary psych:               f,t.
+ 
+TSH_measured:   f,t.
+TSH:            cont 0..600.        
+...
+<continued>
+############################################################################### 
+
+The data itself is compressed, but can be viewed through 'zcat', as below:
+
+zcat hypo.dta.Z | more
+negative 84 F t f f f f f f f f f f f f f t 0.3 f ? t 154 t 0.97 t 159 f ? other
+negative 41 F f f f f f f f f f f f f f f f ? t 2 t 99 t 0.96 t 104 f ? other
+negative 32 F t f f f f f f f f f f f f f t 0.005 t 2.9 t 138 t 1.15 t 120 f ? other
+negative 71 F f f f t f f f f f f f f f f t 0.16 t 2.4 t 165 t 1.35 t 123 f ? SVI
+negative 60 F f f f f f f f f f f f f f f t 1.2 t 2.6 t 117 t 1.31 t 90 f ? other
+negative 73 F f f f f f f f f f f f f f f t 2.4 t 2 t 119 t 0.92 t 129 f ? SVI
+compensated_hypothyroid 70 F f f f f f f f f f f f f f f t 34 t 1.5 t 88 t 1.06 t 83 f ? other
+negative 18 ? f f f f f f f f f f f f f f t 1.5 t 2.6 t 86 t 0.91 t 94 f ? SVI
+negative 60 M t f f f f f f f f f f f f f t 0.35 t 1.6 t 98 t 0.75 t 131 f ? other
+negative 32 F f f f f f f f f f f f f f f t 2 t 1.7 t 92 t 1.01 t 91 f ? STMW
+negative 77 F f f f f f f f f f f f f f f f ? t 2.6 f ? f ? f ? f ? other
+negative 41 F f f f f f f f f f f f f f t t 0.82 t 1.4 t 129 t 0.88 t 147 f ? SVHC
+negative 20 M f f f f f f f f f f f f f f f ? t 2.2 t 117 f ? f ? f ? other
+negative 45 M f f f f f f f f f f f f f f t 1.9 t 2.5 t 114 t 1.01 t 113 f ? other
+negative 69 F f f f f f f f f f f f f f f t 0.005 t 1.7 t 116 f ? f ? f ? SVI
+negative 50 M f f f f f f f f f f f f f f t 0.005 t 2.4 t 153 t 1.19 t 129 f ? other
+negative 73 M f t f f f f f f f f f f f f f ? t 0.7 t 63 t 0.88 t 72 f ? other
+primary_hypothyroid 58 F f f f f f f f t f f f f f f t 18 t 2.1 t 68 t 1.08 t 63 f ? other
+negative 73 M f t f f f f f f f f f f f f f ? t 0.7 t 63 t 0.88 t 72 f ? other
+
+
+The following file gives a sample run of the decision tree training program 
+for this data. You should first change directories to an empty subdirectory
+in your own workspace, as the program will dump working files there.
+
+   /home/1/yarowsky/cs466/ind/Data/thyroid/RUNME_IN_YOUR_OWN_DIRECTORY
+  
+This program will copy over the data files, encode them in binary format,
+generate a decision tree (reporting accuracy) and print it (as follows):
+
+========================================================================
+GENERATING TREE FOR:  hypo
+========================================================================
+Percentage accuracy for tree 1 = 99.4958 +/- 0.121966
+Mean square error for tree 1 = 0.0114824
+Expected accuracy for tree 1 = 98.5094
+Typical std. dev. of expected accuracy for an example = 4.1736
+Neg. Log Posterior for tree 1 = 50.3332 (nits)
+Neg. Log Posterior for examples = 154.272 (nits)
+Leaf count for tree 1 = 9, expected = 7.011234
+Misclassification matrix for tree 1:
+ (row = predicted, col = actual, in .attr file order)
+  0.048932  0.000593  0.002372  0.000000 | 0.051898
+  0.000000  0.922894  0.000000  0.000593 | 0.923488
+  0.000000  0.001483  0.023132  0.000000 | 0.024614
+  0.000000  0.000000  0.000000  0.000000 | 0.000000
+--------------------------------------------------
+  0.048932  0.924970  0.025504  0.000593 | 1.00000
+ 
+========================================================================
+PRINTING TREE FOR:  hypo
+========================================================================
+ 0.07294 0.9034 0.02307 0.0006234 (L0)
+TSH < 6.05:  0.0007407 0.9978 0.0007407 0.0007407 (L1)
+TSH >= 6.05:  0.4535 0.3992 0.1434 0.003876 (L1.72047e-14)
+|   TSH_measured = f:  0.01515 0.9545 0.01515 0.01515 (L1)
+|   TSH_measured = t:  0.5969 0.2092 0.1888 0.005102 (L1.78036e-08)
+|   |   FTI < 63.5:  0.1667 0.02381 0.7857 0.02381 (L0.568568)
+|   |   |   FTI_measured = f:  0.5 0.07143 0.3571 0.07143 (L0.33163)
+|   |   |   |   TSH < 17.5:  0.3304 0.04721 0.5752 0.04721 (L0.0998022)
+|   |   |   |   TSH >= 17.5:  0.2731 0.0497 0.6275 0.0497 (L0.0998022)
+|   |   |   FTI_measured = t:  0.1082 0.02702 0.8377 0.02702 (L0.431432)
+|   |   FTI >= 63.5:  0.7025 0.2595 0.03165 0.006329 (L4.08224e-05)
+|   |   |   on_thyroxine = f:  0.8538 0.1 0.03846 0.007692 (L0.180828)
+|   |   |   |   thyroid_surgery = f:  0.881 0.07143 0.03968 0.007937 (L0.158225)
+|   |   |   |   |   TT4 < 151:  0.9208 0.03504 0.03583 0.008296 (L0.660907)
+|   |   |   |   |   TT4 >= 151:  0.3447 0.4869 0.1149 0.05349 (L0.660907)
+|   |   |   |   thyroid_surgery = t:  0.2568 0.5301 0.1093 0.1038 (L0.819132)
+|   |   |   on_thyroxine = t:  0.03128 0.9062 0.03125 0.03125 (L0.99996)
+ 
+
+Please see the documentation regarding the meaning of the data in the
+tree and come talk with me if you have any questions about this.
+
+------------------------------------------------------------------
+
+If you want to run IND on your Assignment 1 data, you will first need to
+convert it to a format usable by the program. Although the program can
+take boolean, numeric (continuous) and  categorical data (e.g. a list
+of discrete symbolic values), a 10,000 word vocabulary is a bit big
+to be enumerated as categorical values. It also can't incorporate
+Perl's class_member function directly. Thus it will be necessary to
+write a Perl script to map the original input data into a format that
+IND can understand.
+
+For example:
+
+Original Data:
+
+ CLASS ID#  word-L3 word-L2 word-L1 C word-R1 ... Llength Rlength Nspaces
+
+This can be converted by perl into data with additional attributes that
+you think might be helpful. For example the 'hw1a.attr' file:
+
+  class: EOS, NEOS.
+  
+  word_L1_is_Title:  t,f.
+  word_L1_is_abbrev: t,f.
+  word_R1_lowercase: t,f.
+  word_R1_new_paragraph: t,f.
+  word_R1_unlikely_proper_name: t,f.
+  word_R1_single_letter: t,f.
+  word_R3_single_letter: t,f.
+  word_R1: Program, Go, He, She, AND, Dr, You, ... (limited list of actual words)
+  Llength: cont 0..200.
+  Rlength: cont 0..200.
+  Nspaces: cont 0..50.
+
+And the sample data:
+
+  EOS t f f t t t t t Dr 10 150 2    (sample column values)
+
+IND will build a decision tree from this data and quantify the
+performance using a variety of measures given in the documentation.
+
+Please read the IND documentation for a good discussion of how 
+the system works and what the output means. If you have any questions 
+about the program or methods, please feel free to contact me.
+
+
+					 -- David Yarowsky
+					    yarowsky@cs.jhu.edu
+					    516-5372
+
+
+
+

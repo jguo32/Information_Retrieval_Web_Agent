@@ -1,0 +1,52 @@
+#!/bin/csh
+# IND-version2.0
+#    IND 2.0 released 9/15/92   contact: ind@kronos.arc.nasa.gov
+#    by Wray Buntine (and others, see IND/README)
+#    NASA Ames Research Center, MS 269-2, Moffett Field, CA 94035
+#
+#	Run this in a data directory to print out results produced
+#	by ttest.   All arguments are optional.  A "-" reverts
+#	the corresponding argument to the default.
+#
+#	$1 = # examples in test,  if not given or if "-"
+#		then sort and returns all test results
+#	$2 = arguments to "lstat"
+#	$3 = "mtime" for find, i.e.  only return tests done in last
+#		$3 days,  default is 5,  "-" leaves default alone
+
+if  ( "$2" != "" ) then
+	set opts = ( $2 )
+else
+	set opts = ( -u 1,2,7 -f 2 )
+endif
+
+if  ( "$3" != "" &&  "$3" != "-" ) then
+	set mtime = $3
+else
+	set mtime = 500
+endif
+
+
+if (  "$1" != "" && "$1" != "-" ) then
+	set files = ( `find *.trial.$1[a-z,A-Z]* -mtime -$mtime -print | \\
+		sed -e 's/^\(.*\)\.trial\..*$/\1/' | sort | uniq` )
+	foreach file ( $files )
+	    echo ------------------------------   $file
+	    echo ---------------  size = $1
+	    lstat $opts `find *.trial.${1}[a-z,A-Z]* -mtime -$mtime -print`
+	end
+else
+	set files = ( `find *.trial.* -mtime -$mtime -print | \\
+		sed -e 's/^\(.*\)\.trial\..*$/\1/' | sort | uniq` )
+	set sizes = `find *.trial.* -mtime -$mtime -print | \\
+			sed -e 's/^.*trial\.\([0-9]*\)[^0-9].*$/\1/' | \\
+			sort -n | uniq`
+	foreach file ( $files )
+	    echo ------------------------------   $file
+	    foreach size ( $sizes )
+	        echo ---------------  size = $size
+		lstat $opts `find $file.trial.${size}[a-z,A-Z]* \\
+			-mtime -$mtime -print`
+	    end
+	end
+endif

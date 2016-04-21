@@ -1,0 +1,107 @@
+#!/usr/local/bin/perl -w
+
+# socket based hypertext version of UNIX cat
+
+
+use strict;
+use Socket;                   # include Socket module
+require 'tcp.pl';             # file with Open_TCP routine
+require 'web.pl';             # file with parseURL routine 
+use vars qw($opt_h $opt_H $opt_r $opt_d);
+use Getopt::Std;
+
+
+# parse command line arguments
+getopts('hHrd');
+
+# print out usage if needed
+if (defined $opt_h || $#ARGV<0) { help(); }
+
+# if it wasn't an option, it was a URL
+while($_ = shift @ARGV) {
+  hcat($_, $opt_r, $opt_H, $opt_d);
+}
+
+# Subroutine to print out usage information
+
+
+sub usage {
+  print "usage: $0 -rhHd URL(s)\n";
+  print "       -h           help\n";
+  print "       -r           print out response\n";
+  print "       -H           print out header\n";
+  print "       -d           print out data\n\n";
+  exit(-1);
+}
+
+
+# Subroutine to print out help text along with usage information
+
+
+sub help {
+  print "Hypertext cat help\n\n";
+  print "This program prints out documents on a remote web server.\n";
+  print "By default, the response code, header, and data are printed\n";
+  print "but can be selectively printed with the -r, -H, and -d options.\n\n";
+
+  usage();
+}
+
+
+# Given a URL, print out the data there
+
+
+sub hcat {
+
+  # grab parameters
+  my ($full_url, $response, $header, $data)=@_;
+
+  # assume that response, header, and data will be printed
+  my $all = !($response || $header || $data);
+
+  # if the URL isn't a full URL, assume that it is a http request
+  $full_url="http://$full_url" if ($full_url !~ 
+                                 m/(\w+):\/\/([^\/:]+)(:\d*)?([^#]*)/);
+
+  # break up URL into meaningful parts
+  my @the_url = parse_URL($full_url);
+  if (!defined @the_url) {
+    print "Please use fully qualified valid URL\n";
+    exit(-1);
+  }
+
+  # we're only interested in HTTP URL's
+  return if ($the_url[0] !~ m/http/i);
+
+  # connect to server specified in 1st parameter
+  if (!defined open_TCP('F', $the_url[1], $the_url[2])) {
+    print "Error connecting to web server: $the_url[1]\n";
+    exit(-1);
+  }
+
+  # request the path of the document to get
+    print F "GET $the_url[3] HTTP/1.0\n";
+    print F "Accept: */*\n";
+    print F "User-Agent: hcat/1.0\n\n";
+
+  # print out server's response.
+
+  # get the HTTP response line
+  my $the_response=<F>;
+  print $the_response if ($all || defined $response);
+
+  # get the header data
+  while(<F>=~ m/^(\S+):\s+(.+)/) {
+    print "$1: $2\n" if ($all || defined $header);
+  }
+
+  # get the entity body
+  if ($all || defined $data) {
+    print while (<F>);
+  }
+
+  # close the network connection
+  close(F);
+
+}
+

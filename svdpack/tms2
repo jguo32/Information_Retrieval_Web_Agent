@@ -1,0 +1,3054 @@
+C*************************************************************************
+C                                                                        *
+C                                                                        *
+C     SPARSE SVD VIA EIGENSYSTEM OF EQUIVALENT SHIFTED A'A MATRIX        *
+C                                                                        *
+C                                                                        *
+C*************************************************************************
+C                                                                        *
+C                         (C) COPYRIGHT 1991                             *
+C                          MICHAEL W. BERRY                              *
+C                         ALL RIGHTS RESERVED                            *
+C                                                                        *
+C           PERMISSION TO COPY ALL OR PART OF ANY OF THIS                *
+C           SOFTWARE IS ONLY GRANTED UPON APPROVAL FROM THE              *
+C           AUTHOR: MICHAEL W. BERRY, DEPT. OF COMPUTER                  *
+C           SCIENCE, UNIVERSITY OF TENNESSEE,  107 AYRES HALL,           *
+C           KNOXVILLE, TN,  37996-1301 (BERRY@CS.UTK.EDU)                *
+C                                                                        *
+C                                                                        *
+C*************************************************************************
+C
+      PROGRAM TMS2
+C....
+C.... TMS2 IMPLEMENTS A TRACE-MINIMIZATION SVD METHOD FOR DETERMINING
+C.... THE P-LARGEST SINGULAR TRIPLETS OF A LARGE SPARSE MATRIX A. THIS
+C.... IS A PARALLEL METHOD WHICH PERMITS CONCURRENT ITERATIONS OF THE
+C.... CLASSICAL CONJUGATE GRADIENT METHOD AND POLYNOMIAL MULTIPLICATION
+C.... OF INDEPENDENT ITERATION VECTORS.  PARALLELIZATION DIRECTIVES
+C.... SUCH AS THE C$DOACROSS FOR THE SEQUENT SYMMETRY MULTIPROCESSOR
+C.... (SHARED MEMORY) PRECEDE LOOPS WHOSE ITERATIONS CAN BE INDEPENDENTLY
+C.... SCHEDULED ACROSS PROCESSORS OF ANY PARALLEL MACHINE.  THESE
+C.... DIRECTIVES WILL BE TREATED AS COMMENTS BY ANY OTHER MACHINE'S
+C.... PREPROCESSOR, OF COURSE, AND ITERATIONS OF THE CORRESPONDING LOOPS 
+C.... WILL BE EXECUTED IN SEQUENTIAL FASHION.
+C....
+C.... SUBROUTINE TSVD2 COMPUTES THE SINGULAR TRIPLETS OF THE MATRIX A
+C.... VIA THE EQUIVALENT SYMMETRIC EIGENSYSTEM OF
+C....
+C....  B = (ALPHA*ALPHA)*I - A'A, WHERE A IS M (=NROW) BY N (=NCOL),
+C....
+C.... SO THAT SQRT(ALPHA*ALPHA-LAMBDA) IS A SINGULAR VALUE OF A.
+C.... ALPHA IS CHOSEN SO THAT B IS (SYMMETRIC) POSITIVE DEFINITE.  IN
+C.... THE CALLING PROGRAM, ALPHA IS DETERMINED AS THE MATRIX 1-NORM OF
+C.... A.  THE USER CAN SET ALPHA TO BE ANY KNOWN UPPER BOUND FOR THE
+C.... THE LARGEST SINGULAR VALUES OF THE MATRIX A.
+C.... (A' = TRANSPOSE OF A)
+C
+C.... USER SUPPLIED ROUTINES: OPA, OPB
+C....
+C.... OPA(X,Y) TAKES AN N-VECTOR X AND SHOULD RETURN A*X IN Y.
+C.... OPB(N,X,Y,SHIFT) TAKES AN N-VECTOR X AND SHOULD RETURN D*X 
+C.... IN Y, WHERE D=[B-SHIFT*I], I IS THE N-TH ORDER IDENTITY MATRIX.
+C....
+C.... USER SHOULD REPLACE CALLS TO DTIME WITH AN APPROPRIATE CALL TO
+C.... AN INSTRINSIC TIMING ROUTINE THAT RETURNS DELTA USER CPU TIME
+C.... (I.E., USER CPU TIME ELAPSED FROM PREVIOUS CALL TO TIMING ROUTINE).
+C.... ELAPSE RETURNS ELAPSED WALL-CLOCK TIME (MACHINE DEPENDENT)
+C....
+C.... TMS2 UTILIZES RITZ SHIFTING AND/OR CHEBYSHEV POLYNOMIAL
+C.... ACCELERATION OF CONVERGENCE.
+C....
+C.....PARAMETERS IN TMS2 DRIVER:
+C....
+C.... LDY   SHOULD BE AT LEAST AS LARGE AS THE ORDER OF MATRIX B
+C.... ISMAX IS THE MAXIMUM INITIAL SUBSPACE DIMENSION FOR SUBR. TSVD2
+C.... MAXI  IS THE MAXIMUM NUMBER OF TRACE MIN. ITERATIONS ALLOWED.
+C....
+C.....PARAMETERS IN TMS2 DRIVER AND SUBROUTINE TSVD2:
+C....
+C.... NMAX  IS THE MAXIMUM COLUMN DIMENSION FOR THE SPARSE MATRIX A
+C.... NZMAX IS THE MAXIMUM NUMBER OF NONZEROS FOR THE SPARSE MATRIX A
+C....
+C.... PARAMETER IN SUBROUTINES CGT AND CGTS:
+C....
+C.... NCG SHOULD BE AT LEAST AS LARGE AS THE ORDER OF MATRIX B.
+C....
+      PARAMETER(LDY=500,ISMAX=12,LDW1=100,LDW2=LDW1,LDW3=ISMAX,
+     *          LDW4=LDW1,LDW5=ISMAX,LDWI=ISMAX,
+     *          MAXI=150,NMAX=500,NZMAX=2000)
+C
+      DOUBLE PRECISION  WORK1(LDW1,ISMAX),   WORK2(LDW2,ISMAX),
+     *                  WORK3(LDW3,ISMAX),   WORK4(LDW4,3),
+     *                  WORK5(LDW5,4),       Y(LDY,MAXI),
+     *                  RES(MAXI),SIG(MAXI), 
+     *                  VALUE(NZMAX), ALPHA, TOL, RED, DSUM
+C
+      REAL              TIME(5),WCLK0,WCLK1
+C
+      INTEGER           N, P, S, JOB, I, II, J, JJ, LDY,
+     *                  TITER(MAXI),   MEM, ISMAX, NMAX, NZMAX,
+     *                  ITCG(MAXI),   MAXI, MXV(3), ITIME(4),
+     *                  IWORK(LDWI,2), POINTR(NMAX), ROWIND(NZMAX),
+     *                  NCOL, NROW, MATRIX, RESULT, INPUT,
+     *                  NNZERO, NRHS, IVEC, IWALL, NINT,
+     *                  LDWI, LDW1, LDW2, LDW3, LDW4, LDW5,
+     *                  IERR, MAXD
+      
+      LOGICAL           LWORK(ISMAX),VEC
+C
+C------------------------------------------------------------
+C
+C ----- HARWELL-BOEING COLLECTION DATA STRUCTURE
+C
+C------------------------------------------------------------
+C
+      CHARACTER TITLE*72, KEY*8, TYPE*3, PTRFMT*16, INDFMT*16,
+     *          VALFMT*20, RHSFMT*20
+C
+      COMMON /SPARSE/    VALUE,ALPHA,POINTR,ROWIND,NCOL,NROW
+C....
+       INPUT=5
+       MATRIX=7
+       RESULT=9
+C....
+C....  OPEN FILES FOR INPUT/OUTPUT
+C....
+       OPEN(MATRIX,FILE='LAI7')
+       OPEN(RESULT,FILE='TMO2')
+       OPEN(INPUT,FILE='TMI1')
+C....
+C....  READ IN PARAMETERS FOR THIS TEST RUN
+C....
+C....  P     := NUMBER OF SINGULAR TRIPLETS (LARGEST) DESIRED
+C....  S     := INITIAL SUBSPACE DIMENSION
+C....  JOB   := CONTROLS USE OF RITZ SHIFTING (0=NO,1=YES,2=YES+POLY.ACCEL.)
+C....  TOL   := USER-SPECIFIED TOLERANCE FOR RESIDUALS
+C....  RED   := RESIDUAL NORM REDUCTION FACTOR FOR INITIATING SHIFTING
+C....  VEC   := OUTPUT SINGULAR VECTORS? (BOOLEAN)
+C....      
+       READ(INPUT,*) P, S, JOB, TOL, RED, VEC 
+C....
+       IF (VEC) THEN
+         IVEC=3
+         OPEN(IVEC,FILE='TMO3',FORM='UNFORMATTED')
+       ENDIF
+C....
+      READ (MATRIX,10) TITLE, KEY,
+     1   TYPE, NROW, NCOL, NNZERO, NRHS, PTRFMT, INDFMT, VALFMT, RHSFMT
+ 10   FORMAT (A72, A8 // A3, 11X, 4I14 / 2A16, 2A20)
+C
+C LEAVE IF MATRIX TOO BIG ----
+C
+      IF (NCOL .GE. NMAX .OR. NNZERO .GT. NZMAX) THEN
+        WRITE(RESULT,*) ' SORRY, YOUR MATRIX IS TOO BIG '
+        STOP
+       ENDIF
+C
+C READ DATA...
+C
+      READ (MATRIX,PTRFMT) (POINTR (I), I = 1, NCOL+1)
+      READ (MATRIX,INDFMT) (ROWIND (I), I = 1, NNZERO)
+      READ (MATRIX,VALFMT) (VALUE  (I), I = 1, NNZERO)
+C
+C DEFINE LAST ELEMENT OF POINTR IN CASE IT IS NOT.
+C
+      POINTR(NCOL+1) = NNZERO + 1
+C
+      N=MIN(NROW,NCOL)
+C
+C.... ESTIMATE ALPHA (VIA MATRIX 1-NORM)
+C.... (USED FOR UPPER BOUND ON MAX SINGULAR VALUE OF MATRIX A)
+C
+      ALPHA=0.0D0
+      DO 75 JJ=1,NCOL
+         DSUM=0.0D0
+         DO 85 II=POINTR(JJ),POINTR(JJ+1)-1
+            DSUM=DSUM+DABS(VALUE(II))
+85       CONTINUE
+         ALPHA=DMAX1(ALPHA,DSUM)
+75    CONTINUE
+C
+      CALL ELAPSE(WCLK0)
+      CALL TSVD2    (N,P,S,JOB,
+     1              MAXI,MAXD,TOL,RED,SIG,Y,LDY,MEM,
+     2              TITER,ITCG,TIME,RES,MXV,WORK1,LDW1,
+     3              WORK2,LDW2,WORK3,LDW3,WORK4,LDW4,
+     4              WORK5,LDW5,IWORK,LDWI,LWORK,IERR)
+      CALL ELAPSE(WCLK1)
+      IWALL=NINT(MOD(WCLK1-WCLK0+1000000.0,1000000.0))
+      ITIME(1)=NINT(100*(TIME(1)/TIME(5)))
+      ITIME(2)=NINT(100*(TIME(2)/TIME(5)))
+      ITIME(3)=NINT(100*(TIME(3)/TIME(5)))
+      ITIME(4)=NINT(100*(TIME(4)/TIME(5)))
+C
+      IF(JOB.NE.2) MAXD=0
+C
+      WRITE(RESULT,2000)  N,MAXI,MAXD,TITER(P),P,S,MEM,JOB,VEC
+      WRITE(RESULT,2001)  ALPHA,TOL,RED,MXV(1),MXV(2),MXV(3),IERR
+      WRITE(RESULT,2002)  TIME(1),ITIME(1),
+     *                    TIME(2),ITIME(2),
+     *                    TIME(3),ITIME(3),
+     *                    TIME(4),ITIME(4),
+     *                    TIME(5),IWALL,TITLE,KEY,NROW,NCOL,N
+2000  FORMAT(
+     *    1X,'... '
+     *   /1X,'... TRACE MINIMIZATION ON THE'
+     *   /1X,'... EQUIVALENT A^TA E-PROBLEM'
+     *   /1X,'... NO. OF EQUATIONS          =',I10
+     *   /1X,'... MAX. NO. OF ITERATIONS    =',I10
+     *   /1X,'... MAX. POLY. DEGREE USED    =',I10
+     *   /1X,'... NO. OF ITERATIONS TAKEN   =',I10
+     *   /1X,'... NO. OF DESIRED EIGENPAIRS =',I10
+     *   /1X,'... INITIAL SUBSPACE DIM.     =',I10
+     *   /1X,'... MEMORY REQUIRED (BYTES)   =',I10
+     *   /1X,'... JOB: 0=NO SHIFT, 1=SHIFT, =',I10
+     *   /1X,'... WANT S-VECTORS?   [T/F]   =',L10
+     *   /1X,'... ')
+2001  FORMAT(
+     *    1X,'... ALPHA                     =',1PE10.2
+     *   /1X,'... FINAL RESIDUAL TOLERANCE  =',1PE10.2
+     *   /1X,'... RESIDUAL REDUCTION TOL.   =',1PE10.2
+     *   /1X,'... MULTIPLICATIONS BY A      =',I10
+     *   /1X,'... MULTIPLICATIONS BY A^T    =',I10
+     *   /1X,'... TOTAL NUMBER OF MULT.     =',I10
+     *   /1X,'... IERR FROM SUBR. TSVD2     =',I10
+     *   /1X,'... ')
+2002  FORMAT(
+     *    1X,'... CPU TIME BREAKDOWN:        ',
+     *   /1X,'...   GRAM-SCHMIDT ORTHOG.    =',1PE10.2,2X,'(',I3,'%)'
+     *   /1X,'...   SPECTRAL DECOMPOSITION  =',1PE10.2,2X,'(',I3,'%)'
+     *   /1X,'...   CONVERGENCE CRITERIA    =',1PE10.2,2X,'(',I3,'%)'
+     *   /1X,'...   CONJUGATE GRADIENT      =',1PE10.2,2X,'(',I3,'%)'
+     *   /1X,'... TOTAL CPU  TIME (SEC)     =',1PE10.2
+     *   /1X,'... WALL-CLOCK TIME (SEC)     =',I10
+     *   //1X,A50
+     *   / 1X,A50
+     *   /1X,'... NO. OF DOCUMENTS (ROWS)   = ',I8
+     *   /1X,'... NO. OF TERMS     (COLS)   = ',I8
+     *   /1X,'... ORDER OF MATRIX B         = ',I8
+     *   /1X,'... ')
+C
+      WRITE(RESULT,9999) (I,SIG(I),RES(I),TITER(I),ITCG(I),
+     *                     I=1,P)
+      IF (VEC) THEN
+         DO 35 J=1,P
+            WRITE(IVEC) (Y(I,J),I=1,NROW+NCOL)
+35       CONTINUE
+      ENDIF
+C
+9999  FORMAT(1X,'...... '
+     *   /1X,'...... ',4X,'COMPUTED SINGULAR VALUES',2X,
+     *    '(','RESIDUAL NORMS',')',2X,'T-MIN STEPS',3X,
+     *        'CG STEPS',
+     *   /1X,'...... '
+     *   /(1X,'...... ',I3,3X,1PE22.14,2X,'(',1PE11.2,')',2I12))
+      STOP
+      END
+C
+C     ELAPSE RETURNS WALL CLOCK TIME, T, IN SECONDS.
+C     NOTE T IS OF TYPE 'REAL'
+C
+C     THE INTRINSIC FUNTION 'TIME' IS CALLED.
+C     TIME RETURNS SYSTEM TIME IN SECONDS SINCE JAN. 1, 1970,
+C     AND WE ONLY USE THE LEAST SIGNIFICANT 6 DIGITS.
+C
+      SUBROUTINE ELAPSE(T)
+      REAL T
+      INTEGER TIME
+      T=MOD(TIME(),1000000)
+      RETURN
+      END
+C
+      SUBROUTINE TSVD2(N,P,S,JOB,MAXI,MAXD,TOL,RED,SIG,Y,LDY,MEM,
+     *                 TITER,ITCGT,TIME,RES,MXV,WORK1,LDW1,
+     *                 WORK2,LDW2,WORK3,LDW3,WORK4,LDW4,WORK5,
+     *                 LDW5,IWORK,LDWI,LWORK,IERR)
+C
+C.... TSVD2 IMPLEMENTS A TRACE-MINIMIZATION SVD METHOD FOR DETERMINING
+C.... THE P-LARGEST SINGULAR TRIPLETS OF A LARGE SPARSE MATRIX A. THIS
+C.... IS A PARALLEL METHOD WHICH PERMITS CONCURRENT ITERATIONS OF THE
+C.... CLASSICAL CONJUGATE GRADIENT METHOD.  PARALLELIZATION DIRECTIVES
+C.... SUCH AS THE C$DOACROSS FOR THE SEQUENT SYMMETRY MULTIPROCESSOR
+C.... (SHARED MEMORY) PRECEDE LOOPS WHOSE ITERATIONS CAN BE INDEPENDENTLY
+C.... SCHEDULED ACROSS PROCESSORS OF ANY PARALLEL MACHINE.  THESE
+C.... DIRECTIVES WILL BE TREATED AS COMMENTS BY ANY OTHER MACHINE'S
+C.... PREPROCESSOR, OF COURSE, AND ITERATIONS OF THE CORRESPONDING LOOPS 
+C.... WILL BE EXECUTED IN SEQUENTIAL FASHION.
+C....
+C.... TMS2 COMPUTES THE SINGULAR TRIPLETS OF THE MATRIX A VIA THE
+C.... EQUIVALENT SYMMETRIC EIGENSYSTEM OF
+C....
+C....  B = (ALPHA*ALPHA)*I - A'A, WHERE A IS M (=NROW) BY N (=NCOL),
+C....
+C.... SO THAT SQRT(ALPHA*ALPHA-LAMBDA) IS A SINGULAR VALUE OF A.
+C.... ALPHA IS CHOSEN SO THAT B IS (SYMMETRIC) POSITIVE DEFINITE.  IN
+C.... THE CALLING PROGRAM, ALPHA IS DETERMINED AS THE MATRIX 1-NORM OF
+C.... A.  THE USER CAN SET ALPHA TO BE ANY KNOWN UPPER BOUND FOR THE
+C.... THE LARGEST SINGULAR VALUES OF THE MATRIX A.
+C.... (A' = TRANSPOSE OF A)
+C
+C.... USER SUPPLIED ROUTINES: OPA, OPB
+C....
+C.... OPA(X,Y) TAKES AN N-VECTOR X AND SHOULD RETURN A*X IN Y.
+C.... OPB(NROW+NCOL,X,Y,SHIFT) TAKES AN (M+N)-VECTOR X AND SHOULD RETURN D*X 
+C.... IN Y, WHERE D=[B-SHIFT*I], I IS THE (M+N) ORDER IDENTITY MATRIX.
+C....
+C.... USER SHOULD REPLACE CALLS TO DTIME WITH AN APPROPRIATE CALL TO
+C.... AN INSTRINSIC TIMING ROUTINE THAT RETURNS DELTA USER CPU TIME
+C.... (I.E., USER CPU TIME ELAPSED FROM PREVIOUS CALL TO TIMING ROUTINE).
+C....
+C.... TSVD2 UTILIZES RITZ SHIFTING AND/OR CHEBYSHEV POLYNOMIAL
+C.... ACCELERATION OF CONVERGENCE.
+C....
+C.... INPUT PARAMETERS:
+C....
+C....   N    (INTEGER)  ORDER OF EQUIVALENT SYMMETRIC EIGENVALUE PROBLEM.
+C....                   SHOULD BE EQUAL TO MIN(NROWS,NCOLS), WHERE NROWS IS 
+C....                   THE NUMBER OF ROWS OF A AND NCOLS IS THE NUMBER OF
+C....                   COLUMNS OF A.
+C....
+C....   P    (INTEGER)  NUMBER OF DESIRED SINGULAR TRIPLETS (LARGEST) OF A.
+C....
+C....   S    (INTEGER)  DIMENSION OF INITIAL SUBSPACE (S SHOULD BE GREATER
+C....                   THAN P; S=2*P IS USUALLY SAFE BUT SINCE THE COMPLEXITY
+C....                   OF THE METHOD IS DETERMINED BY S, THE USER SHOULD 
+C....                   TRY TO KEEP S AS CLOSE TO P AS POSSIBLE).
+C....
+C....   JOB  (INTEGER)  ACCELERATION STRATEGY SWITCH:
+C....
+C....                     JOB = 0, NO ACCELERATION USED,
+C....                         = 1, RITZ-SHIFTING USED ONLY,
+C....                         = 2, CHEBYSHEV POLYNOMIALS AND RITZ-SHIFTING USED.
+C....
+C....   MAXI (INTEGER)  MAXIMUM NUMBER OF TRACE MINIMIZATION STEPS ALLOWED.
+C....
+C....   TOL  (DOUBLE    USER-SUPPLIED TOLERANCE FOR RESIDUAL OF AN
+C....        PRECISION) EQUIVALENT EIGENPAIR OF B (SINGULAR TRIPLET OF A).
+C....
+C....   RED  (DOUBLE    USER-SUPPLIED TOLERANCE FOR RESIDUAL REDUCTION TO
+C....        PRECISION) INITIATE RITZ-SHIFTING WHEN JOB=1 OR JOB=2.
+C....   
+C....   LDY  (INTEGER)  LEADING DIMENSION OF ARRAY Y, IT SHOULD BE GREATER
+C....                   THAN OR EQUAL TO NROWS+NCOLS. (ROW+COLUMN DIMENSION
+C....                   OF A).
+C....
+C....   LDW1 (INTEGER)  LEADING DIMENSION OF ARRAY WORK1, IT SHOULD BE GREATER
+C....                   THAN OR EQUAL TO N (ORDER OF MATRIX B).
+C....
+C....   WORK1(LDW1,S)   (DOUBLE PRECISION) WORK ARRAY.
+C....
+C....   LDW2 (INTEGER)  LEADING DIMENSION OF ARRAY WORK2, IT SHOULD BE GREATER
+C....                   THAN OR EQUAL TO N.
+C....
+C....   WORK2(LDW2,S)   (DOUBLE PRECISION) WORK ARRAY.
+C....
+C....   LDW3 (INTEGER)  LEADING DIMENSION OF ARRAY WORK3, IT SHOULD BE GREATER
+C....                   THAN OR EQUAL TO S.
+C....
+C....   WORK3(LDW3,S)   (DOUBLE PRECISION) WORK ARRAY.
+C....
+C....   LDW4 (INTEGER)  LEADING DIMENSION OF ARRAY WORK4, IT SHOULD BE GREATER
+C....                   THAN OR EQUAL TO N.
+C....
+C....   WORK4(LDW4,3)   (DOUBLE PRECISION) WORK ARRAY.
+C....
+C....   LDW5 (INTEGER)  LEADING DIMENSION OF ARRAY WORK5, IT SHOULD BE GREATER
+C....                   THAN OR EQUAL TO S.
+C....
+C....   WORK5(LDW5,4)   (DOUBLE PRECISION) WORK ARRAY.
+C....
+C....   LDWI (INTEGER)  LEADING DIMENSION OF ARRAY IWORK, IT SHOULD BE GREATER
+C....                   THAN OR EQUAL TO S.
+C....
+C....   IWORK(LDWI,2)   (INTEGER) WORK ARRAY.
+C....
+C....   LWORK(S)        (LOGICAL) WORK ARRAY.
+C....
+C.... OUTPUT PARAMETERS:
+C....
+C....   IERR (INTEGER)  ERROR FLAG:
+C....                   IERR=99, INPUT PARAMETER JOB INVALID.
+C....
+C....   MEM  (INTEGER)  NUMBER OF BYTES OF MEMORY NEEDED
+C....                   (REAL, INTEGER, LOGICAL = 4  BYTES,
+C....                   DOUBLE PRECISION = 8 BYTES)
+C....
+C....   MAXD (INTEGER)  MAXIMUM POLYNOMIAL DEGREE USED (JOB=2).
+C....
+C....   MXV(3)          (INTEGER)   MATRIX TIMES VECTOR COUNTERS:
+C....                   MXV(1) = NUMBER OF A*X,
+C....                   MXV(2) = NUMBER OF A'*X,
+C....                   MXV(3) = MXV(1)+MXV(2)
+C....
+C....   SIG(P)          (DOUBLE PRECISION) CONTAINS P-DESIRED SINGULAR VALUES.
+C....
+C....   Y(LDY,P)        (DOUBLE PRECISION) CONTAINS LEFT AND RIGHT SINGULAR
+C....                   VECTORS, I.E.,
+C....
+C....                   Y(1:R+C,1:P)  = [V(1:C,1:P)' | V(1:R,1:P)']',
+C....                   WHERE R = NO. OF ROWS OF MATRIX A AND
+C....                   C = NO. OF COLS OF MATRIX A.
+C....
+C....
+C....   TITER(P)        (INTEGER) TITER(I) := NUMBER OF TRACE MIN. STEPS
+C....                   NEED FOR I-TH TRIPLET OF A.
+C....
+C....
+C....   ITCGT(S)        (INTEGER)  ITCGT(I) := NUMBER OF CG STEPS NEEDED FOR
+C....                   I-TH TRIPLET OF A. (ARRAY MUST HAVE S ELEMENTS)
+C....
+C....   TIME(5)         (REAL)  TIMING BREAKDOWN ARRAY:
+C....
+C....                   TIME(1)  = GRAM-SCHMIDT ORTHOGONALIZATION
+C....                   TIME(2)  = SECTION-FORMATION (SPECTRAL DECOMPOSITION)
+C....                   TIME(3)  = CONVERGENCE CRITERIA
+C....                   TIME(4)  = CONJUGATE GRADIENT METHOD
+C....                   TIME(5)  = TOTAL EXECUTION TIME (USER-CPU)
+C....
+C....   RES(P)          (DOUBLE PRECISION) 2-NORMS OF RESIDUAL VECTORS
+C....                   (A*Y[I]-SIG(I)*Y[I]), I=1,2,...,P.
+C....
+C....
+C.... ROUTINES CALLED:
+C....
+C....     (TIMER)      DTIME
+C....     (RNG)        RANDOM
+C....     (PRECISION)  EPSLON
+C....     (MATH)       DSQRT,DABS,DMAX1,MIN0,ACOSH
+C....     (BLAS)       DAXPY,DDOT,DNRM2
+C....     (BLAS3)      DGEMM,DGEMV,XERBLA
+C....     (EISPACK)    TRED2,TQL2,PYTHAG
+C....
+C....
+      INTEGER               N, P, LDY, S, MEM, JOB, IPTR, LEFT,
+     *                      I, J, II, JJ, K,IERR, IRAND, ITER,
+     *                      MAXI, TITER(P), ITCGT(S), MXV(3),
+     *                      LDW1, LDW2, LDW3, LDW4, LDW5, LDWI,
+     *                      IWORK(LDWI,2), NMAX, NZMAX, DEGREE,
+     *                      NDEGRE, MAXD, ITMP
+      REAL                  T1, TOTAL, DT(2), DTIME,
+     *                      SEC1, SEC2, SEC21, SEC22, SEC23,
+     *                      SEC3, SEC4, TIME(5)
+      DOUBLE PRECISION      WORK1(LDW1,S), WORK2(LDW2,S), WORK3(LDW3,S),
+     *                      WORK4(LDW4,3), WORK5(LDW5,4), 
+     *                      Y(LDY,S), SIG(S), RES(P), EPSLON, MEPS,
+     *                      DDOT, DNRM2, DASUM, RANDOM, RED, TOL, TMP,
+     *                      TMPI, PPARM1, PPARM2, E, ENEW, ACOSH
+      LOGICAL               LWORK(S),SHIFT,POLYAC
+C
+C.... COMMON BLOCKS:
+C
+      PARAMETER(NMAX=500,NZMAX=2000)
+      DOUBLE PRECISION   VALUE(NZMAX), ALPHA
+      INTEGER            POINTR(NMAX), ROWIND(NZMAX), NCOL, NROW
+      COMMON /SPARSE/    VALUE,ALPHA,POINTR,ROWIND,NCOL,NROW
+C
+C.....GET BYTE COUNT (ESTIMATE)
+C
+      MEM  = 4*(48+2*P+2*LDWI)+
+     *       8*(4+P+S+3*LDW4+4*LDW5+
+     *          S*(LDW1+LDW2+LDW3+LDY) )
+C
+C.... GET MACHINE EPSILON (MEPS)
+C
+      MEPS=EPSLON(1.0D0)
+      SHIFT =.FALSE.
+      IERR=0
+      IF(JOB.NE.0.AND.JOB.NE.1.AND.JOB.NE.2) THEN
+         IERR=99
+         RETURN
+      ENDIF
+C
+      IF(JOB.EQ.1) THEN
+         DO 36 I=1,P
+           LWORK(I)  =.FALSE.
+           WORK5(I,3)=-1.0D0
+           WORK5(I,4)=-1.0D0
+36       CONTINUE
+      ELSE IF(JOB.EQ.2) THEN
+         DEGREE=0
+         NDEGRE=0
+         PPARM1=0.04D0
+         PPARM2= 4.0D0
+      ENDIF
+      
+C
+C.... INITIALIZE TIMERS, COUNTERS, FLAGS:
+C
+      SEC1 =   0.0
+      SEC21 =  0.0
+      SEC22 =  0.0
+      SEC23 =  0.0
+      SEC3 =   0.0
+      SEC4 =   0.0
+      MXV(1)=  0
+      MXV(2)= 0
+      POLYAC=.FALSE.
+C
+C--   INITIALIZE Y(1:N,1:S) = RANDOM MATRIX
+C
+C--   (CARRY S VECTORS IN THE TMIN ITERATIONS, ASSUMING S.GE.P)
+C
+      IRAND = 91827211
+C
+      DO 30 K = 1, S
+         SIG(K)    =   0.0D0
+         WORK5(K,2) =  0.0D0
+30    CONTINUE
+C
+      DO 31 K = 1, S
+         DO  40 I = 1, N
+         Y(I,K) = RANDOM(IRAND)
+40       CONTINUE
+31    CONTINUE
+C
+C--------------------------------------------------------------
+C
+C     POINTER AND COUNTER FOR HYBRID MONITOR:
+C
+C            1 2 3 4 5 ... I ... P
+C           -----------------------
+C       SIG:| | | | | |...| |...| | (ASCENDING ORDER)
+C           -----------------------
+C                          ^
+C                          |
+C                        IPTR : POINTS TO FIRST E-VALUE OF B
+C                               THAT HAS NOT CONVERGED
+C
+C     LEFT:=S-IPTR+1 (IE HOW MANY Y-VECTORS REMAIN FOR TSVD2)
+C--------------------------------------------------------------
+C
+C     INITIALIZE A FEW POINTERS AND COUNTERS:
+C
+      TOTAL=0.0
+      IPTR=1
+      LEFT=S
+      DO 170 II=1,P
+         TITER(II)=0
+170   CONTINUE
+      DO 175 II=1,S
+         ITCGT(II)=0
+175   CONTINUE
+C
+C--------------------------------------------------------------
+C     MAIN TMIN ITERATION LOOP (NMAX ITERATIONS)
+C--------------------------------------------------------------
+C
+      DO 500 ITER = 1,MAXI
+C
+         IF(JOB.EQ.2.AND..NOT.SHIFT) THEN
+C
+            IF(NDEGRE.NE.0) THEN
+               DEGREE=NDEGRE
+               MAXD=MAX(MAXD,DEGREE)
+               POLYAC=.TRUE.
+            ELSE
+               POLYAC=.FALSE.
+            ENDIF
+C
+         ENDIF
+C
+C....    SECTION FORMATION 
+C
+C....    USE MODIFIED GRAM-SCHMIDT FOR B-ORTHOGONALIZATION
+C
+            T1 = DTIME(DT(1))
+            IF(POLYAC) THEN
+               DO 815 JJ=1,S
+                  DO 816 II=1,N
+                    WORK2(II,JJ)=Y(II,JJ)   
+816               CONTINUE
+815            CONTINUE
+               CALL PORTH(N,0,S,WORK2,LDW2,WORK1(1,1),WORK1(1,2),
+     *                    WORK4(1,1),WORK4(1,2),WORK4(1,3),E,DEGREE,
+     *                    ALPHA)
+C
+               MXV(1)=MXV(1)+DEGREE*S
+               MXV(2)=MXV(2)+DEGREE*S
+C
+            ELSE
+               DO 615 JJ=1,S
+                  DO 616 II=1,N
+                    WORK2(II,JJ)=Y(II,JJ)   
+616               CONTINUE
+615            CONTINUE
+               CALL ORTHG(N,0,S,WORK1,LDW1,WORK2,LDW2,WORK4(1,1))
+            ENDIF
+            T1 = DTIME(DT(1))
+C
+            SEC1 = SEC1 + T1
+C
+C
+C....    FORM WORK1(1:N,IPTR:S) = B(1:N,1:N)*WORK2(1:N,IPTR:S) 
+C
+         T1 = DTIME(DT(1))
+C
+         IF(POLYAC) THEN
+            DO 235 J=1,LEFT
+               DO 236 I=1,N
+                  WORK1(I,IPTR+J-1)=WORK2(I,IPTR+J-1)
+236            CONTINUE
+235         CONTINUE
+         ELSE
+            DO 1625 J=1,LEFT
+               CALL OPB(N,WORK2(1,IPTR+J-1),WORK1(1,IPTR+J-1),0.0D0)
+1625        CONTINUE
+         ENDIF
+C
+C....    FORM WORK3(1:LEFT,1:LEFT) = WORK2(1:N,IPTR:S)'*WORK1(1:N,IPTR:S)
+C
+         CALL DGEMM('T','N',LEFT,LEFT,N,1.0D0,WORK2(1,IPTR),
+     *              LDW2,WORK1(1,IPTR),LDW1,0.0D0,WORK3,LDW3)
+C
+C....    LOAD GERSHGORIN RADII
+C
+         IF(JOB.GE.1) THEN
+            DO 1630 J = 1,LEFT
+               WORK4(J,1)=DASUM(LEFT,WORK3(J,1),LDW3)-DABS(WORK3(J,J))
+1630        CONTINUE
+         ENDIF
+C
+C....    COMPUTE THE EIGENVALUES AND EIGENVECTORS OF WORK3:
+C
+         T1 = DTIME(DT(1))
+         SEC21 = SEC21 + T1
+C
+         T1 = DTIME(DT(1))
+C
+C....    EIGENVECTORS OVERWRITE ARRAY WORK3(:,:)
+C
+         IF (POLYAC) THEN
+C
+            CALL TRED2(LDW3,LEFT,WORK3,WORK5(1,1),WORK4(1,2),WORK3)
+            CALL TQL2(LDW3,LEFT,WORK5(1,1),WORK4(1,2),WORK3,IERR)
+            IF(IERR.NE.0) WRITE(*,*) 'IERR FROM TQL2= ',IERR
+C
+         ELSE
+C
+C....       STORE CURRENT E-VALUES IN WORK5(:,2)
+C
+            DO 560 JJ=IPTR,S
+               WORK5(JJ,2)=SIG(JJ)
+560         CONTINUE   
+C
+            CALL TRED2(LDW3,LEFT,WORK3,SIG(IPTR),WORK4(1,2),WORK3)
+            CALL TQL2(LDW3,LEFT,SIG(IPTR),WORK4(1,2),WORK3,IERR)
+            IF(IERR.NE.0) WRITE(*,*) 'IERR FROM TQL2= ',IERR
+C
+         ENDIF
+C
+         T1=DTIME(DT(1))
+C
+         SEC22 = SEC22 + T1
+C
+C....    FORM Y(1:N,IPTR:S) = WORK2(1:N,IPTR:S)*WORK3(1:LEFT,1:LEFT)
+C
+         T1=DTIME(DT(1))
+C
+         CALL DGEMM('N','N',N,LEFT,LEFT,1.0D0,WORK2(1,IPTR),
+     *              LDW2,WORK3,LDW3,0.0D0,Y(1,IPTR),LDY)
+C
+         T1=DTIME(DT(1))
+         SEC23 = SEC23 + T1
+C
+C....    TEST FOR CONVERGENCE HERE
+C
+         T1=DTIME(DT(1))
+C
+         DO 840 J=IPTR,S
+            CALL OPB(N,Y(1,J),WORK2(1,J),0.0D0)
+            IF (POLYAC) THEN
+               WORK5(J,2)=SIG(J)
+               SIG(J)=DDOT(N,Y(1,J),1,WORK2(1,J),1)/
+     *                DDOT(N,Y(1,J),1,    Y(1,J),1)
+            ENDIF
+            CALL DAXPY(N,-SIG(J),Y(1,J),1,WORK2(1,J),1)
+            WORK4(J-IPTR+1,3) = DNRM2(N,WORK2(1,J),1)
+            IF(J.LE.P) TITER(J)=TITER(J)+1
+840      CONTINUE
+         MXV(1) =MXV(1)+S-IPTR+1
+         MXV(2) =MXV(2)+S-IPTR+1
+C
+         T1=DTIME(DT(1))
+         SEC3 = SEC3 + T1
+C
+C....    ARRAY WORK4(:,3) STORES THE VECTOR 2-NORMS OF RESIDUAL VECTORS
+C
+         DO 50 K=1,LEFT
+            IF (DABS(WORK4(K,3)).LE.TOL) THEN
+                IPTR=IPTR+1
+                IF (IPTR.GT.P) GO TO 400
+                LEFT=S-IPTR+1
+            ENDIF
+50       CONTINUE
+C
+         IF(.NOT.SHIFT.AND.JOB.GE.1) THEN
+C
+C....          WORK4(:,1) STORES GERSHGORIN RADII
+C
+               CALL DISK(LEFT,SIG(IPTR),WORK4(1,1),IWORK(1,1),
+     *                   IWORK(1,2))
+C
+C....          IWORK(:,1) IS THE CLUSTERING VECTOR
+C
+               DO 244 K = IPTR,S
+C
+               IF(IWORK(K-IPTR+1,1).EQ.1) THEN
+                  CALL ISOL(K,WORK4(K-IPTR+1,3),
+     *                 RED,LWORK,WORK5(1,3),WORK5(1,4),S)
+               ELSE IF(IWORK(K-IPTR+1,1).GT.1) THEN
+                  CALL CLUS(K,IWORK(K-IPTR+1,1),
+     *                 WORK4(K-IPTR+1,3),RED,
+     *                 LWORK,WORK5(1,3),WORK5(1,4),WORK4(1,2),S)
+               ENDIF
+C
+244            CONTINUE
+C
+         ENDIF
+C
+C        CONTINUE ALGORITHM...
+C
+C....    SHIFT START
+C
+         IF(ITER.GT.1.AND..NOT.SHIFT.AND.JOB.GE.1) THEN
+C
+              IF(LWORK(IPTR)) THEN
+                 SHIFT=.TRUE.
+                 POLYAC=.FALSE.
+                 CALL ORTHG(N,0,S,WORK1,LDW1,Y,LDY,WORK4(1,1))
+              ENDIF
+         ENDIF
+C
+        IF(SHIFT) THEN
+C
+C....                COMPUTE SHIFTS IN WORK5(:,1) HERE:
+C
+                     DO 638 K=IPTR,S
+                        IF(K.GT.IPTR.AND.K.LE.P) THEN
+                           WORK5(K,1)=0.0
+C
+                           DO 639 J=IPTR-1,K-1
+                              IF(J.NE.0.AND.SIG(J).LE.SIG(K)
+     *                          -WORK4(K-IPTR+1,3))
+     *                           WORK5(K,1)=SIG(J)
+639                        CONTINUE
+C
+                           IF(WORK5(K,1).EQ.SIG(K-1).AND.
+     *                        WORK5(K-1,1).EQ.SIG(K-1))
+     *                        WORK5(K,1)=SIG(K)
+                           IF(WORK5(K,1).EQ.0.0)
+     *                        WORK5(K,1)=WORK5(K-1,1)
+                        ELSE IF(K.GT.P) THEN
+                           WORK5(K,1)=WORK5(P,1)
+                        ELSE IF(K.EQ.IPTR) THEN
+                           WORK5(K,1)=SIG(K)
+                        ENDIF
+638                  CONTINUE
+            ENDIF
+C
+C....       MONITOR POLYNOMIAL DEGREE (IF JOB=2)
+C
+            IF(JOB.EQ.2) THEN
+               ENEW=SIG(S)
+               E=DABS(ENEW-ALPHA*ALPHA)
+               IF(SIG(IPTR).GT.PPARM1*SIG(S).AND.
+     *            ENEW.LT.ALPHA*ALPHA.AND..NOT.SHIFT) THEN
+                  TMP=ACOSH(SIG(S)/SIG(IPTR))
+                  ITMP=2*MAX0(IDINT(PPARM2/TMP),1)
+                  IF(DEGREE.NE.0) THEN
+                    NDEGRE=MIN(2*DEGREE,ITMP)
+                  ELSE
+                    NDEGRE=2
+                  ENDIF
+               ENDIF
+            ENDIF
+C
+            T1 = DTIME(DT(1))
+C
+            IF (POLYAC) THEN
+C
+C....       UPDATE Y VIA QR-FACTORZATION OF P(B)*Y
+C
+C$DOACROSS SHARE(N,Y,WORK2,WORK4,E,DEGREE,ALPHA)
+C$   *     LOCAL(JJ)
+               DO 303 JJ=IPTR,S
+                  CALL PMUL (N,Y(1,JJ),WORK2(1,JJ),
+     *                 WORK4(1,1),WORK4(1,2),WORK4(1,3),E,DEGREE,
+     *                    ALPHA)
+303            CONTINUE
+C
+               CALL ORTHG(N,0,LEFT,WORK1,LDW1,WORK2(1,IPTR),
+     *                    LDW2,WORK4(1,1))
+C
+C....          UPPER-TRIANGULAR MATRIX R IS IN ARRAY WORK1
+C....          ORTHOGONAL MATRIX Q OVERRIDES ARRAY WORK2(1,IPTR)
+C
+C....          SOLVE R Y' = Q' OR Y R' = Q FOR UPDATED Y.
+C
+               DO 305 JJ=IPTR,S
+                  DO 304 II=1,N
+                     Y(II,JJ)=WORK2(II,JJ)
+304               CONTINUE
+305            CONTINUE
+C
+C....          Y ARRAY CONTAINS Q ON INPUT AND UPDATED Y ON OUTPUT
+C
+               CALL DTRSM('R','U','T','N',N,LEFT,1.0D0,WORK1,LDW1,
+     *                    Y(1,IPTR),LDY)
+C
+C              CALL DGEMM('T','N',S,S,N,1.0D0,WORK2(1,IPTR),
+C    *              LDW2,Y(1,IPTR),LDY,0.0D0,WORK1,LDW1)
+C              CALL DGEMM('N','N',N,S,N,1.0D0,WORK2(1,IPTR),
+C    *              LDW2,WORK1,LDW1,0.0D0,Y,LDY)
+C
+               MXV(1)=MXV(1)+DEGREE*LEFT
+               MXV(2)=MXV(2)+DEGREE*LEFT
+C
+            
+            ELSE
+C
+C....           DO PARALLEL CG ITERATIONS 
+C
+C....           LOAD Y INTO WORK1 ARRAY FOR ORTHOG. PROJECTOR IN SUBROUTINE CGT
+C
+                DO 490 JJ=1,LEFT
+                   DO 495 II=1,N
+                      WORK1(II,JJ)=Y(II,IPTR+JJ-1)
+495                CONTINUE
+490             CONTINUE
+C
+C....           CG LOOP FOR INDEPENDENT SYSTEMS (NO SHIFTING USED)
+C
+                IF(.NOT.SHIFT) THEN
+C$DOACROSS SHARE(Y,LDW1,ITCGT,SIG,IWORK,MEPS,N,WORK1,
+C$   *           IPTR,S,LEFT)
+C$   *     LOCAL(II)
+                   DO 515 II=1,LEFT
+                      CALL CGT (N,LEFT,Y(1,IPTR+II-1),WORK1,LDW1,
+     *                     ITCGT(IPTR+II-1),SIG(IPTR+II-1),SIG(S),
+     *                     IWORK(II,1),MEPS)
+C
+515                CONTINUE
+C
+                ELSE
+C
+C....             SHIFT WITH WORK5(:,1) IN CG ITERATIONS
+C
+C$DOACROSS SHARE(Y,LDW1,ITCGT,SIG,WORK5,IWORK,MEPS,N,
+C$   *           WORK1,IPTR,S,LEFT)
+C$   *     LOCAL(II)
+                   DO 516 II=1,LEFT
+                     CALL CGTS (N,LEFT,Y(1,IPTR+II-1),WORK1,LDW1,
+     *                    ITCGT(IPTR+II-1),SIG(IPTR+II-1),
+     *                    WORK5(IPTR+II-1,2),SIG(S),WORK5(IPTR+II-1,1),
+     *                    IWORK(II,1),MEPS)
+516                CONTINUE
+C
+                ENDIF
+C
+                DO 517 II=1,LEFT
+                   MXV(1)=MXV(1)+IWORK(II,1)
+                   MXV(2)=MXV(2)+IWORK(II,1)
+517             CONTINUE
+C
+         ENDIF
+C
+         T1 = DTIME(DT(1))
+C
+         SEC4 = SEC4 + T1
+C
+500   CONTINUE
+400   CONTINUE
+C
+C.... RETRIEVE LEFT S-VECTORS INTO TOP PORTION OF Y ARRAY AND
+C.... COMPUTE 2-NORMS OF RESIDUAL VECTORS 
+C
+      DO 740 J = 1,P
+         CALL OPB(N,Y(1,J),WORK2(1,J),ALPHA*ALPHA)
+         TMP=DDOT(N,Y(1,J),1,WORK2(1,J),1)
+     *         /DDOT(N,Y(1,J),1, Y(1,J),1)
+         CALL DAXPY(N,-TMP,Y(1,J),1,WORK2(1,J),1)
+         TMP=DSQRT(DABS(TMP))
+         WORK4(J,3) = DNRM2(N,WORK2(1,J),1)
+         CALL OPA(Y(1,J),Y(N+1,J))
+         TMPI=1.0D0/DABS(TMP)
+         CALL DSCAL(NROW,TMPI,Y(N+1,J),1)
+         WORK4(J,3)=WORK4(J,3)*TMPI
+         SIG(J)=TMP
+740     CONTINUE
+C
+        MXV(1) = MXV(1)+2*P
+        MXV(2) = MXV(2)+  P
+C
+      SEC2 = SEC21 + SEC22 + SEC23
+      TOTAL = TOTAL + SEC1 + SEC2 + SEC3 + SEC4
+C
+C.... LOAD OUTPUT TIME AND MXV ARRAYS
+C
+      TIME(1)=SEC1
+      TIME(2)=SEC2
+      TIME(3)=SEC3
+      TIME(4)=SEC4
+      TIME(5)=TOTAL
+      MXV(3)=MXV(1)+MXV(2)
+C
+C.... LOAD RESIDUAL VECTOR
+C
+      DO 430 II=1,P
+         RES(II)=WORK4(II,3)
+430   CONTINUE
+C
+      RETURN
+      END
+C
+C.... END OF TSVD2
+C
+      DOUBLE PRECISION FUNCTION EPSLON (X)
+C
+C     ESTIMATE UNIT ROUNDOFF IN QUANTITIES OF SIZE X.
+C
+      DOUBLE PRECISION A, B, C, EPS, X
+C
+C     THIS PROGRAM SHOULD FUNCTION PROPERLY ON ALL SYSTEMS
+C     SATISFYING THE FOLLOWING TWO ASSUMPTIONS,
+C        1.  THE BASE USED IN REPRESENTING FLOATING POINT
+C            NUMBERS IS NOT A POWER OF THREE.
+C        2.  THE QUANTITY  A  IN STATEMENT 10 IS REPRESENTED TO 
+C            THE ACCURACY USED IN FLOATING POINT VARIABLES
+C            THAT ARE STORED IN MEMORY.
+C     THE STATEMENT NUMBER 10 AND THE GO TO 10 ARE INTENDED TO
+C     FORCE OPTIMIZING COMPILERS TO GENERATE CODE SATISFYING 
+C     ASSUMPTION 2.
+C     UNDER THESE ASSUMPTIONS, IT SHOULD BE TRUE THAT,
+C            A  IS NOT EXACTLY EQUAL TO FOUR-THIRDS,
+C            B  HAS A ZERO FOR ITS LAST BIT OR DIGIT,
+C            C  IS NOT EXACTLY EQUAL TO ONE,
+C            EPS  MEASURES THE SEPARATION OF 1.0 FROM
+C                 THE NEXT LARGER FLOATING POINT NUMBER.
+C     THE DEVELOPERS OF EISPACK WOULD APPRECIATE BEING INFORMED
+C     ABOUT ANY SYSTEMS WHERE THESE ASSUMPTIONS DO NOT HOLD.
+C
+C     THIS VERSION DATED 4/6/83.
+C
+      A = 4.0D0/3.0D0
+   10 B = A - 1.0D0
+      C = B + B + B
+      EPS = DABS(C-1.0D0)
+      IF (EPS .EQ. 0.0D0) GO TO 10
+      EPSLON = EPS*DABS(X)
+      RETURN
+      END
+C
+      SUBROUTINE DGEMM ( TRANSA, TRANSB, M, N, K, ALPHA, A, LDA, B, LDB,
+     $                   BETA, C, LDC )
+*     .. SCALAR ARGUMENTS ..
+      CHARACTER*1        TRANSA, TRANSB
+      INTEGER            M, N, K, LDA, LDB, LDC
+      DOUBLE PRECISION   ALPHA, BETA
+*     .. ARRAY ARGUMENTS ..
+      DOUBLE PRECISION   A( LDA, * ), B( LDB, * ), C( LDC, * )
+*     ..
+*
+*  PURPOSE
+*  =======
+*
+*  DGEMM  PERFORMS ONE OF THE MATRIX-MATRIX OPERATIONS
+*
+*     C := ALPHA*OP( A )*OP( B ) + BETA*C,
+*
+*  WHERE  OP( X ) IS ONE OF
+*
+*     OP( X ) = X   OR   OP( X ) = X',
+*
+*  ALPHA AND BETA ARE SCALARS, AND A, B AND C ARE MATRICES, WITH OP( A )
+*  AN M BY K MATRIX,  OP( B )  A  K BY N MATRIX AND  C AN M BY N MATRIX.
+*
+*  PARAMETERS
+*  ==========
+*
+*  TRANSA - CHARACTER*1.
+*           ON ENTRY, TRANSA SPECIFIES THE FORM OF OP( A ) TO BE USED IN
+*           THE MATRIX MULTIPLICATION AS FOLLOWS:
+*
+*              TRANSA = 'N' OR 'N',  OP( A ) = A.
+*
+*              TRANSA = 'T' OR 'T',  OP( A ) = A'.
+*
+*              TRANSA = 'C' OR 'C',  OP( A ) = A'.
+*
+*           UNCHANGED ON EXIT.
+*
+*  TRANSB - CHARACTER*1.
+*           ON ENTRY, TRANSB SPECIFIES THE FORM OF OP( B ) TO BE USED IN
+*           THE MATRIX MULTIPLICATION AS FOLLOWS:
+*
+*              TRANSB = 'N' OR 'N',  OP( B ) = B.
+*
+*              TRANSB = 'T' OR 'T',  OP( B ) = B'.
+*
+*              TRANSB = 'C' OR 'C',  OP( B ) = B'.
+*
+*           UNCHANGED ON EXIT.
+*
+*  M      - INTEGER.
+*           ON ENTRY,  M  SPECIFIES  THE NUMBER  OF ROWS  OF THE  MATRIX
+*           OP( A )  AND OF THE  MATRIX  C.  M  MUST  BE AT LEAST  ZERO.
+*           UNCHANGED ON EXIT.
+*
+*  N      - INTEGER.
+*           ON ENTRY,  N  SPECIFIES THE NUMBER  OF COLUMNS OF THE MATRIX
+*           OP( B ) AND THE NUMBER OF COLUMNS OF THE MATRIX C. N MUST BE
+*           AT LEAST ZERO.
+*           UNCHANGED ON EXIT.
+*
+*  K      - INTEGER.
+*           ON ENTRY,  K  SPECIFIES  THE NUMBER OF COLUMNS OF THE MATRIX
+*           OP( A ) AND THE NUMBER OF ROWS OF THE MATRIX OP( B ). K MUST
+*           BE AT LEAST  ZERO.
+*           UNCHANGED ON EXIT.
+*
+*  ALPHA  - DOUBLE PRECISION.
+*           ON ENTRY, ALPHA SPECIFIES THE SCALAR ALPHA.
+*           UNCHANGED ON EXIT.
+*
+*  A      - DOUBLE PRECISION ARRAY OF DIMENSION ( LDA, KA ), WHERE KA IS
+*           K  WHEN  TRANSA = 'N' OR 'N',  AND IS  M  OTHERWISE.
+*           BEFORE ENTRY WITH  TRANSA = 'N' OR 'N',  THE LEADING  M BY K
+*           PART OF THE ARRAY  A  MUST CONTAIN THE MATRIX  A,  OTHERWISE
+*           THE LEADING  K BY M  PART OF THE ARRAY  A  MUST CONTAIN  THE
+*           MATRIX A.
+*           UNCHANGED ON EXIT.
+*
+*  LDA    - INTEGER.
+*           ON ENTRY, LDA SPECIFIES THE FIRST DIMENSION OF A AS DECLARED
+*           IN THE CALLING (SUB) PROGRAM. WHEN  TRANSA = 'N' OR 'N' THEN
+*           LDA MUST BE AT LEAST  MAX( 1, M ), OTHERWISE  LDA MUST BE AT
+*           LEAST  MAX( 1, K ).
+*           UNCHANGED ON EXIT.
+*
+*  B      - DOUBLE PRECISION ARRAY OF DIMENSION ( LDB, KB ), WHERE KB IS
+*           N  WHEN  TRANSB = 'N' OR 'N',  AND IS  K  OTHERWISE.
+*           BEFORE ENTRY WITH  TRANSB = 'N' OR 'N',  THE LEADING  K BY N
+*           PART OF THE ARRAY  B  MUST CONTAIN THE MATRIX  B,  OTHERWISE
+*           THE LEADING  N BY K  PART OF THE ARRAY  B  MUST CONTAIN  THE
+*           MATRIX B.
+*           UNCHANGED ON EXIT.
+*
+*  LDB    - INTEGER.
+*           ON ENTRY, LDB SPECIFIES THE FIRST DIMENSION OF B AS DECLARED
+*           IN THE CALLING (SUB) PROGRAM. WHEN  TRANSB = 'N' OR 'N' THEN
+*           LDB MUST BE AT LEAST  MAX( 1, K ), OTHERWISE  LDB MUST BE AT
+*           LEAST  MAX( 1, N ).
+*           UNCHANGED ON EXIT.
+*
+*  BETA   - DOUBLE PRECISION.
+*           ON ENTRY,  BETA  SPECIFIES THE SCALAR  BETA.  WHEN  BETA  IS
+*           SUPPLIED AS ZERO THEN C NEED NOT BE SET ON INPUT.
+*           UNCHANGED ON EXIT.
+*
+*  C      - DOUBLE PRECISION ARRAY OF DIMENSION ( LDC, N ).
+*           BEFORE ENTRY, THE LEADING  M BY N  PART OF THE ARRAY  C MUST
+*           CONTAIN THE MATRIX  C,  EXCEPT WHEN  BETA  IS ZERO, IN WHICH
+*           CASE C NEED NOT BE SET ON ENTRY.
+*           ON EXIT, THE ARRAY  C  IS OVERWRITTEN BY THE  M BY N  MATRIX
+*           ( ALPHA*OP( A )*OP( B ) + BETA*C ).
+*
+*  LDC    - INTEGER.
+*           ON ENTRY, LDC SPECIFIES THE FIRST DIMENSION OF C AS DECLARED
+*           IN  THE  CALLING  (SUB)  PROGRAM.   LDC  MUST  BE  AT  LEAST
+*           MAX( 1, M ).
+*           UNCHANGED ON EXIT.
+*
+*
+*  LEVEL 3 BLAS ROUTINE.
+*
+*  -- WRITTEN ON 8-FEBRUARY-1989.
+*     JACK DONGARRA, ARGONNE NATIONAL LABORATORY.
+*     IAIN DUFF, AERE HARWELL.
+*     JEREMY DU CROZ, NUMERICAL ALGORITHMS GROUP LTD.
+*     SVEN HAMMARLING, NUMERICAL ALGORITHMS GROUP LTD.
+*
+*
+*     .. EXTERNAL FUNCTIONS ..
+      LOGICAL            LSAME
+      EXTERNAL           LSAME
+*     .. EXTERNAL SUBROUTINES ..
+      EXTERNAL           XERBLA
+*     .. INTRINSIC FUNCTIONS ..
+      INTRINSIC          MAX
+*     .. LOCAL SCALARS ..
+      LOGICAL            NOTA, NOTB
+      INTEGER            I, INFO, J, L, NCOLA, NROWA, NROWB
+      DOUBLE PRECISION   TEMP
+*     .. PARAMETERS ..
+      DOUBLE PRECISION   ONE         , ZERO
+      PARAMETER        ( ONE = 1.0D+0, ZERO = 0.0D+0 )
+*     ..
+*     .. EXECUTABLE STATEMENTS ..
+*
+*     SET  NOTA  AND  NOTB  AS  TRUE IF  A  AND  B  RESPECTIVELY ARE NOT
+*     TRANSPOSED AND SET  NROWA, NCOLA AND  NROWB  AS THE NUMBER OF ROWS
+*     AND  COLUMNS OF  A  AND THE  NUMBER OF  ROWS  OF  B  RESPECTIVELY.
+*
+      NOTA  = LSAME( TRANSA, 'N' )
+      NOTB  = LSAME( TRANSB, 'N' )
+      IF( NOTA )THEN
+         NROWA = M
+         NCOLA = K
+      ELSE
+         NROWA = K
+         NCOLA = M
+      END IF
+      IF( NOTB )THEN
+         NROWB = K
+      ELSE
+         NROWB = N
+      END IF
+*
+*     TEST THE INPUT PARAMETERS.
+*
+      INFO = 0
+      IF(      ( .NOT.NOTA                 ).AND.
+     $         ( .NOT.LSAME( TRANSA, 'C' ) ).AND.
+     $         ( .NOT.LSAME( TRANSA, 'T' ) )      )THEN
+         INFO = 1
+      ELSE IF( ( .NOT.NOTB                 ).AND.
+     $         ( .NOT.LSAME( TRANSB, 'C' ) ).AND.
+     $         ( .NOT.LSAME( TRANSB, 'T' ) )      )THEN
+         INFO = 2
+      ELSE IF( M  .LT.0               )THEN
+         INFO = 3
+      ELSE IF( N  .LT.0               )THEN
+         INFO = 4
+      ELSE IF( K  .LT.0               )THEN
+         INFO = 5
+      ELSE IF( LDA.LT.MAX( 1, NROWA ) )THEN
+         INFO = 8
+      ELSE IF( LDB.LT.MAX( 1, NROWB ) )THEN
+         INFO = 10
+      ELSE IF( LDC.LT.MAX( 1, M     ) )THEN
+         INFO = 13
+      END IF
+      IF( INFO.NE.0 )THEN
+         CALL XERBLA( 'DGEMM ', INFO )
+         RETURN
+      END IF
+*
+*     QUICK RETURN IF POSSIBLE.
+*
+      IF( ( M.EQ.0 ).OR.( N.EQ.0 ).OR.
+     $    ( ( ( ALPHA.EQ.ZERO ).OR.( K.EQ.0 ) ).AND.( BETA.EQ.ONE ) ) )
+     $   RETURN
+*
+*     AND IF  ALPHA.EQ.ZERO.
+*
+      IF( ALPHA.EQ.ZERO )THEN
+         IF( BETA.EQ.ZERO )THEN
+            DO 20, J = 1, N
+               DO 10, I = 1, M
+                  C( I, J ) = ZERO
+   10          CONTINUE
+   20       CONTINUE
+         ELSE
+            DO 40, J = 1, N
+               DO 30, I = 1, M
+                  C( I, J ) = BETA*C( I, J )
+   30          CONTINUE
+   40       CONTINUE
+         END IF
+         RETURN
+      END IF
+*
+*     START THE OPERATIONS.
+*
+      IF( NOTB )THEN
+         IF( NOTA )THEN
+*
+*           FORM  C := ALPHA*A*B + BETA*C.
+*
+            DO 90, J = 1, N
+               IF( BETA.EQ.ZERO )THEN
+                  DO 50, I = 1, M
+                     C( I, J ) = ZERO
+   50             CONTINUE
+               ELSE IF( BETA.NE.ONE )THEN
+                  DO 60, I = 1, M
+                     C( I, J ) = BETA*C( I, J )
+   60             CONTINUE
+               END IF
+               DO 80, L = 1, K
+                  IF( B( L, J ).NE.ZERO )THEN
+                     TEMP = ALPHA*B( L, J )
+                     DO 70, I = 1, M
+                        C( I, J ) = C( I, J ) + TEMP*A( I, L )
+   70                CONTINUE
+                  END IF
+   80          CONTINUE
+   90       CONTINUE
+         ELSE
+*
+*           FORM  C := ALPHA*A'*B + BETA*C
+*
+            DO 120, J = 1, N
+               DO 110, I = 1, M
+                  TEMP = ZERO
+                  DO 100, L = 1, K
+                     TEMP = TEMP + A( L, I )*B( L, J )
+  100             CONTINUE
+                  IF( BETA.EQ.ZERO )THEN
+                     C( I, J ) = ALPHA*TEMP
+                  ELSE
+                     C( I, J ) = ALPHA*TEMP + BETA*C( I, J )
+                  END IF
+  110          CONTINUE
+  120       CONTINUE
+         END IF
+      ELSE
+         IF( NOTA )THEN
+*
+*           FORM  C := ALPHA*A*B' + BETA*C
+*
+            DO 170, J = 1, N
+               IF( BETA.EQ.ZERO )THEN
+                  DO 130, I = 1, M
+                     C( I, J ) = ZERO
+  130             CONTINUE
+               ELSE IF( BETA.NE.ONE )THEN
+                  DO 140, I = 1, M
+                     C( I, J ) = BETA*C( I, J )
+  140             CONTINUE
+               END IF
+               DO 160, L = 1, K
+                  IF( B( J, L ).NE.ZERO )THEN
+                     TEMP = ALPHA*B( J, L )
+                     DO 150, I = 1, M
+                        C( I, J ) = C( I, J ) + TEMP*A( I, L )
+  150                CONTINUE
+                  END IF
+  160          CONTINUE
+  170       CONTINUE
+         ELSE
+*
+*           FORM  C := ALPHA*A'*B' + BETA*C
+*
+            DO 200, J = 1, N
+               DO 190, I = 1, M
+                  TEMP = ZERO
+                  DO 180, L = 1, K
+                     TEMP = TEMP + A( L, I )*B( J, L )
+  180             CONTINUE
+                  IF( BETA.EQ.ZERO )THEN
+                     C( I, J ) = ALPHA*TEMP
+                  ELSE
+                     C( I, J ) = ALPHA*TEMP + BETA*C( I, J )
+                  END IF
+  190          CONTINUE
+  200       CONTINUE
+         END IF
+      END IF
+*
+      RETURN
+*
+*     END OF DGEMM .
+*
+      END
+C
+      SUBROUTINE DGEMV ( TRANS, M, N, ALPHA, A, LDA, X, INCX,
+     $                   BETA, Y, INCY )
+*     .. SCALAR ARGUMENTS ..
+      DOUBLE PRECISION   ALPHA, BETA
+      INTEGER            INCX, INCY, LDA, M, N
+      CHARACTER*1        TRANS
+*     .. ARRAY ARGUMENTS ..
+      DOUBLE PRECISION   A( LDA, * ), X( * ), Y( * )
+*     ..
+*
+*  PURPOSE
+*  =======
+*
+*  DGEMV  PERFORMS ONE OF THE MATRIX-VECTOR OPERATIONS
+*
+*     Y := ALPHA*A*X + BETA*Y,   OR   Y := ALPHA*A'*X + BETA*Y,
+*
+*  WHERE ALPHA AND BETA ARE SCALARS, X AND Y ARE VECTORS AND A IS AN
+*  M BY N MATRIX.
+*
+*  PARAMETERS
+*  ==========
+*
+*  TRANS  - CHARACTER*1.
+*           ON ENTRY, TRANS SPECIFIES THE OPERATION TO BE PERFORMED AS
+*           FOLLOWS:
+*
+*              TRANS = 'N' OR 'N'   Y := ALPHA*A*X + BETA*Y.
+*
+*              TRANS = 'T' OR 'T'   Y := ALPHA*A'*X + BETA*Y.
+*
+*              TRANS = 'C' OR 'C'   Y := ALPHA*A'*X + BETA*Y.
+*
+*           UNCHANGED ON EXIT.
+*
+*  M      - INTEGER.
+*           ON ENTRY, M SPECIFIES THE NUMBER OF ROWS OF THE MATRIX A.
+*           M MUST BE AT LEAST ZERO.
+*           UNCHANGED ON EXIT.
+*
+*  N      - INTEGER.
+*           ON ENTRY, N SPECIFIES THE NUMBER OF COLUMNS OF THE MATRIX A.
+*           N MUST BE AT LEAST ZERO.
+*           UNCHANGED ON EXIT.
+*
+*  ALPHA  - DOUBLE PRECISION.
+*           ON ENTRY, ALPHA SPECIFIES THE SCALAR ALPHA.
+*           UNCHANGED ON EXIT.
+*
+*  A      - DOUBLE PRECISION ARRAY OF DIMENSION ( LDA, N ).
+*           BEFORE ENTRY, THE LEADING M BY N PART OF THE ARRAY A MUST
+*           CONTAIN THE MATRIX OF COEFFICIENTS.
+*           UNCHANGED ON EXIT.
+*
+*  LDA    - INTEGER.
+*           ON ENTRY, LDA SPECIFIES THE FIRST DIMENSION OF A AS DECLARED
+*           IN THE CALLING (SUB) PROGRAM. LDA MUST BE AT LEAST
+*           MAX( 1, M ).
+*           UNCHANGED ON EXIT.
+*
+*  X      - DOUBLE PRECISION ARRAY OF DIMENSION AT LEAST
+*           ( 1 + ( N - 1 )*ABS( INCX ) ) WHEN TRANS = 'N' OR 'N'
+*           AND AT LEAST
+*           ( 1 + ( M - 1 )*ABS( INCX ) ) OTHERWISE.
+*           BEFORE ENTRY, THE INCREMENTED ARRAY X MUST CONTAIN THE
+*           VECTOR X.
+*           UNCHANGED ON EXIT.
+*
+*  INCX   - INTEGER.
+*           ON ENTRY, INCX SPECIFIES THE INCREMENT FOR THE ELEMENTS OF
+*           X. INCX MUST NOT BE ZERO.
+*           UNCHANGED ON EXIT.
+*
+*  BETA   - DOUBLE PRECISION.
+*           ON ENTRY, BETA SPECIFIES THE SCALAR BETA. WHEN BETA IS
+*           SUPPLIED AS ZERO THEN Y NEED NOT BE SET ON INPUT.
+*           UNCHANGED ON EXIT.
+*
+*  Y      - DOUBLE PRECISION ARRAY OF DIMENSION AT LEAST
+*           ( 1 + ( M - 1 )*ABS( INCY ) ) WHEN TRANS = 'N' OR 'N'
+*           AND AT LEAST
+*           ( 1 + ( N - 1 )*ABS( INCY ) ) OTHERWISE.
+*           BEFORE ENTRY WITH BETA NON-ZERO, THE INCREMENTED ARRAY Y
+*           MUST CONTAIN THE VECTOR Y. ON EXIT, Y IS OVERWRITTEN BY THE
+*           UPDATED VECTOR Y.
+*
+*  INCY   - INTEGER.
+*           ON ENTRY, INCY SPECIFIES THE INCREMENT FOR THE ELEMENTS OF
+*           Y. INCY MUST NOT BE ZERO.
+*           UNCHANGED ON EXIT.
+*
+*
+*  LEVEL 2 BLAS ROUTINE.
+*
+*  -- WRITTEN ON 22-OCTOBER-1986.
+*     JACK DONGARRA, ARGONNE NATIONAL LAB.
+*     JEREMY DU CROZ, NAG CENTRAL OFFICE.
+*     SVEN HAMMARLING, NAG CENTRAL OFFICE.
+*     RICHARD HANSON, SANDIA NATIONAL LABS.
+*
+*
+*     .. PARAMETERS ..
+      DOUBLE PRECISION   ONE         , ZERO
+      PARAMETER        ( ONE = 1.0D+0, ZERO = 0.0D+0 )
+*     .. LOCAL SCALARS ..
+      DOUBLE PRECISION   TEMP
+      INTEGER            I, INFO, IX, IY, J, JX, JY, KX, KY, LENX, LENY
+*     .. EXTERNAL FUNCTIONS ..
+      LOGICAL            LSAME
+      EXTERNAL           LSAME
+*     .. EXTERNAL SUBROUTINES ..
+      EXTERNAL           XERBLA
+*     .. INTRINSIC FUNCTIONS ..
+      INTRINSIC          MAX
+*     ..
+*     .. EXECUTABLE STATEMENTS ..
+*
+*     TEST THE INPUT PARAMETERS.
+*
+      INFO = 0
+      IF     ( .NOT.LSAME( TRANS, 'N' ).AND.
+     $         .NOT.LSAME( TRANS, 'T' ).AND.
+     $         .NOT.LSAME( TRANS, 'C' )      )THEN
+         INFO = 1
+      ELSE IF( M.LT.0 )THEN
+         INFO = 2
+      ELSE IF( N.LT.0 )THEN
+         INFO = 3
+      ELSE IF( LDA.LT.MAX( 1, M ) )THEN
+         INFO = 6
+      ELSE IF( INCX.EQ.0 )THEN
+         INFO = 8
+      ELSE IF( INCY.EQ.0 )THEN
+         INFO = 11
+      END IF
+      IF( INFO.NE.0 )THEN
+         CALL XERBLA( 'DGEMV ', INFO )
+         RETURN
+      END IF
+*
+*     QUICK RETURN IF POSSIBLE.
+*
+      IF( ( M.EQ.0 ).OR.( N.EQ.0 ).OR.
+     $    ( ( ALPHA.EQ.ZERO ).AND.( BETA.EQ.ONE ) ) )
+     $   RETURN
+*
+*     SET  LENX  AND  LENY, THE LENGTHS OF THE VECTORS X AND Y, AND SET
+*     UP THE START POINTS IN  X  AND  Y.
+*
+      IF( LSAME( TRANS, 'N' ) )THEN
+         LENX = N
+         LENY = M
+      ELSE
+         LENX = M
+         LENY = N
+      END IF
+      IF( INCX.GT.0 )THEN
+         KX = 1
+      ELSE
+         KX = 1 - ( LENX - 1 )*INCX
+      END IF
+      IF( INCY.GT.0 )THEN
+         KY = 1
+      ELSE
+         KY = 1 - ( LENY - 1 )*INCY
+      END IF
+*
+*     START THE OPERATIONS. IN THIS VERSION THE ELEMENTS OF A ARE
+*     ACCESSED SEQUENTIALLY WITH ONE PASS THROUGH A.
+*
+*     FIRST FORM  Y := BETA*Y.
+*
+      IF( BETA.NE.ONE )THEN
+         IF( INCY.EQ.1 )THEN
+            IF( BETA.EQ.ZERO )THEN
+               DO 10, I = 1, LENY
+                  Y( I ) = ZERO
+   10          CONTINUE
+            ELSE
+               DO 20, I = 1, LENY
+                  Y( I ) = BETA*Y( I )
+   20          CONTINUE
+            END IF
+         ELSE
+            IY = KY
+            IF( BETA.EQ.ZERO )THEN
+               DO 30, I = 1, LENY
+                  Y( IY ) = ZERO
+                  IY      = IY   + INCY
+   30          CONTINUE
+            ELSE
+               DO 40, I = 1, LENY
+                  Y( IY ) = BETA*Y( IY )
+                  IY      = IY           + INCY
+   40          CONTINUE
+            END IF
+         END IF
+      END IF
+      IF( ALPHA.EQ.ZERO )
+     $   RETURN
+      IF( LSAME( TRANS, 'N' ) )THEN
+*
+*        FORM  Y := ALPHA*A*X + Y.
+*
+         JX = KX
+         IF( INCY.EQ.1 )THEN
+            DO 60, J = 1, N
+               IF( X( JX ).NE.ZERO )THEN
+                  TEMP = ALPHA*X( JX )
+                  DO 50, I = 1, M
+                     Y( I ) = Y( I ) + TEMP*A( I, J )
+   50             CONTINUE
+               END IF
+               JX = JX + INCX
+   60       CONTINUE
+         ELSE
+            DO 80, J = 1, N
+               IF( X( JX ).NE.ZERO )THEN
+                  TEMP = ALPHA*X( JX )
+                  IY   = KY
+                  DO 70, I = 1, M
+                     Y( IY ) = Y( IY ) + TEMP*A( I, J )
+                     IY      = IY      + INCY
+   70             CONTINUE
+               END IF
+               JX = JX + INCX
+   80       CONTINUE
+         END IF
+      ELSE
+*
+*        FORM  Y := ALPHA*A'*X + Y.
+*
+         JY = KY
+         IF( INCX.EQ.1 )THEN
+            DO 100, J = 1, N
+               TEMP = ZERO
+               DO 90, I = 1, M
+                  TEMP = TEMP + A( I, J )*X( I )
+   90          CONTINUE
+               Y( JY ) = Y( JY ) + ALPHA*TEMP
+               JY      = JY      + INCY
+  100       CONTINUE
+         ELSE
+            DO 120, J = 1, N
+               TEMP = ZERO
+               IX   = KX
+               DO 110, I = 1, M
+                  TEMP = TEMP + A( I, J )*X( IX )
+                  IX   = IX   + INCX
+  110          CONTINUE
+               Y( JY ) = Y( JY ) + ALPHA*TEMP
+               JY      = JY      + INCY
+  120       CONTINUE
+         END IF
+      END IF
+*
+      RETURN
+*
+*     END OF DGEMV .
+*
+      END
+      LOGICAL          FUNCTION LSAME( CA, CB )
+*
+*  -- LAPACK AUXILIARY ROUTINE --
+*     ARGONNE NATIONAL LABORATORY
+*     OCTOBER 11, 1988
+*
+*     .. SCALAR ARGUMENTS ..
+      CHARACTER          CA, CB
+*     ..
+*
+*  PURPOSE
+*  =======
+*
+*     LSAME RETURNS .TRUE. IF CA IS THE SAME LETTER AS CB REGARDLESS
+*     OF CASE.
+*
+*  N.B. THIS VERSION OF THE ROUTINE IS ONLY CORRECT FOR ASCII CODE.
+*       INSTALLERS MUST MODIFY THE ROUTINE FOR OTHER CHARACTER-CODES.
+*
+*       FOR EBCDIC SYSTEMS THE CONSTANT IOFF MUST BE CHANGED TO -64.
+*       FOR CDC SYSTEMS USING 6-12 BIT REPRESENTATIONS, THE SYSTEM-
+*       SPECIFIC CODE IN COMMENTS MUST BE ACTIVATED.
+*
+*  ARGUMENTS
+*  =========
+*
+*  CA     - CHARACTER*1
+*  CB     - CHARACTER*1
+*           ON ENTRY, CA AND CB SPECIFY CHARACTERS TO BE COMPARED.
+*           UNCHANGED ON EXIT.
+*
+*  AUXILIARY ROUTINE FOR LEVEL 2 BLAS.
+*
+*  -- WRITTEN ON 20-JULY-1986
+*     RICHARD HANSON, SANDIA NATIONAL LABS.
+*     JEREMY DU CROZ, NAG CENTRAL OFFICE.
+*
+*
+*     .. PARAMETERS ..
+      INTEGER            IOFF
+      PARAMETER        ( IOFF = 32 )
+*     ..
+*     .. INTRINSIC FUNCTIONS ..
+      INTRINSIC          ICHAR
+*     ..
+*     .. EXECUTABLE STATEMENTS ..
+*
+*     TEST IF THE CHARACTERS ARE EQUAL
+*
+      LSAME = CA.EQ.CB
+*
+*     NOW TEST FOR EQUIVALENCE
+*
+      IF( .NOT.LSAME ) THEN
+         LSAME = ICHAR( CA ) - IOFF.EQ.ICHAR( CB )
+      END IF
+      IF( .NOT.LSAME ) THEN
+         LSAME = ICHAR( CA ).EQ.ICHAR( CB ) - IOFF
+      END IF
+*
+      RETURN
+*
+*  THE FOLLOWING COMMENTS CONTAIN CODE FOR CDC SYSTEMS USING 6-12 BIT
+*  REPRESENTATIONS.
+*
+*     .. PARAMETERS ..
+*     INTEGER            ICIRFX
+*     PARAMETER        ( ICIRFX=62 )
+*     .. SCALAR ARGUMENTS ..
+*     CHARACTER*1        CB
+*     .. ARRAY ARGUMENTS ..
+*     CHARACTER*1        CA(*)
+*     .. LOCAL SCALARS ..
+*     INTEGER            IVAL
+*     .. INTRINSIC FUNCTIONS ..
+*     INTRINSIC          ICHAR, CHAR
+*     .. EXECUTABLE STATEMENTS ..
+*
+*     SEE IF THE FIRST CHARACTER IN STRING CA EQUALS STRING CB.
+*
+*     LSAME = CA(1) .EQ. CB .AND. CA(1) .NE. CHAR(ICIRFX)
+*
+*     IF (LSAME) RETURN
+*
+*     THE CHARACTERS ARE NOT IDENTICAL. NOW CHECK THEM FOR EQUIVALENCE.
+*     LOOK FOR THE 'ESCAPE' CHARACTER, CIRCUMFLEX, FOLLOWED BY THE
+*     LETTER.
+*
+*     IVAL = ICHAR(CA(2))
+*     IF (IVAL.GE.ICHAR('A') .AND. IVAL.LE.ICHAR('Z')) THEN
+*        LSAME = CA(1) .EQ. CHAR(ICIRFX) .AND. CA(2) .EQ. CB
+*     END IF
+*
+*     RETURN
+*
+*     END OF LSAME.
+*
+      END
+C
+      SUBROUTINE XERBLA( SRNAME, INFO )
+*
+*  -- LAPACK AUXILIARY ROUTINE --
+*     ARGONNE NATIONAL LABORATORY
+*     NOVEMBER 16, 1988
+*
+*     .. SCALAR ARGUMENTS ..
+      CHARACTER*6        SRNAME
+      INTEGER            INFO
+*     ..
+*
+*  PURPOSE
+*  =======
+*
+*     XERBLA  IS AN ERROR HANDLER FOR THE LAPACK ROUTINES.
+*     IT IS CALLED BY AN LAPACK ROUTINE IF AN INPUT PARAMETER HAS AN
+*     INVALID VALUE.  A MESSAGE IS PRINTED AND EXECUTION STOPS.
+*
+*     INSTALLERS MAY CONSIDER MODIFYING THE STOP STATEMENT IN ORDER TO
+*     CALL SYSTEM-SPECIFIC EXCEPTION-HANDLING FACILITIES.
+*
+*  PARAMETERS
+*  ==========
+*
+*  SRNAME - CHARACTER*6.
+*           ON ENTRY, SRNAME SPECIFIES THE NAME OF THE ROUTINE WHICH
+*           CALLED XERBLA.
+*
+*  INFO   - INTEGER.
+*           ON ENTRY, INFO SPECIFIES THE POSITION OF THE INVALID
+*           PARAMETER IN THE PARAMETER-LIST OF THE CALLING ROUTINE.
+*
+*
+      WRITE( *, FMT = 9999 )SRNAME, INFO
+*
+      STOP
+*
+ 9999 FORMAT( ' ** ON ENTRY TO ', A6, ' PARAMETER NUMBER ', I2, ' HAD ',
+     $      'AN ILLEGAL VALUE' )
+*
+*     END OF XERBLA
+*
+      END
+C
+      SUBROUTINE TRED2(NM,N,A,D,E,Z)
+C
+      INTEGER I,J,K,L,N,II,NM,JP1
+      DOUBLE PRECISION A(NM,N),D(N),E(N),Z(NM,N)
+      DOUBLE PRECISION F,G,H,HH,SCALE
+C
+C     THIS SUBROUTINE IS A TRANSLATION OF THE ALGOL PROCEDURE TRED2,
+C     NUM. MATH. 11, 181-195(1968) BY MARTIN, REINSCH, AND WILKINSON.
+C     HANDBOOK FOR AUTO. COMP., VOL.II-LINEAR ALGEBRA, 212-226(1971).
+C
+C     THIS SUBROUTINE REDUCES A REAL SYMMETRIC MATRIX TO A
+C     SYMMETRIC TRIDIAGONAL MATRIX USING AND ACCUMULATING
+C     ORTHOGONAL SIMILARITY TRANSFORMATIONS.
+C
+C     ON INPUT
+C
+C        NM MUST BE SET TO THE ROW DIMENSION OF TWO-DIMENSIONAL
+C          ARRAY PARAMETERS AS DECLARED IN THE CALLING PROGRAM
+C          DIMENSION STATEMENT.
+C
+C        N IS THE ORDER OF THE MATRIX.
+C
+C        A CONTAINS THE REAL SYMMETRIC INPUT MATRIX.  ONLY THE
+C          LOWER TRIANGLE OF THE MATRIX NEED BE SUPPLIED.
+C
+C     ON OUTPUT
+C
+C        D CONTAINS THE DIAGONAL ELEMENTS OF THE TRIDIAGONAL MATRIX.
+C
+C        E CONTAINS THE SUBDIAGONAL ELEMENTS OF THE TRIDIAGONAL
+C          MATRIX IN ITS LAST N-1 POSITIONS.  E(1) IS SET TO ZERO.
+C
+C        Z CONTAINS THE ORTHOGONAL TRANSFORMATION MATRIX
+C          PRODUCED IN THE REDUCTION.
+C
+C        A AND Z MAY COINCIDE.  IF DISTINCT, A IS UNALTERED.
+C
+C     QUESTIONS AND COMMENTS SHOULD BE DIRECTED TO BURTON S. GARBOW,
+C     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY
+C
+C     THIS VERSION DATED AUGUST 1983.
+C
+C     ------------------------------------------------------------------
+C
+      DO 100 I = 1, N
+C
+         DO 80 J = I, N
+   80    Z(J,I) = A(J,I)
+C
+         D(I) = A(N,I)
+  100 CONTINUE
+C
+      IF (N .EQ. 1) GO TO 510
+C     .......... FOR I=N STEP -1 UNTIL 2 DO -- ..........
+      DO 300 II = 2, N
+         I = N + 2 - II
+         L = I - 1
+         H = 0.0D0
+         SCALE = 0.0D0
+         IF (L .LT. 2) GO TO 130
+C     .......... SCALE ROW (ALGOL TOL THEN NOT NEEDED) ..........
+         DO 120 K = 1, L
+  120    SCALE = SCALE + DABS(D(K))
+C
+         IF (SCALE .NE. 0.0D0) GO TO 140
+  130    E(I) = D(L)
+C
+         DO 135 J = 1, L
+            D(J) = Z(L,J)
+            Z(I,J) = 0.0D0
+            Z(J,I) = 0.0D0
+  135    CONTINUE
+C
+         GO TO 290
+C
+  140    DO 150 K = 1, L
+            D(K) = D(K) / SCALE
+            H = H + D(K) * D(K)
+  150    CONTINUE
+C
+         F = D(L)
+         G = -DSIGN(DSQRT(H),F)
+         E(I) = SCALE * G
+         H = H - F * G
+         D(L) = F - G
+C     .......... FORM A*U ..........
+         DO 170 J = 1, L
+  170    E(J) = 0.0D0
+C
+         DO 240 J = 1, L
+            F = D(J)
+            Z(J,I) = F
+            G = E(J) + Z(J,J) * F
+            JP1 = J + 1
+            IF (L .LT. JP1) GO TO 220
+C
+            DO 200 K = JP1, L
+               G = G + Z(K,J) * D(K)
+               E(K) = E(K) + Z(K,J) * F
+  200       CONTINUE
+C
+  220       E(J) = G
+  240    CONTINUE
+C     .......... FORM P ..........
+         F = 0.0D0
+C
+         DO 245 J = 1, L
+            E(J) = E(J) / H
+            F = F + E(J) * D(J)
+  245    CONTINUE
+C
+         HH = F / (H + H)
+C     .......... FORM Q ..........
+         DO 250 J = 1, L
+  250    E(J) = E(J) - HH * D(J)
+C     .......... FORM REDUCED A ..........
+         DO 280 J = 1, L
+            F = D(J)
+            G = E(J)
+C
+            DO 260 K = J, L
+  260       Z(K,J) = Z(K,J) - F * E(K) - G * D(K)
+C
+            D(J) = Z(L,J)
+            Z(I,J) = 0.0D0
+  280    CONTINUE
+C
+  290    D(I) = H
+  300 CONTINUE
+C     .......... ACCUMULATION OF TRANSFORMATION MATRICES ..........
+      DO 500 I = 2, N
+         L = I - 1
+         Z(N,L) = Z(L,L)
+         Z(L,L) = 1.0D0
+         H = D(I)
+         IF (H .EQ. 0.0D0) GO TO 380
+C
+         DO 330 K = 1, L
+  330    D(K) = Z(K,I) / H
+C
+         DO 360 J = 1, L
+            G = 0.0D0
+C
+            DO 340 K = 1, L
+  340       G = G + Z(K,I) * Z(K,J)
+C
+            DO 360 K = 1, L
+               Z(K,J) = Z(K,J) - G * D(K)
+  360    CONTINUE
+C
+  380    DO 400 K = 1, L
+  400    Z(K,I) = 0.0D0
+C
+  500 CONTINUE
+C
+  510 DO 520 I = 1, N
+         D(I) = Z(N,I)
+         Z(N,I) = 0.0D0
+  520 CONTINUE
+C
+      Z(N,N) = 1.0D0
+      E(1) = 0.0D0
+      RETURN
+      END
+C
+      SUBROUTINE TQL2(NM,N,D,E,Z,IERR)
+C
+      INTEGER I,J,K,L,M,N,II,L1,L2,NM,MML,IERR
+      DOUBLE PRECISION D(N),E(N),Z(NM,N)
+      DOUBLE PRECISION C,C2,C3,DL1,EL1,F,G,H,P,R,S,S2,TST1,TST2,PYTHAG
+C
+C     THIS SUBROUTINE IS A TRANSLATION OF THE ALGOL PROCEDURE TQL2,
+C     NUM. MATH. 11, 293-306(1968) BY BOWDLER, MARTIN, REINSCH, AND
+C     WILKINSON.
+C     HANDBOOK FOR AUTO. COMP., VOL.II-LINEAR ALGEBRA, 227-240(1971).
+C
+C     THIS SUBROUTINE FINDS THE EIGENVALUES AND EIGENVECTORS
+C     OF A SYMMETRIC TRIDIAGONAL MATRIX BY THE QL METHOD.
+C     THE EIGENVECTORS OF A FULL SYMMETRIC MATRIX CAN ALSO
+C     BE FOUND IF  TRED2  HAS BEEN USED TO REDUCE THIS
+C     FULL MATRIX TO TRIDIAGONAL FORM.
+C
+C     ON INPUT
+C
+C        NM MUST BE SET TO THE ROW DIMENSION OF TWO-DIMENSIONAL
+C          ARRAY PARAMETERS AS DECLARED IN THE CALLING PROGRAM
+C          DIMENSION STATEMENT.
+C
+C        N IS THE ORDER OF THE MATRIX.
+C
+C        D CONTAINS THE DIAGONAL ELEMENTS OF THE INPUT MATRIX.
+C
+C        E CONTAINS THE SUBDIAGONAL ELEMENTS OF THE INPUT MATRIX
+C          IN ITS LAST N-1 POSITIONS.  E(1) IS ARBITRARY.
+C
+C        Z CONTAINS THE TRANSFORMATION MATRIX PRODUCED IN THE
+C          REDUCTION BY  TRED2, IF PERFORMED.  IF THE EIGENVECTORS
+C          OF THE TRIDIAGONAL MATRIX ARE DESIRED, Z MUST CONTAIN
+C          THE IDENTITY MATRIX.
+C
+C      ON OUTPUT
+C
+C        D CONTAINS THE EIGENVALUES IN ASCENDING ORDER.  IF AN
+C          ERROR EXIT IS MADE, THE EIGENVALUES ARE CORRECT BUT
+C          UNORDERED FOR INDICES 1,2,...,IERR-1.
+C
+C        E HAS BEEN DESTROYED.
+C
+C        Z CONTAINS ORTHONORMAL EIGENVECTORS OF THE SYMMETRIC
+C          TRIDIAGONAL (OR FULL) MATRIX.  IF AN ERROR EXIT IS MADE,
+C          Z CONTAINS THE EIGENVECTORS ASSOCIATED WITH THE STORED
+C          EIGENVALUES.
+C
+C        IERR IS SET TO
+C          ZERO       FOR NORMAL RETURN,
+C          J          IF THE J-TH EIGENVALUE HAS NOT BEEN
+C                     DETERMINED AFTER 30 ITERATIONS.
+C
+C     CALLS PYTHAG FOR  DSQRT(A*A + B*B) .
+C
+C     QUESTIONS AND COMMENTS SHOULD BE DIRECTED TO BURTON S. GARBOW,
+C     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY
+C
+C     THIS VERSION DATED AUGUST 1983.
+C
+C     ------------------------------------------------------------------
+C
+      IERR = 0
+      IF (N .EQ. 1) GO TO 1001
+C
+      DO 100 I = 2, N
+  100 E(I-1) = E(I)
+C
+      F = 0.0D0
+      TST1 = 0.0D0
+      E(N) = 0.0D0
+C
+      DO 240 L = 1, N
+         J = 0
+         H = DABS(D(L)) + DABS(E(L))
+         IF (TST1 .LT. H) TST1 = H
+C     .......... LOOK FOR SMALL SUB-DIAGONAL ELEMENT ..........
+         DO 110 M = L, N
+            TST2 = TST1 + DABS(E(M))
+            IF (TST2 .EQ. TST1) GO TO 120
+C     .......... E(N) IS ALWAYS ZERO, SO THERE IS NO EXIT
+C                THROUGH THE BOTTOM OF THE LOOP ..........
+  110    CONTINUE
+C
+  120    IF (M .EQ. L) GO TO 220
+  130    IF (J .EQ. 30) GO TO 1000
+         J = J + 1
+C     .......... FORM SHIFT ..........
+         L1 = L + 1
+         L2 = L1 + 1
+         G = D(L)
+         P = (D(L1) - G) / (2.0D0 * E(L))
+         R = PYTHAG(P,1.0D0)
+         D(L) = E(L) / (P + DSIGN(R,P))
+         D(L1) = E(L) * (P + DSIGN(R,P))
+         DL1 = D(L1)
+         H = G - D(L)
+         IF (L2 .GT. N) GO TO 145
+C
+         DO 140 I = L2, N
+  140    D(I) = D(I) - H
+C
+  145    F = F + H
+C     .......... QL TRANSFORMATION ..........
+         P = D(M)
+         C = 1.0D0
+         C2 = C
+         EL1 = E(L1)
+         S = 0.0D0
+         MML = M - L
+C     .......... FOR I=M-1 STEP -1 UNTIL L DO -- ..........
+         DO 200 II = 1, MML
+            C3 = C2
+            C2 = C
+            S2 = S
+            I = M - II
+            G = C * E(I)
+            H = C * P
+            R = PYTHAG(P,E(I))
+            E(I+1) = S * R
+            S = E(I) / R
+            C = P / R
+            P = C * D(I) - S * G
+            D(I+1) = H + S * (C * G + S * D(I))
+C     .......... FORM VECTOR ..........
+            DO 180 K = 1, N
+               H = Z(K,I+1)
+               Z(K,I+1) = S * Z(K,I) + C * H
+               Z(K,I) = C * Z(K,I) - S * H
+  180       CONTINUE
+C
+  200    CONTINUE
+C
+         P = -S * S2 * C3 * EL1 * E(L) / DL1
+         E(L) = S * P
+         D(L) = C * P
+         TST2 = TST1 + DABS(E(L))
+         IF (TST2 .GT. TST1) GO TO 130
+  220    D(L) = D(L) + F
+  240 CONTINUE
+C     .......... ORDER EIGENVALUES AND EIGENVECTORS ..........
+      DO 300 II = 2, N
+         I = II - 1
+         K = I
+         P = D(I)
+C
+         DO 260 J = II, N
+            IF (D(J) .GE. P) GO TO 260
+            K = J
+            P = D(J)
+  260    CONTINUE
+C
+         IF (K .EQ. I) GO TO 300
+         D(K) = D(I)
+         D(I) = P
+C
+         DO 280 J = 1, N
+            P = Z(J,I)
+            Z(J,I) = Z(J,K)
+            Z(J,K) = P
+  280    CONTINUE
+C
+  300 CONTINUE
+C
+      GO TO 1001
+C     .......... SET ERROR -- NO CONVERGENCE TO AN
+C                EIGENVALUE AFTER 30 ITERATIONS ..........
+ 1000 IERR = L
+ 1001 RETURN
+      END
+C
+      DOUBLE PRECISION FUNCTION PYTHAG(A,B)
+      DOUBLE PRECISION A,B
+C
+C     FINDS DSQRT(A**2+B**2) WITHOUT OVERFLOW OR DESTRUCTIVE UNDERFLOW
+C
+      DOUBLE PRECISION P,R,S,T,U
+C
+      P = DMAX1(DABS(A),DABS(B))
+      IF (P .EQ. 0.0D0) GO TO 20
+      R = (DMIN1(DABS(A),DABS(B))/P)**2
+   10 CONTINUE
+         T = 4.0D0 + R
+         IF (T .EQ. 4.0D0) GO TO 20
+         S = R/T
+         U = 1.0D0 + 2.0D0*S
+         P = U*P
+         R = (S/U)**2 * R
+      GO TO 10
+   20 PYTHAG = P
+      RETURN
+      END
+C
+      SUBROUTINE ORTHG(N,F,P,B,LDB,X,LDX,TMP)
+C----------------------------------------------------------------------
+C
+C.....BLAS2  GRAM-SCHMIDT ORTHOGONALIZATION PROCEDURE
+C
+C     THE N BY P MATRIX Z STORED IN COLUMNS F+1 TO F+P OF
+C     ARRAY X IS REORTHOGONALIZED W.R.T. THE FIRST F COLUMNS OF
+C     ARRAY X.  THE RESULTING MATRIX Z IS THEN FACTORED INTO THE
+C     PRODUCT OF AN N BY P ORTHONORMAL MATRIX (STORED OVER MATRIX Z)
+C     AND A P BY P UPPER-TRIANGULAR MATRIX (STORED IN THE FIRST
+C     P ROWS AND COLUMNS OF ARRAY B).
+C     (BASED ON ORTHOG FROM RUTISHAUSER)
+C----------------------------------------------------------------------
+      INTEGER N,F,P,LDB,LDX
+      DOUBLE PRECISION B(LDB,1), X(LDX,1),TMP(1), DDOT, S, T
+      INTEGER FP1,FPP, K, KM1
+      LOGICAL ORIG
+C
+      IF(P.EQ.0) RETURN
+      FP1=F+1
+      FPP=F+P
+C
+      DO 50 K=FP1,FPP
+         ORIG=.TRUE.
+         KM1=K-1
+C
+C-----------------------------------------------------------
+10       T=0.0D0
+         IF(KM1.LT.1) GO TO 25
+         IF(KM1.GT.1) THEN
+           CALL DGEMV('T',N,KM1,1.0D0,X,LDX,X(1,K),1,0.0D0,TMP,1)
+           T=T+DDOT(KM1,TMP,1,TMP,1)
+         ELSE
+           TMP(1)=DDOT(N,X(1,1),1,X(1,K),1)
+           T=T+TMP(1)*TMP(1)
+         ENDIF
+         IF (ORIG.AND.KM1.GT.F)
+     *      CALL DCOPY(KM1-F,TMP(FP1),1,B(1,K-FP1+1),1)
+         IF(KM1.GT.1) THEN
+         CALL DGEMV('N',N,KM1,-1.0D0,X,LDX,TMP,1,1.0D0,X(1,K),1)
+         ELSE
+         CALL DAXPY(N,-TMP(1),X(1,1),1,X(1,K),1)
+         ENDIF
+         IF(P.EQ.1) GO TO 50
+C-----------------------------------------------------------
+25       S=DDOT(N,X(1,K),1,X(1,K),1)
+         T=T+S
+         IF(S.GT.T/100.0D0) GO TO 40
+         ORIG=.FALSE.
+         GO TO 10
+40       S=DSQRT(S)
+         B(K-FP1+1,K-FP1+1)=S
+         IF(S.NE.0.0D0) S=1.0D0/S
+         CALL DSCAL(N,S,X(1,K),1)
+50    CONTINUE
+      RETURN
+      END
+C
+      DOUBLE PRECISION FUNCTION RANDOM(IY) 
+      INTEGER IY
+C
+C        RANDOM IS A UNIFORM RANDOM NUMBER GENERATOR BASED  ON  THEORY  AND
+C     SUGGESTIONS  GIVEN  IN  D.E.KNUTH (1969),  VOL  2.  THE INTEGER  IY
+C     SHOULD BE INITIALIZED TO AN ARBITRARY INTEGER PRIOR TO THE FIRST CALL
+C     TO RANDOM.THE CALLING PROGRAM SHOULD  NOT  ALTER  THE  VALUE  OF  IY
+C     BETWEEN SUBSEQUENT CALLS TO RANDOM.VALUES OF RANDOM WILL BE RETURNED
+C     IN THE INTERVAL (0,1).
+C
+      INTEGER M,IA,IC,MIC
+      DOUBLE PRECISION HALFM,S
+C
+      INTEGER M2,ITWO
+      DATA M2,ITWO/0,2/
+      IF (M2.EQ.0) THEN
+C
+C        IF FIRST ENTRY, COMPUTE MACHINE INTEGER WORD LENGTH
+C
+         M = 1 
+10       M2 = M
+         M = ITWO*M2 
+         IF (M.GT.M2) GO TO 10 
+         HALFM = M2
+C
+C        COMPUTE MULTIPLIER AND INCREMENT FOR LINEAR CONGRUENTIAL METHOD
+C
+         IA = 8*IDINT(HALFM*DATAN(1.D0)/8.D0)+5
+         IC = 2*IDINT(HALFM*(0.5D0-DSQRT(3.D0)/6.D0))+1
+         MIC = (M2-IC)+M2
+C
+C        S IS THE SCALE FACTOR FOR CONVERTING TO FLOATING POINT 
+C
+         S = 0.5D0/HALFM 
+C
+C        COMPUTE NEXT RANDOM NUMBER 
+C
+      ENDIF
+      IY = IY*IA
+C
+C     THE FOLLOWING STATEMENT IS FOR COMPUTERS WHICH DO NOT ALLOW
+C     INTEGER OVERFLOW ON ADDITION 
+C
+      IF (IY.GT.MIC) IY = (IY-M2)-M2
+C
+      IY = IY+IC
+C
+C     THE FOLLOWING STATEMENT IS FOR COMPUTERS WHERE THE 
+C     WORD LENGTH FOR ADDITION IS GREATER THAN FOR MULTIPLICATION
+C
+      IF (IY/2.GT.M2) IY = (IY-M2)-M2 
+C
+C     THE FOLLOWING STATEMENT IS FOR COMPUTERS WHERE INTEGER 
+C     OVERFLOW AFFECTS THE SIGN BIT
+C
+      IF (IY.LT.0) IY = (IY+M2)+M2
+      RANDOM = DBLE(IY)*S 
+      RETURN
+      END 
+C
+      SUBROUTINE OPA(X,Y)
+C
+C.....MULTIPLICATION OF (NROW BY NCOL SPARSE MATRIX A) BY THE
+C     VECTOR X, STORE IN Y
+
+      PARAMETER(NMAX=500,NZMAX=2000)
+      DOUBLE PRECISION VALUE(NZMAX), ALPHA
+      DOUBLE PRECISION X(1), Y(1)
+      INTEGER   POINTR(NMAX), ROWIND(NZMAX)
+      INTEGER   I, J, NCOL, NROW, NMAX, NZMAX
+      COMMON /SPARSE/ VALUE,ALPHA,POINTR,ROWIND,NCOL,NROW
+C
+C---------------------
+C
+      DO 55 I=1,NROW
+         Y(I)=0.0D0
+55    CONTINUE
+C
+      DO 10 I =1,NCOL
+C
+         DO 20 J=POINTR(I),POINTR(I+1)-1
+            Y(ROWIND(J))=Y(ROWIND(J))+VALUE(J)*X(I)
+   20    CONTINUE
+C
+10    CONTINUE
+
+      RETURN
+      END
+C
+      SUBROUTINE OPB(N, X, Y, SHIFT)
+C
+C.....MULTIPLICATION OF MATRIX C BY A VECTOR X , WHERE
+C
+C     C=[B-SHIFT*I], I IS THE N-TH ORDER IDENTITY MATRIX,  
+C                    A IS NROW BY NCOL (NROW >> NCOL),
+C                    B = (ALPHA*ALPHA)*I - A'A, AND
+C                    ALPHA  IS AN UPPER BOUND FOR THE LARGEST
+C                    SINGULAR VALUE OF A.
+C
+C     HENCE, C  IS OF ORDER N:=NCOL (Y STORES PRODUCT VECTOR)
+C
+      PARAMETER(NMAX=500,NZMAX=2000)
+      DOUBLE PRECISION VALUE(NZMAX), Z(NMAX), ALPHA
+      DOUBLE PRECISION X(1), Y(1), SHIFT
+      INTEGER   POINTR(NMAX), ROWIND(NZMAX)
+      INTEGER I, J, NROW, NCOL, NMAX, NZMAX
+      COMMON /SPARSE/ VALUE,ALPHA,POINTR,ROWIND,NCOL,NROW
+      INTEGER N
+C
+C---------------------
+C
+      DO 55 I=1,N
+         Y(I)=(ALPHA*ALPHA-SHIFT)*X(I)
+55    CONTINUE
+      DO 65 I=1,NROW
+         Z(I)=0.0D0
+65    CONTINUE
+C
+      DO 15 I=1,NCOL
+C
+         DO 10 J=POINTR(I),POINTR(I+1)-1
+            Z(ROWIND(J))=Z(ROWIND(J))+VALUE(J)*X(I)
+   10    CONTINUE
+C
+15    CONTINUE
+C
+      DO 25 I =1,NCOL
+C
+         DO 20 J=POINTR(I),POINTR(I+1)-1
+            Y(I)=Y(I)-VALUE(J)*Z(ROWIND(J))
+   20    CONTINUE
+25    CONTINUE
+C
+      RETURN
+      END
+      SUBROUTINE DISK(N,SIG,RAD,CSIZE,CLUS)
+C
+C.... MONITOR SEPARATION OF GERSHGORIN DISKS
+C
+      DOUBLE PRECISION SIG(N),RAD(N),RADI,RADIP1,TMP
+      INTEGER          CPTR,CSIZE(N),CLUS(N),N,I,K
+C....
+C.... ASSUME ORDERING: SIG(1)<=SIG(2)<=.....<=SIG(N) FOR SIG ARRAY IN TSVD2
+C....
+C.... RAD:= RADII FOR APPROXIMATE E-VALUES
+C....
+      DO 10 I = 1,N-1
+         RADI=RAD(I)
+         RADIP1=RAD(I+1)
+         TMP=(RADI+RADIP1) - (SIG(I+1)-SIG(I))
+C
+         IF(TMP.LE.0.0D0) THEN
+               CLUS(I)=1
+            ELSE
+               CLUS(I)=0
+         ENDIF
+C
+10    CONTINUE
+C
+C.....CLUSTERING VECTOR FILLED, NOW LOCATE CLUSTERS AND THEIR SIZE
+C
+      DO 5 I = 1,N
+         CSIZE(I)=1
+5     CONTINUE
+C
+      DO 20 I = 1,N-1
+         CPTR=I
+         DO 25 K = I-1,1,-1
+            IF(CSIZE(K).NE.0)  THEN
+               GO TO 26
+            ELSE
+               CPTR=K
+            ENDIF
+25       CONTINUE
+C
+26       IF(CLUS(I).EQ.0)  THEN
+           IF(CSIZE(I).NE.0) THEN
+              CSIZE(I) = CSIZE(I)  +1
+           ELSE
+              CSIZE(CPTR-1) = CSIZE(CPTR-1)  +1
+           ENDIF
+C
+           CSIZE(I+1)=CSIZE(I+1)-1
+         ENDIF
+C
+20    CONTINUE
+C
+C.....CSIZE ARRAY INDICATES LOCATION AND SIZE OF CLUSTERS:
+C
+C     CSIZE(I)=K  (K.NE.0) := CLUSTER OF SIZE K WITH FIRST DISK
+C     CENTERED AT SIG(I).
+C
+      RETURN
+      END
+      SUBROUTINE ISOL(I,RESID,TOL,INIT,
+     *                   IRES0,CRES0,S)
+      INTEGER S,I
+      DOUBLE PRECISION IRES0(S), CRES0(S), RESID, TOL
+      LOGICAL INIT(S)
+C....
+C.... MONITOR RESIDUAL REDUCTION FOR ISOLATED SINGULAR VALUE APPROXIMATIONS
+C....
+C.... ASSUME ORDERING: SIG(1)<=SIG(2)<=.....<=SIG(S) FOR SIG ARRAY IN TSVD2
+C....
+C.... RESID:= 2-NORM OF B-EIGENPAIR RESIDUAL
+C....
+      IF(IRES0(I).LT.0.0D0.OR.CRES0(I).GE.0.0D0) THEN
+C
+         IF(CRES0(I).LT.0.0D0) THEN
+            IRES0(I)=RESID
+         ELSE
+            IRES0(I)=RESID
+            CRES0(I)=-1.0D0
+         ENDIF
+C
+      ELSE
+C
+         IF(RESID.LE.TOL*IRES0(I)) INIT(I)=.TRUE.
+C
+      ENDIF
+      RETURN
+      END
+      SUBROUTINE CLUS(I,SIZE,RESID,TOL,INIT,IRES0,CRES0,TMP,S)
+      INTEGER          SIZE,S,I,K
+      DOUBLE PRECISION RESID(SIZE),TMP(SIZE),CRES0(S),IRES0(S)
+      DOUBLE PRECISION DASUM,ERROR,TOL
+      LOGICAL          INIT(S)
+C....
+C.... MONITOR RESIDUAL REDUCTION FOR CLUSTERED SINGULAR VALUE APPROXIMATIONS
+C....
+C.... ASSUME ORDERING: SIG(1)<=SIG(2)<=.....<=SIG(N) FOR SIG ARRAY IN TSVD2
+C....
+C.... RESID:= 2-NORM OF B-EIGENPAIR RESIDUALS
+C....     I:=  FIRST DISK IN CLUSTER
+C....  SIZE:=  NUMBER OF DISKS IN CLUSTER
+C....
+      DO 20 K=1,SIZE
+         TMP(K)=RESID(K)*RESID(K)
+20    CONTINUE
+C
+      ERROR=DSQRT(DASUM(SIZE,TMP,1))
+C
+      IF(CRES0(I).LT.0.0D0) THEN
+         IF(IRES0(I).LT.0.0D0) THEN
+            CRES0(I)=ERROR
+         ELSE
+            CRES0(I)=ERROR
+            IRES0(I)=-1.0D0
+         ENDIF
+C
+      ELSE
+C
+         IF(ERROR.LE.TOL*CRES0(I))  THEN
+            DO 40 K=I,I+SIZE-1
+               INIT(K)=.TRUE.
+40          CONTINUE
+         ENDIF
+      ENDIF
+      RETURN
+      END
+      SUBROUTINE CGT(N,LEFT,W,V,LDV,CGITER,SIG,SIGMAX,
+     *                KOUNT,EPS)
+C
+C.... CG FOR INDEPENDENT SYSTEMS IN TRACE MIN. OPTIMIZATION STEP
+C....
+C.... V STORES CURRENT ORTHOG BASIS FOR R(Y)
+C.... SET NCG TO BE AT LEAST N = ORDER OF MATRIX B
+C....
+      PARAMETER(NCG=500)
+      DOUBLE PRECISION   W(N), V(LDV,LEFT),
+     *                   Z(NCG),V2(NCG),R(NCG),R2(NCG),
+     *                   P(NCG),Z2(NCG),SIG,SIGMAX,EPS,
+     *                   DENOM,DABS,DDOT,BOUND,A,A0,
+     *                   B,DNRM2,ERROR,RNORM,RNORM0,VNORM
+      INTEGER            CGITER,N,MAXI,NCG,LEFT,LDV,KOUNT,I,II,J,K
+C
+      MAXI=N
+      KOUNT=0
+      BOUND=(SIG/SIGMAX)**2
+C
+C.... W0=W BY DEFINITION, GET FIRST RESIDUAL VIA ORTHOG. PROJECTOR
+C
+      CALL OPB(N,W,Z,0.0D0)
+      KOUNT=KOUNT+1
+      CALL DGEMV('T',N,LEFT,1.0D0,V,LDV,Z,1,0.0D0,R,1)
+      CALL DGEMV('N',N,LEFT,1.0D0,V,LDV,R,1,0.0D0,V2,1)
+C
+      DO 10 I=1,N
+         R(I)=Z(I)-V2(I)
+10    CONTINUE
+C
+      RNORM0=DNRM2(N,R,1)
+C
+      DO 20 I=1,N
+         P(I)=R(I)
+20    CONTINUE
+C
+C.....(MAIN ITERATION LOOP 30)
+C
+      DO 30 I = 1,MAXI
+C
+         CALL OPB(N,P,V2,0.0D0)
+         KOUNT=KOUNT+1
+C
+         DENOM=DDOT(N,P,1,V2,1)
+         IF(DENOM.LE.0.0) RETURN
+         A = DDOT(N,R,1,R,1)/DENOM
+         IF(I.EQ.1) A0=A
+         CALL DAXPY(N,-A,P,1,W,1)
+C
+         DO 40 J=1,N
+            R2(J)=R(J)
+40       CONTINUE
+         CALL DGEMV('T',N,LEFT,1.0D0,V,LDV,V2,1,0.0D0,Z,1)
+         CALL DGEMV('N',N,LEFT,1.0D0,V,LDV,Z,1,0.0D0,Z2,1)
+         DO 45 II=1,N
+            V2(II)=V2(II)-Z2(II)
+45       CONTINUE
+         CALL DAXPY(N,-A,V2,1,R2,1)
+         RNORM=DNRM2(N,R2,1)
+         DO 145 K=1,N
+           V2(K)=P(K)
+145      CONTINUE
+         CALL DSCAL(N,A,V2,1)
+         VNORM=DNRM2(N,V2,1)
+C
+C....    EARLY TERMINATION CODE:
+C
+         ERROR=DABS(A*RNORM*RNORM/(A0*RNORM0*RNORM0))
+         IF(ERROR.LE.BOUND.OR.VNORM.LE.EPS) THEN
+           CGITER=CGITER+I
+           GO TO 999
+         ELSE IF(I.EQ.MAXI) THEN
+           CGITER=CGITER+MAXI
+           GO TO 998
+         ENDIF
+C
+         DO 50 J=1,N
+            V2(J)=R2(J)
+50       CONTINUE
+         B = DDOT(N,R2,1,R2,1)/DDOT(N,R,1,R,1)
+         CALL DAXPY(N,B,P,1,V2,1)
+         DO 60 J=1,N
+            P(J)=V2(J)
+60       CONTINUE
+         DO 65 J=1,N
+            R(J)=R2(J)
+65       CONTINUE
+30    CONTINUE
+998   CONTINUE
+      WRITE(*,*) 'CGTS FAILED TO CONVERGE IN ',MAXI,' ITERATIONS.'
+999   CONTINUE
+      RETURN
+      END
+      SUBROUTINE CGTS(N,LEFT,W,V,LDV,CGITER,SIG,SIGOLD,SIGMAX,
+     *                SHIFT,KOUNT,EPS)
+C
+C.... CG FOR INDEPENDENT SYSTEMS IN TRACE MIN. OPTIMIZATION STEP
+C.... (SHIFT INCORPORATED)
+C.... V STORES CURRENT ORTHOG BASIS FOR R(Y)
+C....
+C.... SET NCG TO BE AT LEAST N = ORDER OF MATRIX B
+C....
+      PARAMETER(NCG=500)
+      DOUBLE PRECISION   W(N), V(LDV,LEFT),
+     *                   Z(NCG),V2(NCG),R(NCG),R2(NCG),
+     *                   P(NCG),Z2(NCG),SIG,SIGMAX,EPS,SHIFT,
+     *                   DENOM,DABS,DDOT,BOUND,A,A0,SIGOLD,
+     *                   B,DNRM2,ERROR,RNORM,RNORM0,VNORM
+      INTEGER            CGITER,N,MAXI,NCG,LEFT,LDV,KOUNT,I,II,J,K
+C
+      MAXI=N
+      KOUNT=0
+      IF(SIG.NE.SHIFT) THEN
+        BOUND=((SIG-SHIFT)/(SIGMAX-SHIFT))**2
+      ELSE
+        BOUND=((SIGOLD-SHIFT)/(SIGMAX-SHIFT))**2
+      ENDIF
+C
+C.... W0=W BY DEFINITION, GET FIRST RESIDUAL VIA ORTHOG. PROJECTOR
+C
+      CALL OPB(N,W,Z,SHIFT)
+      KOUNT=KOUNT+1
+      CALL DGEMV('T',N,LEFT,1.0D0,V,LDV,Z,1,0.0D0,R,1)
+      CALL DGEMV('N',N,LEFT,1.0D0,V,LDV,R,1,0.0D0,V2,1)
+C
+      DO 10 I=1,N
+         R(I)=Z(I)-V2(I)
+10    CONTINUE
+C
+      RNORM0=DNRM2(N,R,1)
+C
+      DO 20 I=1,N
+         P(I)=R(I)
+20    CONTINUE
+C
+C.... (MAIN ITERATION LOOP 30)
+C
+      DO 30 I = 1,MAXI
+         CALL OPB(N,P,V2,SHIFT)
+         KOUNT=KOUNT+1
+         DENOM=DDOT(N,P,1,V2,1)
+         IF(DENOM.LE.0.0) RETURN
+         A = DDOT(N,R,1,R,1)/DENOM
+         IF(I.EQ.1) A0=A
+         CALL DAXPY(N,-A,P,1,W,1)
+C
+         DO 40 J=1,N
+            R2(J)=R(J)
+40       CONTINUE
+         CALL DGEMV('T',N,LEFT,1.0D0,V,LDV,V2,1,0.0D0,Z,1)
+         CALL DGEMV('N',N,LEFT,1.0D0,V,LDV,Z,1,0.0D0,Z2,1)
+         DO 45 II=1,N
+            V2(II)=V2(II)-Z2(II)
+45       CONTINUE
+         CALL DAXPY(N,-A,V2,1,R2,1)
+         RNORM=DNRM2(N,R2,1)
+         DO 145 K=1,N
+           V2(K)=P(K)
+145      CONTINUE
+         CALL DSCAL(N,A,V2,1)
+         VNORM=DNRM2(N,V2,1)
+C
+C....    EARLY TERMINATION CODE:
+C
+         ERROR=DABS(A*RNORM*RNORM/(A0*RNORM0*RNORM0))
+         IF(ERROR.LE.BOUND.OR.VNORM.LE.EPS) THEN
+           CGITER=CGITER+I
+           GO TO 999
+         ELSE IF(I.EQ.MAXI) THEN
+           CGITER=CGITER+MAXI
+           GO TO 998
+         ENDIF
+C
+         DO 50 J=1,N
+            V2(J)=R2(J)
+50       CONTINUE
+         B = DDOT(N,R2,1,R2,1)/DDOT(N,R,1,R,1)
+         CALL DAXPY(N,B,P,1,V2,1)
+         DO 60 J=1,N
+            P(J)=V2(J)
+60       CONTINUE
+         DO 65 J=1,N
+            R(J)=R2(J)
+65       CONTINUE
+C
+30    CONTINUE
+998   CONTINUE
+      WRITE(*,*) 'CGTS FAILED TO CONVERGE IN ',MAXI,' ITERATIONS.'
+999   CONTINUE
+      RETURN
+      END
+C
+      SUBROUTINE DTRSM ( SIDE, UPLO, TRANSA, DIAG, M, N, ALPHA, A, LDA,
+     $                   B, LDB )
+*     .. SCALAR ARGUMENTS ..
+      CHARACTER*1        SIDE, UPLO, TRANSA, DIAG
+      INTEGER            M, N, LDA, LDB
+      DOUBLE PRECISION   ALPHA
+*     .. ARRAY ARGUMENTS ..
+      DOUBLE PRECISION   A( LDA, * ), B( LDB, * )
+*     ..
+*
+*  PURPOSE
+*  =======
+*
+*  DTRSM  SOLVES ONE OF THE MATRIX EQUATIONS
+*
+*     OP( A )*X = ALPHA*B,   OR   X*OP( A ) = ALPHA*B,
+*
+*  WHERE ALPHA IS A SCALAR, X AND B ARE M BY N MATRICES, A IS A UNIT, OR
+*  NON-UNIT,  UPPER OR LOWER TRIANGULAR MATRIX  AND  OP( A )  IS ONE  OF
+*
+*     OP( A ) = A   OR   OP( A ) = A'.
+*
+*  THE MATRIX X IS OVERWRITTEN ON B.
+*
+*  PARAMETERS
+*  ==========
+*
+*  SIDE   - CHARACTER*1.
+*           ON ENTRY, SIDE SPECIFIES WHETHER OP( A ) APPEARS ON THE LEFT
+*           OR RIGHT OF X AS FOLLOWS:
+*
+*              SIDE = 'L' OR 'L'   OP( A )*X = ALPHA*B.
+*
+*              SIDE = 'R' OR 'R'   X*OP( A ) = ALPHA*B.
+*
+*           UNCHANGED ON EXIT.
+*
+*  UPLO   - CHARACTER*1.
+*           ON ENTRY, UPLO SPECIFIES WHETHER THE MATRIX A IS AN UPPER OR
+*           LOWER TRIANGULAR MATRIX AS FOLLOWS:
+*
+*              UPLO = 'U' OR 'U'   A IS AN UPPER TRIANGULAR MATRIX.
+*
+*              UPLO = 'L' OR 'L'   A IS A LOWER TRIANGULAR MATRIX.
+*
+*           UNCHANGED ON EXIT.
+*
+*  TRANSA - CHARACTER*1.
+*           ON ENTRY, TRANSA SPECIFIES THE FORM OF OP( A ) TO BE USED IN
+*           THE MATRIX MULTIPLICATION AS FOLLOWS:
+*
+*              TRANSA = 'N' OR 'N'   OP( A ) = A.
+*
+*              TRANSA = 'T' OR 'T'   OP( A ) = A'.
+*
+*              TRANSA = 'C' OR 'C'   OP( A ) = A'.
+*
+*           UNCHANGED ON EXIT.
+*
+*  DIAG   - CHARACTER*1.
+*           ON ENTRY, DIAG SPECIFIES WHETHER OR NOT A IS UNIT TRIANGULAR
+*           AS FOLLOWS:
+*
+*              DIAG = 'U' OR 'U'   A IS ASSUMED TO BE UNIT TRIANGULAR.
+*
+*              DIAG = 'N' OR 'N'   A IS NOT ASSUMED TO BE UNIT
+*                                  TRIANGULAR.
+*
+*           UNCHANGED ON EXIT.
+*
+*  M      - INTEGER.
+*           ON ENTRY, M SPECIFIES THE NUMBER OF ROWS OF B. M MUST BE AT
+*           LEAST ZERO.
+*           UNCHANGED ON EXIT.
+*
+*  N      - INTEGER.
+*           ON ENTRY, N SPECIFIES THE NUMBER OF COLUMNS OF B.  N MUST BE
+*           AT LEAST ZERO.
+*           UNCHANGED ON EXIT.
+*
+*  ALPHA  - DOUBLE PRECISION.
+*           ON ENTRY,  ALPHA SPECIFIES THE SCALAR  ALPHA. WHEN  ALPHA IS
+*           ZERO THEN  A IS NOT REFERENCED AND  B NEED NOT BE SET BEFORE
+*           ENTRY.
+*           UNCHANGED ON EXIT.
+*
+*  A      - DOUBLE PRECISION ARRAY OF DIMENSION ( LDA, K ), WHERE K IS M
+*           WHEN  SIDE = 'L' OR 'L'  AND IS  N  WHEN  SIDE = 'R' OR 'R'.
+*           BEFORE ENTRY  WITH  UPLO = 'U' OR 'U',  THE  LEADING  K BY K
+*           UPPER TRIANGULAR PART OF THE ARRAY  A MUST CONTAIN THE UPPER
+*           TRIANGULAR MATRIX  AND THE STRICTLY LOWER TRIANGULAR PART OF
+*           A IS NOT REFERENCED.
+*           BEFORE ENTRY  WITH  UPLO = 'L' OR 'L',  THE  LEADING  K BY K
+*           LOWER TRIANGULAR PART OF THE ARRAY  A MUST CONTAIN THE LOWER
+*           TRIANGULAR MATRIX  AND THE STRICTLY UPPER TRIANGULAR PART OF
+*           A IS NOT REFERENCED.
+*           NOTE THAT WHEN  DIAG = 'U' OR 'U',  THE DIAGONAL ELEMENTS OF
+*           A  ARE NOT REFERENCED EITHER,  BUT ARE ASSUMED TO BE  UNITY.
+*           UNCHANGED ON EXIT.
+*
+*  LDA    - INTEGER.
+*           ON ENTRY, LDA SPECIFIES THE FIRST DIMENSION OF A AS DECLARED
+*           IN THE CALLING (SUB) PROGRAM.  WHEN  SIDE = 'L' OR 'L'  THEN
+*           LDA  MUST BE AT LEAST  MAX( 1, M ),  WHEN  SIDE = 'R' OR 'R'
+*           THEN LDA MUST BE AT LEAST MAX( 1, N ).
+*           UNCHANGED ON EXIT.
+*
+*  B      - DOUBLE PRECISION ARRAY OF DIMENSION ( LDB, N ).
+*           BEFORE ENTRY,  THE LEADING  M BY N PART OF THE ARRAY  B MUST
+*           CONTAIN  THE  RIGHT-HAND  SIDE  MATRIX  B,  AND  ON EXIT  IS
+*           OVERWRITTEN BY THE SOLUTION MATRIX  X.
+*
+*  LDB    - INTEGER.
+*           ON ENTRY, LDB SPECIFIES THE FIRST DIMENSION OF B AS DECLARED
+*           IN  THE  CALLING  (SUB)  PROGRAM.   LDB  MUST  BE  AT  LEAST
+*           MAX( 1, M ).
+*           UNCHANGED ON EXIT.
+*
+*
+*  LEVEL 3 BLAS ROUTINE.
+*
+*
+*  -- WRITTEN ON 8-FEBRUARY-1989.
+*     JACK DONGARRA, ARGONNE NATIONAL LABORATORY.
+*     IAIN DUFF, AERE HARWELL.
+*     JEREMY DU CROZ, NUMERICAL ALGORITHMS GROUP LTD.
+*     SVEN HAMMARLING, NUMERICAL ALGORITHMS GROUP LTD.
+*
+*
+*     .. EXTERNAL FUNCTIONS ..
+      LOGICAL            LSAME
+      EXTERNAL           LSAME
+*     .. EXTERNAL SUBROUTINES ..
+      EXTERNAL           XERBLA
+*     .. INTRINSIC FUNCTIONS ..
+      INTRINSIC          MAX
+*     .. LOCAL SCALARS ..
+      LOGICAL            LSIDE, NOUNIT, UPPER
+      INTEGER            I, INFO, J, K, NROWA
+      DOUBLE PRECISION   TEMP
+*     .. PARAMETERS ..
+      DOUBLE PRECISION   ONE         , ZERO
+      PARAMETER        ( ONE = 1.0D+0, ZERO = 0.0D+0 )
+*     ..
+*     .. EXECUTABLE STATEMENTS ..
+*
+*     TEST THE INPUT PARAMETERS.
+*
+      LSIDE  = LSAME( SIDE  , 'L' )
+      IF( LSIDE )THEN
+         NROWA = M
+      ELSE
+         NROWA = N
+      END IF
+      NOUNIT = LSAME( DIAG  , 'N' )
+      UPPER  = LSAME( UPLO  , 'U' )
+*
+      INFO   = 0
+      IF(      ( .NOT.LSIDE                ).AND.
+     $         ( .NOT.LSAME( SIDE  , 'R' ) )      )THEN
+         INFO = 1
+      ELSE IF( ( .NOT.UPPER                ).AND.
+     $         ( .NOT.LSAME( UPLO  , 'L' ) )      )THEN
+         INFO = 2
+      ELSE IF( ( .NOT.LSAME( TRANSA, 'N' ) ).AND.
+     $         ( .NOT.LSAME( TRANSA, 'T' ) ).AND.
+     $         ( .NOT.LSAME( TRANSA, 'C' ) )      )THEN
+         INFO = 3
+      ELSE IF( ( .NOT.LSAME( DIAG  , 'U' ) ).AND.
+     $         ( .NOT.LSAME( DIAG  , 'N' ) )      )THEN
+         INFO = 4
+      ELSE IF( M  .LT.0               )THEN
+         INFO = 5
+      ELSE IF( N  .LT.0               )THEN
+         INFO = 6
+      ELSE IF( LDA.LT.MAX( 1, NROWA ) )THEN
+         INFO = 9
+      ELSE IF( LDB.LT.MAX( 1, M     ) )THEN
+         INFO = 11
+      END IF
+      IF( INFO.NE.0 )THEN
+         CALL XERBLA( 'DTRSM ', INFO )
+         RETURN
+      END IF
+*
+*     QUICK RETURN IF POSSIBLE.
+*
+      IF( N.EQ.0 )
+     $   RETURN
+*
+*     AND WHEN  ALPHA.EQ.ZERO.
+*
+      IF( ALPHA.EQ.ZERO )THEN
+         DO 20, J = 1, N
+            DO 10, I = 1, M
+               B( I, J ) = ZERO
+   10       CONTINUE
+   20    CONTINUE
+         RETURN
+      END IF
+*
+*     START THE OPERATIONS.
+*
+      IF( LSIDE )THEN
+         IF( LSAME( TRANSA, 'N' ) )THEN
+*
+*           FORM  B := ALPHA*INV( A )*B.
+*
+            IF( UPPER )THEN
+               DO 60, J = 1, N
+                  IF( ALPHA.NE.ONE )THEN
+                     DO 30, I = 1, M
+                        B( I, J ) = ALPHA*B( I, J )
+   30                CONTINUE
+                  END IF
+                  DO 50, K = M, 1, -1
+                     IF( B( K, J ).NE.ZERO )THEN
+                        IF( NOUNIT )
+     $                     B( K, J ) = B( K, J )/A( K, K )
+                        DO 40, I = 1, K - 1
+                           B( I, J ) = B( I, J ) - B( K, J )*A( I, K )
+   40                   CONTINUE
+                     END IF
+   50             CONTINUE
+   60          CONTINUE
+            ELSE
+               DO 100, J = 1, N
+                  IF( ALPHA.NE.ONE )THEN
+                     DO 70, I = 1, M
+                        B( I, J ) = ALPHA*B( I, J )
+   70                CONTINUE
+                  END IF
+                  DO 90 K = 1, M
+                     IF( B( K, J ).NE.ZERO )THEN
+                        IF( NOUNIT )
+     $                     B( K, J ) = B( K, J )/A( K, K )
+                        DO 80, I = K + 1, M
+                           B( I, J ) = B( I, J ) - B( K, J )*A( I, K )
+   80                   CONTINUE
+                     END IF
+   90             CONTINUE
+  100          CONTINUE
+            END IF
+         ELSE
+*
+*           FORM  B := ALPHA*INV( A' )*B.
+*
+            IF( UPPER )THEN
+               DO 130, J = 1, N
+                  DO 120, I = 1, M
+                     TEMP = ALPHA*B( I, J )
+                     DO 110, K = 1, I - 1
+                        TEMP = TEMP - A( K, I )*B( K, J )
+  110                CONTINUE
+                     IF( NOUNIT )
+     $                  TEMP = TEMP/A( I, I )
+                     B( I, J ) = TEMP
+  120             CONTINUE
+  130          CONTINUE
+            ELSE
+               DO 160, J = 1, N
+                  DO 150, I = M, 1, -1
+                     TEMP = ALPHA*B( I, J )
+                     DO 140, K = I + 1, M
+                        TEMP = TEMP - A( K, I )*B( K, J )
+  140                CONTINUE
+                     IF( NOUNIT )
+     $                  TEMP = TEMP/A( I, I )
+                     B( I, J ) = TEMP
+  150             CONTINUE
+  160          CONTINUE
+            END IF
+         END IF
+      ELSE
+         IF( LSAME( TRANSA, 'N' ) )THEN
+*
+*           FORM  B := ALPHA*B*INV( A ).
+*
+            IF( UPPER )THEN
+               DO 210, J = 1, N
+                  IF( ALPHA.NE.ONE )THEN
+                     DO 170, I = 1, M
+                        B( I, J ) = ALPHA*B( I, J )
+  170                CONTINUE
+                  END IF
+                  DO 190, K = 1, J - 1
+                     IF( A( K, J ).NE.ZERO )THEN
+                        DO 180, I = 1, M
+                           B( I, J ) = B( I, J ) - A( K, J )*B( I, K )
+  180                   CONTINUE
+                     END IF
+  190             CONTINUE
+                  IF( NOUNIT )THEN
+                     TEMP = ONE/A( J, J )
+                     DO 200, I = 1, M
+                        B( I, J ) = TEMP*B( I, J )
+  200                CONTINUE
+                  END IF
+  210          CONTINUE
+            ELSE
+               DO 260, J = N, 1, -1
+                  IF( ALPHA.NE.ONE )THEN
+                     DO 220, I = 1, M
+                        B( I, J ) = ALPHA*B( I, J )
+  220                CONTINUE
+                  END IF
+                  DO 240, K = J + 1, N
+                     IF( A( K, J ).NE.ZERO )THEN
+                        DO 230, I = 1, M
+                           B( I, J ) = B( I, J ) - A( K, J )*B( I, K )
+  230                   CONTINUE
+                     END IF
+  240             CONTINUE
+                  IF( NOUNIT )THEN
+                     TEMP = ONE/A( J, J )
+                     DO 250, I = 1, M
+                       B( I, J ) = TEMP*B( I, J )
+  250                CONTINUE
+                  END IF
+  260          CONTINUE
+            END IF
+         ELSE
+*
+*           FORM  B := ALPHA*B*INV( A' ).
+*
+            IF( UPPER )THEN
+               DO 310, K = N, 1, -1
+                  IF( NOUNIT )THEN
+                     TEMP = ONE/A( K, K )
+                     DO 270, I = 1, M
+                        B( I, K ) = TEMP*B( I, K )
+  270                CONTINUE
+                  END IF
+                  DO 290, J = 1, K - 1
+                     IF( A( J, K ).NE.ZERO )THEN
+                        TEMP = A( J, K )
+                        DO 280, I = 1, M
+                           B( I, J ) = B( I, J ) - TEMP*B( I, K )
+  280                   CONTINUE
+                     END IF
+  290             CONTINUE
+                  IF( ALPHA.NE.ONE )THEN
+                     DO 300, I = 1, M
+                        B( I, K ) = ALPHA*B( I, K )
+  300                CONTINUE
+                  END IF
+  310          CONTINUE
+            ELSE
+               DO 360, K = 1, N
+                  IF( NOUNIT )THEN
+                     TEMP = ONE/A( K, K )
+                     DO 320, I = 1, M
+                        B( I, K ) = TEMP*B( I, K )
+  320                CONTINUE
+                  END IF
+                  DO 340, J = K + 1, N
+                     IF( A( J, K ).NE.ZERO )THEN
+                        TEMP = A( J, K )
+                        DO 330, I = 1, M
+                           B( I, J ) = B( I, J ) - TEMP*B( I, K )
+  330                   CONTINUE
+                     END IF
+  340             CONTINUE
+                  IF( ALPHA.NE.ONE )THEN
+                     DO 350, I = 1, M
+                        B( I, K ) = ALPHA*B( I, K )
+  350                CONTINUE
+                  END IF
+  360          CONTINUE
+            END IF
+         END IF
+      END IF
+*
+      RETURN
+*
+*     END OF DTRSM .
+*
+      END
+      SUBROUTINE PMUL (N,Y,Z,Z2,Z3,Z4,E,DEGREE,ALPHA)
+      DOUBLE PRECISION  Y(1),  Z(1) ,Z2(1), Z3(1) ,Z4(1), E,
+     *                  TMP2, ALPHA, ALPHA2, EPS, TMP
+      INTEGER N, DEGREE, I, KK
+C
+C
+C     COMPUTE THE MULTIPLICATION Z=P(B)*Y (AND LEAVE Y UNTOUCHED).
+C     P(B) IS CONSTRUCTED FROM CHEBYSHEV POLYNOMIALS.  THE INPUT
+C     PARAMETER DEGREE SPECIFIES THE POLYNOMIAL DEGREE TO BE USED.
+C     POLYNOMIALS ARE CONSTRUCTED ON INTERVAL (-E,E) AS IN
+C     RUTISHAUSER'S RITZIT CODE.
+C
+      ALPHA2=ALPHA*ALPHA
+      TMP2=1.0D0
+C       
+      EPS=TMP2+1.0D-6
+C
+      IF(DEGREE.EQ.0) THEN
+C
+C.........ZERO DEGREE POLYNOMIAL CASE
+C
+            DO 15 I=1,N
+               Z(I)=Y(I)
+15          CONTINUE
+C
+      ELSE IF(DEGREE.EQ.1) THEN
+C
+C........POLYNOMIAL OF DEGREE 1 CASE
+C
+           CALL OPB (N, Y, Z, ALPHA2)
+C
+      ELSE IF(DEGREE.GT.1) THEN
+C
+C.........USE 3-TERM RECURRENCE FOR HIGHER DEGREE POLYNOMIALS
+C
+            TMP2=2.0D0/E
+            TMP=5.1D-1 * TMP2
+C
+            DO 45 I = 1,N
+                Z(I) =Y(I)
+45          CONTINUE
+C
+            CALL DSCAL(N,TMP,Z,1)
+C
+            CALL OPB (N, Z, Z3, ALPHA2)
+C
+C........RECURRENCE LOOP 100
+C
+         DO 100 KK=1,DEGREE-1
+C
+            DO 55 I=1,N
+               Z4(I)=Z3(I)
+               Z(I)= -Z(I)
+55          CONTINUE
+C
+            CALL OPB (N, Z3, Z2, ALPHA2)
+C
+            CALL DAXPY(N,TMP2,Z2,1,Z,1)
+C
+            IF(KK.NE.DEGREE-1) THEN
+C
+                  DO 95 I = 1,N
+                     Z3(I)= Z(I)
+95                CONTINUE
+                  DO 195 I = 1,N
+                      Z(I)=Z4(I)
+195               CONTINUE
+C
+            ENDIF
+C
+100   CONTINUE
+C
+      ENDIF
+C
+C.....ADD PERTURBATION FOR SPD P(B)
+C
+      CALL DAXPY(N,EPS,Y,1,Z,1)
+C
+      RETURN
+      END
+C
+C.... ACOSH IS INVERSE HYBERBOLIC TANGENT FUNCTION
+C.... THIS MAY BE REMOVED IF IT IS ALREADY PRESENT IN DEFAULT
+C.... MATH LIBRARY FOR YOUR MACHINE
+C
+      DOUBLE PRECISION FUNCTION ACOSH(X)
+      DOUBLE PRECISION X,DLOG,DSQRT
+ 
+      ACOSH = DLOG(X + DSQRT(X*X - 1))
+ 
+      RETURN
+      END
+
+      SUBROUTINE PORTH(N,F,P,X,LDX,TMP,TMP1,TMP2,TMP3,TMP4,
+     *                 E,DEGREE,ALPHA)
+C....
+C.... BLAS2  GRAM-SCHMIDT ORTHOGONALIZATION PROCEDURE FOR
+C            POLYNOMIAL ACCELERATED TRACE MINIMIZATION (JOB=2)
+C
+C     THE N BY P MATRIX Z STORED IN COLUMNS F+1 TO F+P OF
+C     ARRAY X IS REORTHOGONALIZED W.R.T. THE FIRST F COLUMNS OF
+C     ARRAY X.  THE RESULTING MATRIX Z CONTAINS THE DESIRED P-ORTHOGONAL
+C     COLUMNS, WHERE P IS A POLYNOMIAL IN THE MATRIX B FROM TSVD2.
+C     (BASED ON ORTHOG FROM RUTISHAUSER)
+C.... 
+      INTEGER N,F,P,LDX
+      DOUBLE PRECISION X(LDX,1),TMP(1), TMP1(1),
+     *                 TMP2(1), TMP3(1), TMP4(1), DDOT, S, T, E,
+     *                 ALPHA
+      INTEGER FP1,FPP, K, KM1, DEGREE
+C
+      IF(P.EQ.0) RETURN
+      FP1=F+1
+      FPP=F+P
+C
+      DO 50 K=FP1,FPP
+         KM1=K-1
+C
+C....
+10       T=0.0D0
+         IF(KM1.LT.1) GO TO 25
+         CALL PMUL(N,X(1,K),TMP1,TMP2,TMP3,TMP4,E,DEGREE,ALPHA)
+         IF(KM1.GT.1) THEN
+           CALL DGEMV('T',N,KM1,1.0D0,X,LDX,TMP1,1,0.0D0,TMP,1)
+           T=T+DDOT(KM1,TMP,1,TMP,1)
+         ELSE
+           TMP(1)=DDOT(N,X(1,1),1,TMP1,1)
+           T=T+TMP(1)*TMP(1)
+         ENDIF
+         IF(KM1.GT.1) THEN
+         CALL DGEMV('N',N,KM1,-1.0D0,X,LDX,TMP,1,1.0D0,X(1,K),1)
+         ELSE
+         CALL DAXPY(N,-TMP(1),X(1,1),1,X(1,K),1)
+         ENDIF
+         IF(P.EQ.1) GO TO 50
+C....
+25       CALL PMUL(N,X(1,K),TMP1,TMP2,TMP3,TMP4,E,DEGREE,ALPHA)
+         S=DDOT(N,X(1,K),1,TMP1,1)
+         T=T+S
+         IF(S.GT.T/100.0D0) GO TO 40
+         GO TO 10
+40       S=DSQRT(S)
+         IF(S.NE.0.0D0) S=1.0D0/S
+         CALL DSCAL(N,S,X(1,K),1)
+50    CONTINUE
+      RETURN
+      END

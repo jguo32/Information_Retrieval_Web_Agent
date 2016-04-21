@@ -1,0 +1,41 @@
+
+
+ROGET'S THESARUS (1911 Edition)
+
+'roget' contains the original text of the 1911 version of the thesaurus.
+
+'roget.tokenized'  contains the words and phrases in Roget's thesaurus,
+1911 edition, one-per-line and with extraneous material removed.
+There are 1023 classes in the thesaurus, delimited by a line with
+### [0-9]+[a]? ###  (e.g.  ### 431 ### or ### 108a ###). 
+
+'roget.hist' contains a histogram of the words and phrases used
+in the thesaurus.
+
+One very simple method to use Roget's thesaurus for IR would be 
+the following:
+
+  for all words *w* in a query or document:
+
+    1) find all classes *c_i* in the thesaurus in which *w* appears
+    2) add all members of *c_i* to the document/query vector
+         in which *w* appears, weighted with a small value (relative
+         to the original words), with appropriate compensation for
+         frequency of the word in the thesaurus.
+
+There are clearly more sophisticated approaches you could pursue.
+Please come see me if you are interested.
+
+-------------------------------------------------------------------
+
+WORDNET
+
+Wordnet is a hierarchical organization of concepts. An example
+is given in the files wn.*, which may contain terms of more
+recent vintage than contained in the 1911 version of the
+thesaurus. 
+
+Those interested in pursuing WordNet further should consult:
+
+  http://www.cogsci.princeton.edu/~wn/
+   

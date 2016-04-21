@@ -1,0 +1,9 @@
+WARNING:
+	To get "xsaber" working, all the "*.h" files are
+	duplicated throughout the various directories.
+	Therefore, whenever you modify any of these you
+	must duplicate them elsewhere.   Why not use
+	a link (e.g. "ln *.h /Eglib/*.h") you ask?
+	Well I don't know how to get emacs to maintain
+	links correctly, and xsaber seems to trouble with these.
+	

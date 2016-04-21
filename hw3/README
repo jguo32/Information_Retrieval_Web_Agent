@@ -1,0 +1,21 @@
+HW3 Jinyi Guo
+
+Part 2
+
+Self-implemented weighting: adjacent words are given weight 3, words 2-3 away are given weight 2 and all other words are given weight 1. This helps slightly improve the performance.
+
+Part 3 - Evaluation
+
+Result: 
+
+	stemming	Position 	Local Collocation
+					Weighting 	Modelling 	tank 	plant 	pers/place
+	==========================================================================
+1	unstemmed	uniform 	bag-of-words 	0.93 	0.92 	0.77
+2	stemmed 	expndecay 	bag-of-words 	0.93 	0.92 	0.81
+3	unstemmed 	expndecay 	bag-of-words 	0.94 	0.92 	0.76
+4	unstemmed 	expndecay 	adjacent-LR 	0.93 	0.92 	0.88
+5	unstemmed 	stepped 	adjacent-LR 	0.94 	0.93 	0.88
+6	unstemmed 	customized 	adjacent-LR 	0.95 	0.94 	0.89
+7	stemmed 	Bayesian 	bag-of-words 	0.85 	0.90 	0.74
+

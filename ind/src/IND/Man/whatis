@@ -1,0 +1,15 @@
+IND (1)			- describes the .B IND	family of programs
+attr (1)		- describes the .I attribute file  format for the  .B IND  family of programs
+enc (1)			- encode data file for the IND system
+encsmpl (1)		- adjust sampling information for the encoded data file
+lstat (1)		- compute simple statistics on lines of data
+mkclean (1)		- clean up mess from  .B mktree, etc.
+mktree (1)		- make a decision tree and optionally prune and test it
+tchar (1)		- convert a tree to or from character format
+tclass (1)		- classify a test set using a decision tree
+tgen (1)		- generate a decision tree
+thead (1)		- print header details about a tree
+tprint (1)		- print a decision tree
+tprune (1)		- prune a decision tree
+tquest (1)		- classify an example using a decision tree
+ttest (1)		- build and test trees and report statistics

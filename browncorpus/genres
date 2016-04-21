@@ -1,0 +1,500 @@
+ca01	Press	Reportage	The Atlanta Constitution, political
+ca02	Press	Reportage	The Dallas Morning News/Chicago Daily Tribune, political
+ca03	Press	Reportage	Chicago Daily Tribune, political
+ca04	Press	Reportage	The Christian Science Monitor, political
+ca05	Press	Reportage	The Providence Journal, political
+ca06	Press	Reportage	Newark Evening News, political
+ca07	Press	Reportage	The New York Times, political
+ca08	Press	Reportage	The Times-Picayune, political
+ca09	Press	Reportage	The Philadelphia Inquirer, political
+ca10	Press	Reportage	The Oregonian, political
+ca11	Press	Reportage	The Sun, sports
+ca12	Press	Reportage	The Dallas Morning News, sports
+ca13	Press	Reportage	Rocky Mountain News, sports
+ca14	Press	Reportage	The New York Times, sports
+ca15	Press	Reportage	St. Louis Post-Dispatch, sports
+ca16	Press	Reportage	Chicago Daily Tribune, society
+ca17	Press	Reportage	Rocky Mountain News/The Dallas Morning News, society
+ca18	Press	Reportage	The Philadelphia Inquirer/The Times-Picayune, society
+ca19	Press	Reportage	The Sun, spot news
+ca20	Press	Reportage	Chicago Daily Tribune, spot news
+ca21	Press	Reportage	The Detroit News, spot news
+ca22	Press	Reportage	The Atlanta Constitution, spot news
+ca23	Press	Reportage	The Oregonian, spot news
+ca24	Press	Reportage	The Providence Journal, spot news
+ca25	Press	Reportage	San Francisco Chronicle/Chicago Daily Tribune, spot news
+ca26	Press	Reportage	The Dallas Morning News, financial
+ca27	Press	Reportage	Los Angeles Times, financial
+ca28	Press	Reportage	The Wall Street Journal, financial
+ca29	Press	Reportage	The Dallas Morning News, cultural
+ca30	Press	Reportage	Los Angeles Times/The Sun, cultural
+ca31	Press	Reportage	The Miami Herald, cultural
+ca32	Press	Reportage	San Francisco Sunday Chronicle, cultural
+ca33	Press	Reportage	The Washington Post, cultural
+ca34	Press	Reportage	The New York Times, week review
+ca35	Press	Reportage	Commonweal, A Family Affair
+ca36	Press	Reportage	The Nation, Unions and Anti-Trust Law
+ca37	Press	Reportage	Time magazine, national affairs
+ca38	Press	Reportage	Sports Illustrated, sports
+ca39	Press	Reportage	Newsweek, sports
+ca40	Press	Reportage	Time magazine, people, art & education
+ca41	Press	Reportage	Life, This is the way it came about
+ca42	Press	Reportage	Newsweek, national affairs
+ca43	Press	Reportage	U.S. News and World Reports
+ca44	Press	Reportage	Saturday Review
+cb01	Press	Editorial	The Atlanta Constitution/The Washington Post, editorial
+cb02	Press	Editorial	The Christian Science Monitor, editorial
+cb03	Press	Editorial	The Detroit News/Chicago Daily Tribune, editorial
+cb04	Press	Editorial	The Miami Herald/Los Angeles Times, editorial
+cb05	Press	Editorial	Newark Evening News, editorial
+cb06	Press	Editorial	St. Louis Post-Dispatch, editorial
+cb07	Press	Editorial	The New York Times, editorial
+cb08	Press	Editorial	The Atlanta Constitution, column
+cb09	Press	Editorial	The Christian Science Monitor, column
+cb10	Press	Editorial	The Sun, column
+cb11	Press	Editorial	Los Angeles Times, column
+cb12	Press	Editorial	Newark Evening News, column
+cb13	Press	Editorial	The Times-Picayune, column
+cb14	Press	Editorial	The Atlanta Constitution, column
+cb15	Press	Editorial	The Providence Journal, letter to editor
+cb16	Press	Editorial	Chicago Daily Tribune, letter to editor
+cb17	Press	Editorial	Newark Evening News, letter to editor
+cb18	Press	Editorial	The New York Times/Detroit News, letter to editor
+cb19	Press	Editorial	The Philadelphia Inquirer/The Detroit News, letter to editor
+cb20	Press	Editorial	The Nation, editorial
+cb21	Press	Editorial	The New Republic
+cb22	Press	Editorial	Commonweal
+cb23	Press	Editorial	National Review
+cb24	Press	Editorial	Time magazine, review
+cb25	Press	Editorial	The Nation
+cb26	Press	Editorial	National Review, letter to editor
+cb27	Press	Editorial	Saturday Review, letter to editor
+cc01	Press	Reviews	Chicago Daily Tribune/The New York Times
+cc02	Press	Reviews	The Christian Science Monitor
+cc03	Press	Reviews	The New York Times
+cc04	Press	Reviews	The Providence Journal
+cc05	Press	Reviews	The Christian Science Monitor
+cc06	Press	Reviews	The Wall Street Journal
+cc07	Press	Reviews	The New York Times
+cc08	Press	Reviews	The Providence Journal
+cc09	Press	Reviews	The New York Times
+cc10	Press	Reviews	The Providence Journal
+cc11	Press	Reviews	The New York Times
+cc12	Press	Reviews	The Christian Science Monitor
+cc13	Press	Reviews	The Wall Street Journal
+cc14	Press	Reviews	The New York Times
+cc15	Press	Reviews	Life
+cc16	Press	Reviews	Saturday Review
+cc17	Press	Reviews	Time magazine
+cd01	Religion	Physicist and Christian	Book
+cd02	Religion	Christ without Myth	Book
+cd03	Religion	America	Periodical
+cd04	Religion	The Shape of Death:	Book
+cd05	Religion	The Harvard Theological Review	Periodical
+cd06	Religion	American Tract Society	Tract
+cd07	Religion	radio message	Tract
+cd08	Religion	History of Religions	Book
+cd09	Religion	Organizing the Local Church..	?
+cd10	Religion	Journal of Bible and Religion	Periodical
+cd11	Religion	Duke University Press	?
+cd12	Religion	Christianity and Crisis	Periodical
+cd13	Religion	Science of the Mind	Periodical
+cd14	Religion	Christianity in a Revol. Age	Book
+cd15	Religion	Zen: A Rational Critique	Book
+cd16	Religion	Herald Press Tracts	Tract
+cd17	Religion	Guideposts	Periodical
+ce01	Skills  Hobbies	Mr. America
+ce02	Skills  Hobbies	Organic Gardening and Farming
+ce03	Skills  Hobbies	Flying
+ce04	Skills  Hobbies	High Fidelity
+ce05	Skills  Hobbies	Dog World
+ce06	Skills  Hobbies	Rudder
+ce07	Skills  Hobbies	Model Railroader
+ce08	Skills  Hobbies	Hot Rod Magazine
+ce09	Skills  Hobbies	The Horseman and Fair World
+ce10	Skills  Hobbies	Guns and Hunting
+ce11	Skills  Hobbies	Gourmet
+ce12	Skills  Hobbies	U.S. Camera
+ce13	Skills  Hobbies	Travel
+ce14	Skills  Hobbies	Nick Manero's Cook-out Barbecue	B
+ce15	Skills  Hobbies	McCall's Needlework and Crafts
+ce16	Skills  Hobbies	Mechanix Illustrated
+ce17	Skills  Hobbies	The Family Handyman
+ce18	Skills  Hobbies	Covert Bridge Topics
+ce19	Skills  Hobbies	House and Garden
+ce20	Skills  Hobbies	How-to-Do-It-Encyclopedia
+ce21	Skills  Hobbies	Recreation
+ce22	Skills  Hobbies	Musical America
+ce23	Skills  Hobbies	American Artist
+ce24	Skills  Hobbies	Dance Magazine
+ce25	Skills  Hobbies	Electronic World
+ce26	Skills  Hobbies	Electronical Engineering
+ce27	Skills  Hobbies	Successful Farming
+ce28	Skills  Hobbies	Food Engineering
+ce29	Skills  Hobbies	Interior Design
+ce30	Skills  Hobbies	Factory
+ce31	Skills  Hobbies	Sports Age
+ce32	Skills  Hobbies	Product Engineering
+ce33	Skills  Hobbies	Fueloil and Oil Heat
+ce34	Skills  Hobbies	Modern Plastics
+ce35	Skills  Hobbies	House and Home
+ce36	Skills  Hobbies	Playbill
+cf01	Popular Lore	Vogue
+cf02	Popular Lore	True
+cf03	Popular Lore	Fate
+cf04	Popular Lore	Prevention
+cf05	Popular Lore	Vermont Life
+cf06	Popular Lore	Modern Maturity
+cf07	Popular Lore	Sexology
+cf08	Popular Lore	Pageant
+cf09	Popular Lore	Confidential
+cf10	Popular Lore	Today's Health
+cf11	Popular Lore	Family Circle Magazine
+cf12	Popular Lore	Tomorrow
+cf13	Popular Lore	Farmers Bulletin U.S. Dept Agriculture
+cf14	Popular Lore	Commentary
+cf15	Popular Lore	Look Magazine
+cf16	Popular Lore	Real
+cf17	Popular Lore	The North Dakota Quarterly
+cf18	Popular Lore	The Centennial Review
+cf19	Popular Lore	American Quarterly
+cf20	Popular Lore	The Bootleggers and Their Era	Book
+cf21	Popular Lore	The World of Geology	Book
+cf22	Popular Lore	Saga
+cf23	Popular Lore	National Review
+cf24	Popular Lore	National Geographic
+cf25	Popular Lore	The Annals of the Am Academy of Political & Social Science
+cf26	Popular Lore	Western Folklore
+cf27	Popular Lore	A Notebook for the Wines of France	Book
+cf28	Popular Lore	New England Quarterly
+cf29	Popular Lore	Horizon: A Magazine of the Arts
+cf30	Popular Lore	The Ivy League Today	Book
+cf31	Popular Lore	Lizzie Borden: The Untold Story	Book
+cf32	Popular Lore	The Story of Spelman College	Book
+cf33	Popular Lore	Slums and Suburbs	Book
+cf34	Popular Lore	Seeds (The Yearbook of Agriculture)	USDA
+cf35	Popular Lore	The Old-Time Cowhand	Book
+cf36	Popular Lore	Lord of Beasts	Book
+cf37	Popular Lore	On the Road to Christian Unity	Book
+cf38	Popular Lore	Baseball in America	Book
+cf39	Popular Lore	Unmarried Mothers	Book
+cf40	Popular Lore	Monopoly of Wheels	Book
+cf41	Popular Lore	Turn Right at the Fountain	Book
+cf42	Popular Lore	Nobody Knows My Name	Book
+cf43	Popular Lore	Movies, Morals, and Art	Book
+cf44	Popular Lore	The Suburban Captivity of the Churches	Book
+cf45	Popular Lore	The Fur Trade	Book
+cf46	Popular Lore	An American in Washington	Book
+cf47	Popular Lore	House Visits Abroad	Book
+cf48	Popular Lore	Christian Ethics and the Sit-In	Book
+cg01	Belle-Lettres & Biog	The Georgia Review
+cg02	Belle-Lettres & Biog	The Yale Review
+cg03	Belle-Lettres & Biog	The Saturday Evening Post
+cg04	Belle-Lettres & Biog	Harper's Magazine
+cg05	Belle-Lettres & Biog	Horizon
+cg06	Belle-Lettres & Biog	The American-German Review
+cg07	Belle-Lettres & Biog	The New York Times Magazine
+cg08	Belle-Lettres & Biog	The Carolina Quarterly
+cg09	Belle-Lettres & Biog	Criticism, a quarterly for literature and the arts
+cg10	Belle-Lettres & Biog	Freedom and Union
+cg11	Belle-Lettres & Biog	The Centennial Review
+cg12	Belle-Lettres & Biog	Columbia University Forum
+cg13	Belle-Lettres & Biog	Colorado Quarterly
+cg14	Belle-Lettres & Biog	The Antioch Review
+cg15	Belle-Lettres & Biog	The Carleton Miscellany
+cg16	Belle-Lettres & Biog	Chicago Review
+cg17	Belle-Lettres & Biog	The Georgia Review
+cg18	Belle-Lettres & Biog	American-Scandinavian Review
+cg19	Belle-Lettres & Biog	Mainstream
+cg20	Belle-Lettres & Biog	Public Opinion Quarterly
+cg21	Belle-Lettres & Biog	The Sewanee Review
+cg22	Belle-Lettres & Biog	The Ethical Outlook
+cg23	Belle-Lettres & Biog	The Personalist
+cg24	Belle-Lettres & Biog	Massachusetts Review
+cg25	Belle-Lettres & Biog	Modern Age
+cg26	Belle-Lettres & Biog	Partisan Review
+cg27	Belle-Lettres & Biog	The Minnesota Review
+cg28	Belle-Lettres & Biog	Mississippi Quarterly
+cg29	Belle-Lettres & Biog	Manas
+cg30	Belle-Lettres & Biog	Journal of the History of Ideas
+cg31	Belle-Lettres & Biog	Woman of Valor: Life of Henrietta Szold	Book
+cg32	Belle-Lettres & Biog	Frank Lloyd Wright	Book
+cg33	Belle-Lettres & Biog	A Matter of Life and Death	Book
+cg34	Belle-Lettres & Biog	Carl Sandburg	Book
+cg35	Belle-Lettres & Biog	Peace with Justice	Book
+cg36	Belle-Lettres & Biog	Betrayal at the UN:story of Paul Bang-Jensen	Book
+cg37	Belle-Lettres & Biog	Golden Boats from Burma	Book
+cg38	Belle-Lettres & Biog	The Curse of Party:Swift's Relations w Addison & Steele	Book
+cg39	Belle-Lettres & Biog	Harold Arlen Happy with the Blues	Book
+cg40	Belle-Lettres & Biog	Skyline:A Reporter's Reminiscences of the '20s	Book
+cg41	Belle-Lettres & Biog	My Thirty Years Backstairs at the White House	Book
+cg42	Belle-Lettres & Biog	Epilogue to Arnold Rogow	Book
+cg43	Belle-Lettres & Biog	The Liberties of Wit	Book
+cg44	Belle-Lettres & Biog	Comparative Literature	Book
+cg45	Belle-Lettres & Biog	Citizen Hearst	Book
+cg46	Belle-Lettres & Biog	Some 20th-Century Historians	Book
+cg47	Belle-Lettres & Biog	The World Is My Country	Book
+cg48	Belle-Lettres & Biog	Education in Violence	Book
+cg49	Belle-Lettres & Biog	Francis Thompson, A Critical Biography	Book
+cg50	Belle-Lettres & Biog	The King's Chevalier	Book
+cg51	Belle-Lettres & Biog	The Carthaginian Rose	Book
+cg52	Belle-Lettres & Biog	The Reluctant General	Book
+cg53	Belle-Lettres & Biog	Indians, Privateers, and High Society	Book
+cg54	Belle-Lettres & Biog	Thomas Wolfe and His Family	Book
+cg55	Belle-Lettres & Biog	Senator from Vermont	Book
+cg56	Belle-Lettres & Biog	The Moral Measure of Literature	Book
+cg57	Belle-Lettres & Biog	Values in America	Book
+cg58	Belle-Lettres & Biog	Daniel Morgan	Book
+cg59	Belle-Lettres & Biog	A Knight of Great Renown	Book
+cg60	Belle-Lettres & Biog	Molly and Me	Book
+cg61	Belle-Lettres & Biog	Litus Saxonicum	Book
+cg62	Belle-Lettres & Biog	Newton D. Baker	Book
+cg63	Belle-Lettres & Biog	The Death of Tragedy	Book
+cg64	Belle-Lettres & Biog	Shakespeare in Warwickshire	Book
+cg65	Belle-Lettres & Biog	Henry Adams and Brooks Adams	Book
+cg66	Belle-Lettres & Biog	From the Shadow of the Mountain	Book
+cg67	Belle-Lettres & Biog	Sinclair Lewis:An American Life	Book
+cg68	Belle-Lettres & Biog	The Intellectual Development of John Milton	Book
+cg69	Belle-Lettres & Biog	New Mexico Quarterly
+cg70	Belle-Lettres & Biog	The American Scholar
+cg71	Belle-Lettres & Biog	The Hudson Review
+cg72	Belle-Lettres & Biog	Foreign Affairs
+cg73	Belle-Lettres & Biog	The Arizona Quarterly
+cg74	Belle-Lettres & Biog	The Noble Savage
+cg75	Belle-Lettres & Biog	The Kenyon Review
+ch01	Gov't and House Organs	Handbook of Federal Aids to Communities
+ch02	Gov't and House Organs	An Act for International Development
+ch03	Gov't and House Organs	The Leadership of Speaker Sam Rayburn, Tributes
+ch04	Gov't and House Organs	RI Legislative Council - State Autos
+ch05	Gov't and House Organs	RI Legislative Council - tax
+ch06	Gov't and House Organs	RI Development Council - Annual Report
+ch07	Gov't and House Organs	RI Legislative Council - Uniform Fiscal Year
+ch08	Gov't and House Organs	RI Governor's Proclamations
+ch09	Gov't and House Organs	87th Congress - Appropriations
+ch10	Gov't and House Organs	Medicine in National Defense
+ch11	Gov't and House Organs	1961 Research Highlights of NBS
+ch12	Gov't and House Organs	Legislation of Foreign Relations
+ch13	Gov't and House Organs	87th Congress - Congressional Record
+ch14	Gov't and House Organs	Grants-in-Aid by USDHEW
+ch15	Gov't and House Organs	The Family Fallout Shelter, O of Civil & Def Mob.
+ch16	Gov't and House Organs	US Reports - Cases Adjudged in Supreme Court
+ch17	Gov't and House Organs	US Reports - Cases Adjudged in Supreme Court
+ch18	Gov't and House Organs	Department of State - informal remarks by Rusk
+ch19	Gov't and House Organs	Fact Book - Peace Corps
+ch20	Gov't and House Organs	Development Program for Nat'l Forests - USDA
+ch21	Gov't and House Organs	Public Papers of Presidents - Eisenhower
+ch22	Gov't and House Organs	US Treaties and Other International Agreements
+ch23	Gov't and House Organs	FCC Reports
+ch24	Gov't and House Organs	Your Federal Income Tax - IRS
+ch25	Gov't and House Organs	Report of Secretary General, Guggenheim Foundation
+ch26	Gov't and House Organs	A Brief Background of Brown & Sharpe - pamphlet
+ch27	Gov't and House Organs	Annual Report 1960 Leesona Corp
+ch28	Gov't and House Organs	Carleton College Bulletin
+ch29	Gov't and House Organs	Sprague Log, Sprague Electric Co
+ch30	Gov't and House Organs	Annual Report 1961, Carnegie Foundation
+cj01	Learned	The Solar System
+cj02	Learned	Proc of 1961 Heat Transfer and Fluid Mechanics Institute
+cj03	Learned	Trans of the Society of Rheology
+cj04	Learned	The Physical Review
+cj05	Learned	Phosphorus and Its Compounds	Book
+cj06	Learned	J of Physical Chemistry
+cj07	Learned	Satellite Environment Handbook
+cj08	Learned	Encyclopedia of the Biological Sciences
+cj09	Learned	Journal of Immunology
+cj10	Learned	The Story of Pollination	Book
+cj11	Learned	The Giant Snakes	Book
+cj12	Learned	The American J of Anatomy
+cj13	Learned	Soc for Research in Child Development
+cj14	Learned	Hormones in Blood	Book
+cj15	Learned	Archives of Neurology
+cj16	Learned	Virology
+cj17	Learned	Perspectives in Biology and Medicine
+cj18	Learned	Linear Algebra	Book
+cj19	Learned	Probability with Statistical Applications	Book
+cj20	Learned	Trans of the American Mathematical Society
+cj21	Learned	Proc of the American Mathematical Society
+cj22	Learned	The Emerging Nations	Book
+cj23	Learned	American Social Institutions, a Sociological Analysis	Book
+cj24	Learned	The Social Welfare Forum
+cj25	Learned	Studies in Sociology, Catholic University
+cj26	Learned	Demographic Information of Tropical Africa	Book
+cj27	Learned	Marriage and Family Living	Book
+cj28	Learned	Perceptual Changes in Psychopathology	Book
+cj29	Learned	Merrill-Palmer Quarterly of Behavior and Development
+cj30	Learned	Roleplaying in Business and Industry	Book
+cj31	Learned	Psychoanalysis and the Psychoanalytic Review
+cj32	Learned	Proc of the Nat'l Symposium on Machine Translation
+cj33	Learned	The Sentence and Its Parts	book
+cj34	Learned	Language
+cj35	Learned	Intern'l J of American Linguistics
+cj36	Learned	The Cold War and Its Origins
+cj37	Learned	Middle East J
+cj38	Learned	Committee for Economic Development, statement
+cj39	Learned	Stocks, Wheat and Pharaohs	Book
+cj40	Learned	Banking
+cj41	Learned	Southern Economic J
+cj42	Learned	The Political Foundation of Intern'l Law	Book
+cj43	Learned	Conflict in the Court	Book
+cj44	Learned	Tax Law Review
+cj45	Learned	Defense Procurement and Small Business	Book
+cj46	Learned	Employment Security Review
+cj47	Learned	Teaching America's Children	Book
+cj48	Learned	The J of Negro Education
+cj49	Learned	Yearbook of the Nat'l Soc for the Study of Education
+cj50	Learned	Principles of Public Utility Rates	Book
+cj51	Learned	Philosophy, Science and the Sociology of Knowledge	Book
+cj52	Learned	Problems of Ethics:A Book of Readings	Book
+cj53	Learned	The Modern Schoolman
+cj54	Learned	The Origins of Greek Civilization 1100-600B.C.	Book
+cj55	Learned	The Maxwell Land Grant	Book
+cj56	Learned	Manchester, Vermont	Book
+cj57	Learned	J of British Studies
+cj58	Learned	Rhode Island History
+cj59	Learned	Art and Culture: Critical Essays	Book
+cj60	Learned	The Future of Our Cities	Book
+cj61	Learned	Museum News
+cj62	Learned	Art J
+cj63	Learned	Escape from Authority:The Perspectives of Erich Fromm	Book
+cj64	Learned	Opera News
+cj65	Learned	The Pattern of Hardy's Poetry	Book
+cj66	Learned	A Case on the Beat	Book
+cj67	Learned	Publications of the Modern Lang Assoc of America
+cj68	Learned	Texas Studies in Literature and Language
+cj69	Learned	IBM Reference Manual - 7070	Book
+cj70	Learned	J of the Water Pollution Control Federation
+cj71	Learned	US Naval Institute Proc
+cj72	Learned	Mellon Institute Annual Report
+cj73	Learned	NAS Directory of Continuing Numerical Data Projects
+cj74	Learned	Battelle Technical Review
+cj75	Learned	Proc of the Symposium on Adhesion and Cohesion
+cj76	Learned	Modern Plastics Ency	Book
+cj77	Learned	Tech Manual of Am Assoc of Textile Chemists and Colorists
+cj78	Learned	Proc of Image Intensifier Symposium
+cj79	Learned	The Optimal Design of Chemical Reactors	Book
+cj80	Learned	Principles of Inertial Navigation
+ck01	Fiction - General	First Family, Davis
+ck02	Fiction - General	The Ikon, Barbeau
+ck03	Fiction - General	Not to the Swift, Coffin
+ck04	Fiction - General	Worlds of Color, DuBois
+ck05	Fiction - General	The Judges of the Secret Court, Stacton
+ck06	Fiction - General	Dark Rider, Zara
+ck07	Fiction - General	Night, Pollini
+ck08	Fiction - General	Voltaire! Voltaire!, Endore
+ck09	Fiction - General	April Morning, Fast
+ck10	Fiction - General	The Master of Geneva, Barr
+ck11	Fiction - General	Wilderness, Warren
+ck12	Fiction - General	The Heartless Light, Green
+ck13	Fiction - General	The Chateau, Maxwell
+ck14	Fiction - General	The Agony and the Esctasy, Stone
+ck15	Fiction - General	The Lattimer Legend, Hebson
+ck16	Fiction - General	Eagles Where I Walk, Longstreet
+ck17	Fiction - General	Mila 8, Uris
+ck18	Fiction - General	Midcentury, Dos Passos
+ck19	Fiction - General	The Voice of Strangers, Duncan
+ck20	Fiction - General	The Olympians, Bolton
+ck21	Fiction - General	Many Are the Hearts:My Brothers Keeper, Palmer	SS
+ck22	Fiction - General	The New Yorker:The Brigadier and the Golf Widow, Cheever	SS
+ck23	Fiction - General	Best Am SS:The Light of the Sea, Arkin	SS
+ck24	Fiction - General	Best Am SS:The Pedersen Kid, Gass	SS
+ck25	Fiction - General	Best Am SS:The Prophecy, Miller	SS
+ck26	Fiction - General	The Virginia Quarterly:Against the Moon, Rushing	SS
+ck27	Fiction - General	The Sewanee Reviews:The Vindication of Dr Nestor, Myers	SS
+ck28	Fiction - General	The Atlantic Monthly:Moving Dar, Bingham	SS
+ck29	Fiction - General	The Antioch Review:The Sheep's in the Meadwo, Schiller	SS
+cl01	Fiction - Mystery	Shock Treatment, Van Atta
+cl02	Fiction - Mystery	Bachelors Get Lonely, Fair
+cl03	Fiction - Mystery	Encounter with Evil, Dean
+cl04	Fiction - Mystery	Bloodstain, Alexander
+cl05	Fiction - Mystery	The Careless Corpse, Halliday
+cl06	Fiction - Mystery	Hunter at Large, Dewey
+cl07	Fiction - Mystery	Deadlier Than the Male, Holden
+cl08	Fiction - Mystery	The Ace of Spades, Shannon
+cl09	Fiction - Mystery	The Cup, the Blade, or the Sword, Eberhart
+cl10	Fiction - Mystery	Impact, Olesker
+cl11	Fiction - Mystery	The Man Who Looked Death in the Eye, Stone
+cl12	Fiction - Mystery	Evil Come, Evil Go, Masterson
+cl13	Fiction - Mystery	Footsteps in the Night, Hitchens
+cl14	Fiction - Mystery	Murder Has Its Points, Lockridge
+cl15	Fiction - Mystery	Mrs. Meeker's Money, Disney
+cl16	Fiction - Mystery	The Cipher, Gordon
+cl17	Fiction - Mystery	Night of the Kill, James
+cl18	Fiction - Mystery	Error of Judgment, Coxe
+cl19	Fiction - Mystery	Make a Killing, Williams
+cl20	Fiction - Mystery	Manhunt, Death by the Numbers, Lacy	SS
+cl21	Fiction - Mystery	Ellery Queen's Mystery Mag, The Black Disk, McCloy	SS
+cl22	Fiction - Mystery	The Saint Mystery Mag, Monologue of Murder, Barlow	SS
+cl23	Fiction - Mystery	Trapped Detective Story Mag, Try My Sample Murders, Rose	SS
+cl24	Fiction - Mystery	The Murderers, Brown
+cm01	Fiction - Science	Stranger in a Strange Land, Heinlein
+cm02	Fiction - Science	The Lovers, Farmer
+cm03	Fiction - Science	The Star Dwellers, Blish
+cm04	Fiction - Science	If, The Planet with No Nightmare, Harmon	SS
+cm05	Fiction - Science	7th Annual Year's Best S-F, The Ship Who Sang, McCaffrey	SS
+cm06	Fiction - Science	7th Annual Year's Best S-F, A Planet Named Shayol, Smith	SS
+cn01	Fiction - Adventure	The Killer Marshal, Overholser
+cn02	Fiction - Adventure	The Valley, Irving
+cn03	Fiction - Adventure	Trail of the Tattered Star, Farrell
+cn04	Fiction - Adventure	The Shadow Catcher, Horan
+cn05	Fiction - Adventure	Bitter Valley, Ferber
+cn06	Fiction - Adventure	Here Comes Pete Now, Anderson
+cn07	Fiction - Adventure	The Night Riders, Ballard
+cn08	Fiction - Adventure	Just for Tonight, Savage
+cn09	Fiction - Adventure	The Transgressors, Thompson
+cn10	Fiction - Adventure	No Land Is Free, Chadwick
+cn11	Fiction - Adventure	Rifle for Rent, Caesar
+cn12	Fiction - Adventure	Outlaw Town, Booth
+cn13	Fiction - Adventure	Mountains Ahead, McKeown
+cn14	Fiction - Adventure	Rattlesnake Ridge, Field
+cn15	Fiction - Adventure	Sweeney Squadron, Plantz
+cn16	Fiction - Adventure	Northwest Review, On the Old Sante Fe Trail to Siberia, Salisbury	SS
+cn17	Fiction - Adventure	Cavalier, The Bawdy Beautiful, Prather	SS
+cn18	Fiction - Adventure	Monsieur, With Women..Education Pays Off, Bains	SS
+cn19	Fiction - Adventure	Partisan Review, The English Gardens, Jackson	SS
+cn20	Fiction - Adventure	Argosy, The Flooded Desert, McClary	SS
+cn21	Fiction - Adventure	Cavalcade, The Beartiful Mankillers of Eromonga, Sommers	SS
+cn22	Fiction - Adventure	The Yale Review, A Matter of Curiosity, Johnson	SS
+cn23	Fiction - Adventure	Bluebook for Men, Always Shoot to Kill, Hall	SS
+cn24	Fiction - Adventure	Playboy, The Fifteenth Station, Brown	SS
+cn25	Fiction - Adventure	U of Kansas City Review, Aid and Comfort to the Enemy, Newton	SS
+cn26	Fiction - Adventure	Rage Magazine, Toughest Lawman in the Old West, Brock	SS
+cn27	Fiction - Adventure	Swank, Just Any Girl, Hines & Morris	SS
+cn28	Fiction - Adventure	Sir!, Mrs Hacksaw: New Orleans' Society Killer, Grimshaw	SS
+cn29	Fiction - Adventure	Rogue, Riding the Dark Train Out, Ellison	SS
+cp01	Fiction - Romance	A Cup of the Sun, Waldo
+cp02	Fiction - Romance	Seize a Nettle, Ritner
+cp03	Fiction - Romance	The Faribrothers, McMeekin
+cp04	Fiction - Romance	The Moon and the Thorn, Chute
+cp05	Fiction - Romance	The Crows of Edwina Hill, Bosworth
+cp06	Fiction - Romance	The Quixote Anthology, Land of the Silver Dollar, Tiernam	SS
+cp07	Fiction - Romance	The Big Family, Delmar
+cp08	Fiction - Romance	With Gall and Honey, Gourse
+cp09	Fiction - Romance	Mountains of Gilead, Ford
+cp10	Fiction - Romance	The Forger, Williams
+cp11	Fiction - Romance	Take Care of My Roses, Breuer
+cp12	Fiction - Romance	A Passion in Rome, Callaghan
+cp13	Fiction - Romance	The Fleet Rabble, Hanes
+cp14	Fiction - Romance	Sam Bentley's Island, Biddle
+cp15	Fiction - Romance	Good Housekeeping, The Open Door, Burrough	SS
+cp16	Fiction - Romance	Redbook, A Secret Between Friends, Brown	SS
+cp17	Fiction - Romance	Saturday Evening Post, The Huntress, Hine	SS
+cp18	Fiction - Romance	Modern Romances, No Room in My Heart to Forgive	SS
+cp19	Fiction - Romance	Medical Stories, This Cancer Victim May Ruin My Life	SS
+cp20	Fiction - Romance	The Dude, Dirty Dog Inn, Norris	SS
+cp21	Fiction - Romance	The Texas Quarterly, The White Azalea, Spencer	SS
+cp22	Fiction - Romance	True Love, A Husband Stealer from Way Back	SS
+cp23	Fiction - Romance	McCall's, Something Very Much in Common, Robinson	SS
+cp24	Fiction - Romance	Nugget, The Ball Player, Elkin	SS
+cp25	Fiction - Romance	Harper's Bazaar, The Pool at Ryusenji, Butler	SS
+cp26	Fiction - Romance	Prairie Schooner, The Snake, Krause	SS
+cp27	Fiction - Romance	Ladies' Home Journal, Measure of a Man, McGiffin	SS
+cp28	Fiction - Romance	Story, The Shorts on the Bedroom Floor, Hoover	SS
+cp29	Fiction - Romance	My Hero, Carson
+cr01	Humor	No Mother to Guide Her, Loos
+cr02	Humor	Whatever You Do, Don't Panic, Mercier
+cr03	Humor	Little Me, Dennis
+cr04	Humor	The Chairman of the Bored, Streeter
+cr05	Humor	Humorous English; a guide.., Esar
+cr06	Humor	Harper's Magazine, The Future, If Any, of Comedy, Thurber	Essay
+cr07	Humor	The Arizona Quarterly, Take It Off, Wildman	Essay
+cr08	Humor	Mademoiselle, Catch Up With; Something to Talk About, Lemon	Essay
+cr09	Humor	The Rising Gorge, Perelman

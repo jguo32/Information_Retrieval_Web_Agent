@@ -1,0 +1,89 @@
+#!/usr/local/bin/perl
+
+##########################################################
+##  EXAMPLE SHELL FOR END-OF-SENTENCE CLASSIFIER
+##
+##    examp1.prl < sent.data.train | more
+##
+##  Suggestion: run in a wide window
+##########################################################
+
+
+$L="./classes";
+
+&initialize_set(*abbrevs,"$L/abbrevs"); 
+&initialize_set(*titles,"$L/titles"); 
+&initialize_set(*unlikely_proper_nouns,"$L/unlikely_proper_nouns"); 
+&initialize_set(*timeterms,"$L/timeterms"); 
+
+
+while (<>) {
+   @words = split(' ',$_);
+   ($class,$id,$L3,$L2,$L1,$C,$R1,$R2,$R3,$Llength,$Rlength,$Nspaces) = @words;
+ 
+   if    ($R1 =~ /^[a-z]/) { &ret(1,$class,$id,'NEOS');} # +1 is lower case
+   elsif ($R1 eq "<P>")    { &ret(2,$class,$id,'EOS');}  # +1 is new paragraph
+   elsif ($R1 =~ /^[,.]/)  { &ret(3,$class,$id,'NEOS');} # +1 is comma, period
+   elsif ($R1 =~ /^[A-Z]/) {                             # +1 is capitalized 
+      if (&classmember($L1,titles))   { &ret(5,$class,$id,'NEOS');}  # Mr. Mrs.
+      else                            { &ret(4,$class,$id,'EOS');}   # default
+   }
+   else                     { &ret(0,$class,$id,'EOS');  # +1 is number, etc. 
+   }
+}
+print "Your score is: ", $correct/($correct+$incorrect), "\n";
+ 
+##########################################################
+## RET - prints full line for errors and keeps score
+##     - $where indicates the rule number responsible for the classification
+##
+##  This is a useful debugging tool, as after each change in
+##  the program one can identify the remaining misclassified
+##  training examples and the patterns responsible for them. 
+##########################################################
+ 
+sub ret {
+   local($where,$trueclass,$id,$givenclass) = @_;
+   
+   if ($trueclass eq $givenclass) {
+      print ".. (at ",$where,") -  ", $_;
+      $correct++; 
+   }
+   else {
+      print "XX (at ",$where,") -  ", $_;
+      $incorrect++;
+   }
+   next;
+}
+
+##########################################################
+## CLASSMEMBER - tests for membership of $key in a given set
+##
+##  The \L in $set{"\L$key"} is a perl hack to convert a
+##  string into all lower case for lookup in a word array
+##  insensitive to the capitalization of the original key.
+##########################################################
+
+sub classmember{
+   local($key,*set) = @_;
+
+   return $set{"\L$key"};
+}
+
+##########################################################
+## INITIALIZE_SET - loads named associative array with set members   
+##########################################################
+
+sub initialize_set{
+   local(*set,$where) = @_;
+   
+    open (FILE,$where) || die "Can't open file $where: $!\n";
+
+    while (<FILE>) {
+        chop;
+        $set{$_} = 1;
+    }
+    close (FILE);
+}
+
+

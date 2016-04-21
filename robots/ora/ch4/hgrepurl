@@ -1,0 +1,121 @@
+#!/usr/local/bin/perl -w
+
+
+# socket based hypertext grep URLs.  Given a URL, this 
+# prints out URLs of hyperlinks and images.
+
+use strict;
+use Socket;                   # include Socket module
+require 'tcp.pl';             # file with Open_TCP routine
+require 'web.pl';             # file with parseURL routine 
+use vars qw($opt_h $opt_i $opt_l);
+use Getopt::Std;
+
+# parse command line arguments
+getopts('hil');
+
+# print out usage if needed
+if (defined $opt_h || $#ARGV<0) { help(); }
+
+# if it wasn't an option, it was a URL
+while($_ = shift @ARGV) {
+  hgu($_, $opt_i, $opt_l);
+}
+
+
+# Subroutine to print out usage information
+
+
+sub usage {
+  print "usage: $0 -hil URL(s)\n";
+  print "       -h           help\n";
+  print "       -i           print out image URLs\n";
+  print "       -l           print out hyperlink URLs\n";
+  exit(-1);
+}
+
+
+# Subroutine to print out help text along with usage information
+
+
+sub help {
+  print "Hypertext grep URL help\n\n";
+  print "This program prints out hyperlink and image links that\n";
+  print "are referenced by a user supplied URL on a web server.\n\n";
+
+  usage();
+}
+
+
+# hypertext grep url
+
+
+sub hgu {
+
+  # grab parameters
+  my($full_url, $images, $hyperlinks)=@_;
+  my $all = !($images || $hyperlinks);
+  my @links;
+  my @links2;
+
+  # if the URL isn't a full URL, assume that it is a http request
+  $full_url="http://$full_url" if ($full_url !~ 
+                                 m/(\w+):\/\/([^\/:]+)(:\d*)?([^#]*)/);
+
+  # break up URL into meaningful parts
+  my @the_url = parse_URL($full_url);
+
+  if (!defined @the_url) {
+    print "Please use fully qualified valid URL\n";
+    exit(-1);
+  }
+
+  # we're only interested in HTTP URL's
+  return if ($the_url[0] !~ m/http/i);
+
+  # connect to server specified in 1st parameter
+  if (!defined open_TCP('F', $the_url[1], $the_url[2])) {
+    print "Error connecting to web server: $the_url[1]\n";
+    exit(-1);
+  }
+
+  # request the path of the document to get
+    print F "GET $the_url[3] HTTP/1.0\n";
+    print F "Accept: */*\n";
+    print F "User-Agent: hgrepurl/1.0\n\n";
+
+  # print out server's response.
+
+  # get the HTTP response line
+  my $the_response=<F>;
+
+  # if not an "OK" response of 200, skip it
+  if ($the_response !~ m@^HTTP/\d+\.\d+\s+200\s@) {return;}
+
+  # get the header data
+  while(<F>=~ m/^(\S+):\s+(.+)/) {
+    # skip over the headers
+  }
+
+  my $data='';
+  # get the entity body
+  while (<F>) {$data.=$_};
+
+  # close the network connection
+  close(F);
+
+
+  # fetch images and hyperlinks into arrays, print them out
+
+  if (defined $images || $all) {
+    @links=grab_urls($data, ('img', 'src', 'body', 'background'));
+  }
+  if (defined $hyperlinks || $all) {
+    @links2= grab_urls($data, ('a', 'href'));
+  }
+
+  my $link;
+  for $link (@links, @links2) { print "$link\n"; }   
+  
+}
+

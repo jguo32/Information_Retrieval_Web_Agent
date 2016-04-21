@@ -1,0 +1,77 @@
+.\" Wray Buntine 9/92
+.TH COMMAND 1 local
+.SH NAME
+enc \- encode data file for the IND system
+.SH SYNOPSIS
+.B enc 
+[\fBacfnp\fR] \fIstem\fR
+.PP
+.B enc 
+[\fBacfnp\fR] \fIattribute_file\fR 
+[\fIexample_file_in\fR] \fIencoded_file_out\fR
+
+.SH DESCRIPTION
+.PP
+.B enc
+encodes an example file in text format 
+(lines of space/tab delimited fields, see 
+.IR attr (1))
+into IND's internal format.
+The attribute file can also be checked and automatically augmented
+at this stage.
+.PP
+The simplest way to use
+.B enc
+is the command line:
+.br
+	enc stem
+.br
+where \fIstem\fR is the file stem for the data.
+The options allow the various levels of checking and augmenting to
+be switched on.
+.PP
+To generate an attribute file for a new data set,
+construct a basic attribute file giving names of attributes,
+and their basic types, but specify all values to be '?'.
+Then use the command line:
+.br
+        enc -accfn stem
+.br
+
+.SH OPTIONS
+.TP
+.B \-a
+Print an augmentented attribute file to standard output on completion.
+This will incorporate new values and limits encountered in the data
+and should be edited into the current attribute file.
+.TP
+.B \-c
+Update the symbol table during the encoding to reflect
+new values and limits encountered.
+The user will be queried as each new potential modification
+to the symbol table is encountered
+as to whether the example file or symbol table is at error.
+If this option appears twice in the command line
+then the example file is
+assumed correct and
+all potential modifications to the symbol table are accepted
+without query.
+.TP
+.B \-f
+Flag all attributes as being potentially missing
+values or limits,
+so allow modifications to them all.
+Otherwise, modifications and only allowed to specially
+flagged attributes in the attribute filer,
+as described in \fIattr\fR(1).
+.TP
+.B \-n
+Don't output an encoded example file, just do the checking etc.
+.TP
+.B \-p
+Input comes from standard input,
+so \fIexample_file_in\fR is assumed not given.
+
+.SH "SEE ALSO"
+.br
+.IR attr (1).

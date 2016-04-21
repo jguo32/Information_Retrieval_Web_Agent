@@ -1,0 +1,40 @@
+.TH COMMAND 1 local
+.SH NAME
+thead \- print header details about a tree
+.SH SYNOPSIS
+.B thead
+[\fBoptions\fR] \fItree\fR
+.SH DESCRIPTION
+.PP
+\fBthead\fR
+prints details about
+tree built by \fBtgen\fR.
+
+.SH OPTIONS
+.TP
+.B \-A \fIopts\fR
+Same options as for tree prior as in \fBtgen\fR.
+.TP
+.B \-l
+Print number of leaf nodes on one line.
+.TP
+.B \-m \fIntrees\fR
+Indicates how many trees, if more than one.
+.TP
+.B \-P \fIopts\fR
+Same options as for tree prior as in \fBtgen\fR.
+.TP
+.B \-p
+Print information about the prior structure stored for the tree
+(alpha, etc.).
+.TP
+.B \-s
+Print leaf count, nodes, and the "weight"
+(the "sprob" field) which is the log probability for a Bayes tree.
+.TP
+.B \-t
+Print number of nodes on one line.
+
+.SH "SEE ALSO"
+.br
+.IR tgen (1).

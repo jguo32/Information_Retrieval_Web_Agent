@@ -1,0 +1,95 @@
+.\" Wray Buntine 9/92
+.TH COMMAND 1 local
+.SH NAME
+encsmpl \- adjust sampling information for the encoded data file
+.SH SYNOPSIS
+.B enc 
+\fIsample_args\fR \fIstem\fR
+
+.SH DESCRIPTION
+.PP
+.B encsmpl
+takes an encoded example file "\fIstem\fR.enc" produced
+by
+.BR enc (1)
+and creates a sampling record as specified by \fIsample_args\fR.
+The sampling record is stored in the file "\fIstem\fR.encspl".
+If no seed is specified, then 
+.B encsmpl
+generates a psuedo-random seed from the current time in milliseconds.
+.PP
+The option arguments \fIsample_args\fR can be one of:
+.RS
+.TP
+.B S,\fIsize\fR[,\fIseed\fR]
+Sample without replacement from the encoded example file.
+Extract a sample of size \fIsize\fR using \fIseed\fR to initialize
+the random number generator.
+The training set is the sample, the test set is the remainder.
+.TP
+.B R,\fIsize\fR[,\fIseed\fR]
+Sample with replacement from the full encoded example file.
+Extract a sample of size \fIsize\fR using \fIseed\fR to initialize
+the random number generator.
+The training set is the sample, the test set is the remainder,
+any item not sampled.
+.TP
+.B L,\fIsize\fR[,\fIseed\fR]
+Like R but the test set is taken to be the full encoded example file.
+.TP
+.B C,\fIparts,part\fR[,\fIseed\fR]
+Used for cross validation.
+Split the full encoded example file into \fIparts\fR
+mutually exclusive and exhaustive partitions.
+Take the \fIpart\fR-th one as the test set and the others as the
+training set.
+\fIseed\fR initializes the random number generator.
+.TP
+.B D,\fIsize,parts,part\fR[,\fIseed\fR]
+Like C but first take a subsample of size \fIsize\fR and
+partition that.
+.TP
+.B N
+No sampling, use the entire file for both testing and training.
+This is the initial encoded value.
+Use to reset the file.
+.TP
+.B P
+Leave the sampling as it was.
+Useful in conjunction with the \-v and \-c or \-g options.
+.RE
+.PP
+Both
+.B tgen
+or
+.B tclass 
+automatically look for sampling records to match the
+"\fIstem\fR.enc" file.
+If none is found, then take the full sample (the N option above).
+Both 
+.B tgen
+and
+.B tclass 
+extract the training and test samples respectively.
+
+.SH OPTIONS
+.TP
+.B \-c
+Print out the test set on completion.
+Used primarily to check operation.
+.TP
+.B \-g
+Print out the training set on completion.
+Used primarily to check operation.
+.TP
+.B \-s
+If
+.B encsmpl
+generates a seed, print it out.
+.TP
+.B \-v
+Verbose option.  Print details of sampling taken.
+
+.SH "SEE ALSO"
+.br
+.IR enc (1).

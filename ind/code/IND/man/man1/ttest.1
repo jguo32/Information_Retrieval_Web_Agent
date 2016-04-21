@@ -1,0 +1,206 @@
+.\" Wray Buntine 9/90 and 9/91
+.TH COMMAND 1 local
+.SH NAME
+ttest \- build and test trees and report statistics
+.SH SYNOPSIS
+.B ttest
+[\fBoptions\fR] \fIstem\fR \fIsize\fR 
+.SH DESCRIPTION
+.PP
+.B ttest
+is a 
+.B csh
+script used to control the running of experiments on trees.
+\fIstem\fR should be a simple file name and not a path name.
+A sequence of training/tests pairs are formed using
+.BR encsmpl ,
+various trees are built using
+.B mktree
+with different options,
+and statistics are collected in separate report files or output
+to stdio using
+.BR tclass .
+A final summary report is output to stdio using
+.BR lstat .
+.I stem
+is the data set stem to use,
+.I size
+is the size of training sets to generate.
+
+Control of which tree generation and prune combinations to use
+is specified by the \-T and  \-s options.
+A typical command sequence to concurrently
+run MDL-like trials on the
+"hypo" data set might be to use preset styles like:
+.sp
+.RS
+ttest -v -s mml hypo 500
+.RE
+.sp
+or with more fine control over options by using:
+.sp
+.RS
+ttest -v -T "-tPmml -Pchoices -Aclasses,1" \\
+      "-B" "mdl" -c -sblv hypo 500
+.RE
+.sp
+See the description of the \-T
+option, below, to interpret this.
+With this above command,
+.B ttest
+will first output the following summary,
+.sp
+.RS
+Running trials:
+.br
+     tgen -tPmml -Pchoices -Aclasses,1 hypo... ; tprune -B
+.br
+Redirecting results to:
+.br
+     hypo.trial.500mdl
+.RE
+.sp
+and then proceed to run the trials indicated using files
+hypo.bld, hypo.tree.1, etc.
+In this case, for each tree generated,
+.B tclass
+is run using options "-sblv"
+and the output appended to the respective report files.
+
+Selection of training/test data pairs is controlled by the
+\-C and \-V options.
+This allows cross validation, random generation of partitions
+according to a list of seeds, or cross validation
+on random partitions.
+
+.SH OPTIONS
+.TP
+.B \-c \fIclopts\fR
+Pass these options to
+.B tclass
+when generating statistics on individual trees.
+The default is "-svlb",
+or is modified by the preset styles.
+.TP
+.B \-C \fIfolds\fR
+When used alone, this option cancels the use of a seedfile
+(see the \-V option).
+Instead training/test data set pairs
+are generated from the full data set in cross-validation style with
+.I folds
+number of folds.
+If this option is followed by a \-V or \-v option,
+then samples are first selected
+(using the supplied seeds)
+and cross-validation is done with each of these samples
+(instead of the full data set),
+by sub-partitioning them in turn into a number of folds.
+This then returns a cross-validation estimate (with variances)
+of the statistics produced by running 
+.B ttest
+without the  \-C option.
+(i.e.  the report file produced with the \-C
+option will be an estimate with variances
+of the statistics
+determined on the test sample without the  \-C option.)
+.TP
+.B \-d
+Normally, statistics generated are appended to the existing report files.
+This option says to delete all report files at the very beginning
+so statistics collected represent those generated in just this run
+of
+.B ttest.
+.TP
+.B \-k
+On abnormal exit, by default
+.B mkclean
+will be called,
+this option cancels this default.
+.TP
+.B \-l \fIllopts\fR
+Pass these options to
+.B lstat
+when generating the final summary report.
+The default is "-f 2 -v 1,2,3".
+.TP
+.B \-L
+Use logical (see use of "L" in \fBencsmpl\fR(1)) style sampling.
+.TP
+.B \-m \fIdatasize\fR
+Passed onto
+.IR mktree .
+.TP
+.B \-O
+Output all results to stdio.
+With this option,
+the filename modifier to the
+.B \-T
+option is assumed not to exist.
+.TP
+.B \-P \fIprune pname\fR
+Prune the tree generated once more using the pruning command
+"tprune \fIprune\fR \fIstem\fR..."
+and output the results to an additional results file
+"\fIstem\fR.trial.\fIsize\fR\fIpname\fR".
+This way, the single tree generated can be pruned
+multiple times to yield multiple results files.
+.TP
+.B \-Q
+Print a banner at the beginning giving the
+command and the date.
+Should be first option on the command line.
+Shorter version than \-v option to use to record
+runs in an audit trial.
+.TP
+.B \-s \fIstylename\fR
+Rather like \-T but for a preset style.
+The styles are the same as for 
+.IR mktree ,
+and multiple styles overlay,  still producing only one tree each sample.
+.TP
+.B \-t \fIcputime\fR
+Passed onto
+.IR mktree .
+.TP
+.B \-T \fItrial prune name\fR
+Build a tree using the command
+"mktree -o \fItrial\fR -p \fIprune\fR"
+and append the statistics gathered from tclass to the file
+"\fIstem\fR.trial.\fIsize\fR\fIname\fR".
+.B tclass
+is ran with the \-b option
+plus other defaults.
+The
+.I name
+argument is assumed not to exist if output is to stdio.
+The \-T option can occur multiple times and the options
+will be overlayed, still producing only one tree each sample.
+.TP
+.B \-v
+The verbose option.   Print out a few more details
+during operation.
+.TP
+.B \-V \fIseeds\fR
+One trial is run for each train/test pair of the data set.
+Seeds and appropriate sampling options
+are passed one at a time to
+.B encsmpl
+to generate these different train test pairs.
+Either the argument
+.I seeds
+is a file containing white space-separated integers
+to use as seeds (the default is "../seeds"),
+or 
+.I seeds
+is a comma delimited list of integer seeds to use.
+.TP
+.B \-Z
+Leave the ".enc" files compressed during use.
+For really large encoded data files.
+
+
+.SH "SEE ALSO"
+.br
+.IR tclass (1),
+.IR tgen (1),
+.IR mktree (1),

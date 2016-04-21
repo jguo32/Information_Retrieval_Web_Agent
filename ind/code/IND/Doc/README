@@ -1,0 +1,27 @@
+
+All documents have been TeXed with output to various
+Postscript files.  If you can't handle the Postscript, for instance 
+your European style laser writer doesn't like US letter format,
+then contact us for appropriate replacement files.
+
+Documents include:
+
+    Parts of a roughly 8 hour course on decision trees:
+	cont.ps   :  a note on counting tables
+	id3_c.ps  :  pretty printed psuedo-code for the Id3 main loop
+	quest.ps  :  sample questions on decision trees
+		NB.   the final bit of the ID3 course is chapter 3 in the manual
+
+    Manual:
+	indXXX.ps :  postscript version of the manual, rather large
+			    so its broken into pages
+
+    Related documentation about the system:
+	tech2002.ps	 :  overview of the IND system and its
+			    development, presented at a technology transfer
+			    conference;  created on a Mac using MS Word & Draw
+	trees.ps	 :  a paper describing the Bayesian aspects of IND
+	dgraph.ps	 :  a paper on Jon Oliver's decision graph work
+			    included in Version 2.1 of IND
+
+	

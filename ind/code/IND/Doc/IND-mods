@@ -1,0 +1,100 @@
+Modifications to IND
+====================
+
+
+Bugs reported/fixed in IND prerelease 0.1:
+========================================
+
+1.    "make NumRec" should be commented out in IND/Makefile
+      and references to IND/NumRec and -lnumrec should be
+      deleted from IND/Util/lstat/Makefile
+
+2.    "-v" flag in tclass returns incorrect value, variance
+      calculation turns out to be ghastly so forget
+
+Bugs reported/fixed in IND prerelease 0.2:
+========================================
+
+1.    got "-R" option in tgen & ttest working again
+
+Bugs fixed in IND release 1.0
+=============================
+
+1.    screwed up "-R" option again
+
+2.    got subsetting and contexts working (or appears that way)
+
+Bugs fixed in IND release 1.1
+=============================
+
+1.    made Eglib/Makefile so symyacc.c and symlex.c don't need
+      to be yaccd and flexd in release version, 10/25/91
+
+2.    changed egset.size from short to int, and deleted use
+      of MAXVALS and shorts in add_egs(), so that maximum
+      set size can be > 32K, 10/26/91
+
+Bugs fixed in IND release 1.2
+=============================
+
+1.    ".all" files not sampled properly in mkbld
+2.    "-t" and "-m" not passed from ttest to mktree
+3.    cut-points refuse to work with < than 5 data points
+      (really a useful feature, but should be changeable),
+      removed this for now and an overhall of cutpoint
+      algorithm is required.
+4.    "add_egs()" bombed if there where too many unknowns,
+      fixed the bug
+5.    subtle memory problems with "tgen -C" may cause bombing
+      and possible errors; fixed
+
+Bugs fixed in IND release 1.3
+=============================
+
+1.    Changed "char  c" to "int c" in options processing
+2.    "ttest -C" didn't work due to bugs in mkbld and
+	"sample -p";  fixed; also got it going with use of seeds
+3.    changed Makefiles so that recompilation only if
+      stuff changed
+4.    Updated manual slightly
+5.    converted release to use "shar" - great stuff!!
+6.    documented new "-Ax,04" option
+
+Bugs fixed in IND release 2.0
+=============================
+
+1.    got the CART bug at last and rewrote the CART code
+2.    major rewrite of the test routines, TREE.h, flags, added
+      bit arrays, removed various annoying limitations on size
+3.    changed xgraph (no longer supported) to gnuplot for handling
+      reports on cut points (interactive growing with 'g' and 'x')
+4.    installed a few new subsetting types
+5.    cleaned up cuts points
+6.    installed decision graphs - but removed from this release - be in 3.0
+7.    changed around documentation and manual so only postscript is released
+8.    fixed memory allocation bugs so all memory properly deallocated
+9.    installed new splitting rules:  twoing and gain ratio
+10.   made both CART pruning and pessimistic pruning work with utilities
+11.   cleaned up the options interface and introduced verbose mode
+      to allow reports on all options used
+12.   added "style" options to mktree and ttest
+13.   reinstalled data encoding ("enc") with online sampling in tgen and tclass
+      so mkbld & sample no longer used 
+14.   removed the Bayesian classifier stuff "/IND/Bayes" cause arkward
+      to support, will include in a later release
+15.   made the option trees stuff operate nicely by itself without
+      hand-holding, see the -L option to tgen, now works great!
+16.   cleaned up ALL the options interfaces to make them more
+      user friendly
+17    simplified the "context" handling and reduced its functionality
+
+Bugs fixed in IND release 2.1
+=============================
+
+1.    installed C4.5 pruning 
+2.    corrected and debugged the "-ii" and "-ir" codes, and for
+	cut points,  now agrees with C4.5
+3.    rationalized the stopping rules, see "tgen -s"
+4.    cleaned up and simplified Bayesian cut-point handling
+5.    installed Jon Oliver's graph stuff 
+6.    cleaned up the Include files

@@ -1,0 +1,506 @@
+#!/bin/csh
+# IND-version2.0
+#    IND 2.0 released 9/15/92   contact: ind@kronos.arc.nasa.gov
+#    by Wray Buntine (and others, see IND/README)
+#    NASA Ames Research Center, MS 269-2, Moffett Field, CA 94035
+#
+#	test various trial options for tree building
+#	and produce report giving statistics
+#	using seeds in $SEEDS to generate random samples;
+#	to print out the results, see IND/Scripts/tstat
+#	
+#	$1  =  file stem
+#	$2  =  size of samples to work with
+#	
+#	-O	output to stdio
+#	-S	disabled?
+#		the data IS stratified, so do re-stratification on classify
+#	-T treeopts pruneopts trialname
+#		builds one tree then prunes ;
+#		output to file tagged "trialname" if not to stdio;
+#		if occurs multiple times then overlays options together but
+#		still only builds one tree
+#	-s style
+#		like -T but uses preset styles;
+#		builds tree according to mktree styles and sets
+#		up appropriate prune and names (like -T)
+#		see  -s option for mktree;
+#		if occurs multiple times then overlays options together
+#	-P pruneopts trialname
+#		must be used after a -T or -s;
+#		can be used multiple times;
+#		gives additional pruning options for previous tree
+#		to create a different pruned tree for testing
+#	-R ran trial prune trialname
+#		do random trial using "ran" as flags to R flag in tgen
+#		using other options "trial" + "name"
+#		BUGS   doesn't handle multiple options for pruning
+#	   NB.NB.   haven't used for a while, might not work
+#	-V SEEDS
+#		set seeds from SEED = file or comma separated seed list
+#	-v 	set verbose
+#	-C folds
+#		do $folds-fold CV instead of sampling - VERY inefficient
+#           NB.  usually does CV on entire data set,
+#                using a -V or -v option *after* -C invokes CV on each of
+#		 of the subsamples selected
+#	-l lstat_options
+#		pass options to lstat, automatically called if no -O
+#	-L      assume "logical" data, so use L option to encsmpl
+#	-d
+#		delete all report files before use
+#	-c tclass_options
+#		use these options with "tclass, default is "sbl"
+#	-k	don't clean up files on error exit (do by default)
+#	-t	passed on to mktree
+#	-m	passed on to mktree
+#	-Z      leave the ".enc" file compressed during use
+#	-Q      print banner giving command and date
+#	-D bin	use directory "bin" for programs
+
+
+unset noclobber
+set alarmsig = 14	#  system dependent!
+set memsig = 15		#  set in "salloc.c"
+set td = .
+if ( -e ../seeds ) then
+   set seeds = `cat ../seeds`
+else
+   set seeds = "1 2 3 4"
+endif
+set lstatopts = "-f 2 -v 1,2,3"
+set trialtrees		#  options used to build trees
+set trialprunes	= ( "" "" "" "" "" "" "" "" "" )
+set trialnames	= ( "" "" "" "" "" "" "" "" "" )
+		 	#  options used to run pruner on grown trees
+set tcopt  verb verbflg bin 
+set ntrialprunes = 1
+set doclean = 1
+set compressed restrat echoon logical
+set folds		#  set if doing Cross Val.
+set stdio ran delrep mktreeopts genopts 
+set trialfiles		#  suffix for result file
+set rtrialfiles		#  used for CV with seeds
+
+
+#    add the style name here
+set stylename = ( cart cart0 id3 c4 mml smml look tlook bayes \
+                opt opt1 dgraph lgraph dgraphwan treewan )
+#    add the tgen command line here
+set stylegen = ( "-it -Pnull -p1 -Sfull -s5 -C10 -n0" \
+                 "-it -Pnull -p0 -Sfull -s1 -C10 -n0" \
+                  "-ii -Pnull " \
+                  "-ir -Pnull -s1,2 -Sfull" \
+                 "-tPmml -A1 -n0.0001"  \
+                 "-tPmml -Pchoices -A1 -n0.0001"  \
+                 "-t -B2,4 " \
+                 "-t  -B3,1,0.00001,4 -J1" \
+                 "-tAnonsym,1" \
+                 "-t -B2,4 -J3,0.005,0.75,0.1 -K3,.05 -L0.9" \
+                 "-t -B1,4 -J3,0.005,0.75,0.1 -K3,.05 -L0.9" \
+                  "-tA1 -DD -tPmml" \
+                  "-tA1 -DD -tPmml -B2,4 -O" \
+                  "-tA1 -DD -tPmml -w" \
+                  "-tA1 -D -tPmml -w" )
+#    add the tprune command line here
+set styleprune = ( "-n" "-n" "-n" "-fn" "-b" "-B" "" "" "-b" "" ""
+		"-b" "-b" "-b" "-b" )
+#    add the tclass command line here
+set styleclass = ( "-slG" "-slG" "-sl" "-sl" "-slvg" "-slvg" "" "" "-slvg" "" ""\
+                "-slvg" "-slvg" "-slvg" "-slvg"  )
+
+while ( 1 )
+switch ( "$1" )
+case "-k":
+        shift
+	set doclean
+        breaksw
+case "-Q":
+        shift
+	echo ttest $* " # `date`"
+        breaksw
+case "-L":
+        shift
+	set logical = 1
+        breaksw
+case "-d":
+        shift
+	set delrep = 1
+        breaksw
+case "-D":
+        shift
+	set bin = "$1"
+	set mktreeopts = "-O $1 $mktreeopts"
+ 	shift
+        breaksw
+case "-c":
+        shift
+	set tcopt = "$1"
+ 	shift
+        breaksw
+case "-Z":
+        shift
+	set compressed = 1
+        breaksw
+case "-O":
+        shift
+	set stdio = 1
+        breaksw
+case "-D":
+        shift
+	set echoon = 1
+        breaksw
+case "-S":
+        shift
+	set restrat = -r
+        breaksw
+case "-V":
+        shift
+	if ( -e "$1" ) then
+	   #   set seeds from file
+	   set seeds = (  `cat $1` )
+	else
+	   set stuff = ( `echo $1 | grep -v '^[0-9,]*$'` )
+	   if ( "$stuff" != ""  ) then
+	   	echo  " seed file $1 cannot be found"
+	   	exit 1
+	   endif
+	   unset stuff
+	   #   set seeds comma separated list
+	   set temp = "`echo $1 | sed -e 's/,/ /g'`"
+	   set seeds = ( $temp )
+	   unset temp
+	endif
+	shift
+        breaksw
+case "-v":
+        shift
+	set verb = 1 verbflg = -v
+        breaksw
+case "-m":
+case "-t":
+	set mktreeopts = "$mktreeopts $1 $2"
+        shift
+	shift
+        breaksw
+case "-C":
+        shift
+	set folds = "$1"
+	set seeds
+	set seed = `date +%H%d%S%M`
+	shift
+        breaksw
+case "-s":
+	shift
+        set i = 1
+        while ( $i <= $#stylename )
+                if ( $stylename[$i] == "$1" ) break
+                @ i ++
+        end
+        if ( $i > $#stylename ) then
+                echo "ttest: invalid style option, should be $stylename"
+                exit 1
+        endif
+        shift
+	set tcopt = "$tcopt $styleclass[$i]"
+	set trialtrees = "$trialtrees $stylegen[$i]"
+	set trialprunes[1] = "$trialprunes[1] $styleprune[$i]"
+	if ( ! $stdio ) then
+		set trialnames[1] = "$trialnames[1]$stylename[$i]"
+	endif
+	breaksw
+case "-T":
+        shift
+	set trialtrees = "$trialtrees $1"
+	endif
+	shift
+	set trialprunes[1] = "$trialprunes[1] $1"
+	shift
+	if ( ! $stdio ) then
+		set trialnames[1] = "$trialnames[1]$1"
+		shift
+	endif
+        breaksw
+case "-P":
+        shift
+	@ ntrialprunes ++
+        if ( $ntrialprunes > 9 ) then
+                echo "ttest:  too many pruning options"
+                exit 1
+        endif
+	set trialprunes[$ntrialprunes] = "$1"
+	shift
+	if ( ! $stdio ) then
+		set trialnames[$ntrialprunes] = "$1"
+		shift
+	endif
+        breaksw
+case "-R":
+        shift
+	set ran = $1
+	set rannum = 5
+	shift
+ 	set trialtrees = "$1"
+	shift
+ 	set trialprunes = "$1"
+	shift
+	if ( ! $stdio )  then
+		set trialnames = "$1"
+		shift
+	endif
+	set trialpt = ( 1 )
+	breaksw
+case "-x":
+	shift
+	set xn = $1
+	shift
+	breaksw
+default:
+        break
+endsw
+end
+
+if ( $#argv < 2 || $#argv > 3 ) then
+  	echo "usage: wrong arguments: $*"
+  	echo "usage: ttest [-s style -T topts popts [names] -P popts [names] \"
+  	echo "             -C folds -V SEEDS -c copts -SOQZvdktmLx] \"
+  	echo "             file-stem size [genopts]"
+	exit 1
+endif
+
+if ( !( -e $1.enc) && !(-e $1.enc.Z) ) then
+  	echo "No encoded data file.  Use 'enc' first"
+	exit 1
+endif
+
+
+#	default  trials
+if ( "$trialtrees" == "" ) then
+        echo "No tests specified."
+        exit 1
+endif
+
+if ( -e $1.enc.Z && "$compressed" == "" ) then
+	uncompress $1.enc
+	set compressed = 1
+else
+	set compressed
+endif
+
+if ( ! $stdio ) then
+    set i = 1
+    while ( $i <= $ntrialprunes )
+	set trialfiles = ( $trialfiles ${1}.trial.${2}$trialnames[$i] )
+	if ( ${delrep} )   rm -f $trialfiles[$i]
+    @ i ++
+    end
+else
+    set trialfiles = dummy.file
+endif
+
+if ( $verb ) then
+  echo 'Running trials:' 
+  if ( $ran ) then
+      echo "     tgen -R $ran $trialtrees ${1}... ; tprune $trialprunes[1]"
+  else
+      echo "     tgen $trialtrees ${1}... ; tprune $trialprunes[1]"
+  endif
+  set i = 2
+  while ( $i <= $ntrialprunes )
+      echo "     ....   ; tprune $trialprunes[$i]"
+    @ i ++
+  end
+  if ( ! $stdio ) then
+    echo 'Redirecting results to:' 
+    set i = 1
+    while ( $i <= $ntrialprunes )
+	echo "     $trialfiles[$i]"
+    @ i ++
+    end
+  endif
+endif
+unset trialnames
+
+if ( "$tcopt" == "" ) then
+	if ( $ran )  then
+		set tcopt = "-Ssblg"
+	else
+		set tcopt = "-sblg"
+	endif
+else
+	set tcopt = "-b $tcopt"
+endif
+
+set fold = 0;
+if ( $echoon ) set echo
+
+if ( "$folds" != "" && "$seeds" != "" ) then
+	#  doing CV and subsampling via seeds, so average results from
+	#  each CV run into summary file, then discard CV results
+	#  set rtrialfiles = name of summary files
+	#  set trialfiles = temporary files for storing cv results
+	set rtrialfiles = ( $trialfiles )
+        set i = 1
+	set trialfiles
+	while ( $i <= $ntrialprunes )
+	  set trialfiles = ( $trialfiles ${1}.trial.temp$i )
+	  rm -f ${1}.trial.temp$i
+	  @ i ++
+	end
+endif
+
+
+while ( "$seeds" != "" || $fold < $folds )
+	#
+	#	select train/test pair
+	#
+	if ( $folds ) then
+	  if ( "$seeds" == "" ) then
+	    # 	do cross validation, call to date generates psuedo random
+	    ${bin}encsmpl $verbflg C,$folds,$fold,$seed  $1
+	  else
+	    # 	do cross validation on each training data in turn, ignore test
+	    ${bin}encsmpl $verbflg D,$2,$folds,$fold,$seeds[1] $1
+	  endif
+	else
+	  #    just do train/test splits according to seeds
+	  set seed = $seeds[1]
+	  shift seeds
+	  if ( $logical ) then
+	    ${bin}encsmpl $verbflg L,$2,$seed $1
+	  else
+	    ${bin}encsmpl $verbflg S,$2,$seed $1
+	  endif
+	endif
+	if ( $ran ) then
+	#	
+	#	randomize option, switched off for now
+	#
+	  echo "random option not installed"
+	  exit 1
+	    ${bin}mktree $mktreeopts  \
+		-p "$trialprunes" -R $ran $rannum -o "$trialtrees" $1
+	    @ stat = ( $status & 127 )
+	    if ( $stat ) then
+	      if ( $stat == $alarmsig || $stat == $memsig ) then
+		if ( ! $stdio ) echo "error ($stat)" >>& $trialfiles
+	      elseif
+		    echo "error with mktree"
+		    if ( $doclean )  mkclean $1
+		    exit 1
+	      endif
+	    else
+	      if ( $stdio ) then
+	            ${bin}tclass ${tcopt} -m $rannum $restrat ${1}.attr \
+				$td/${1}.tree.[1-$rannum]  ${1}.enc
+	      else
+	            ${bin}tclass ${tcopt} -m $rannum $restrat ${1}.attr \
+				$td/${1}.tree.[1-$rannum] ${1}.enc \
+		        >>& $trialfiles
+	      endif
+	    endif
+	else
+	#	
+	#	make, prune and test
+	#
+	   ${bin}mktree $mktreeopts -o "$trialtrees"  $1
+	   @ stat = ( $status & 127 )
+	   if ( $stat && $stat != $alarmsig && $stat != $memsig ) then
+		    echo "ttest: error with mktree ($stat)"
+		    if ( $doclean ) mkclean $1
+		    exit 1
+	   endif
+	   set i = 1
+	   while ( $i <= $ntrialprunes )
+	 	if ( $stat ) then
+		  if ( ! $stdio ) then
+			echo "error ($stat)" >>& $trialfiles[$i]
+		  endif
+		  @ i ++
+		  continue;
+		endif
+		${bin}tprune  $trialprunes[$i] ${1}.attr $td/${1}.treec
+	        if ( $status ) then
+		    echo "ttest: error with tprune"
+		    if ( $doclean ) mkclean $1
+		    exit 1
+	        endif
+		mv $td/${1}.tree $td/${1}.tree.$i
+		if (-e $td/${1}.tree.$i) then
+			set xopt = ""
+		else
+			set xopt = "-wx $xn"
+		endif
+	        if ( $stdio ) then
+		   ${bin}tclass ${xopt} ${tcopt} $restrat ${1}.attr \
+			$td/${1}.tree.$i ${1}.enc
+	           if ( $status ) then
+		       echo "ttest: error with tclass"
+		       if ( $doclean ) mkclean $1
+		       exit 1
+	           endif
+	        else
+                 if ( -e $trialfiles[$i] ) then
+		   ${bin}tclass ${xopt} ${tcopt} $restrat ${1}.attr \
+			$td/${1}.tree.$i ${1}.enc >>& $trialfiles[$i]
+	           if ( $status ) then
+		       echo "ttest: error with tclass"
+		       if ( $doclean ) mkclean $1
+		       exit 1
+	           endif
+		 else
+		   ${bin}tclass ${xopt} ${tcopt} $restrat ${1}.attr  \
+			$td/${1}.tree.$i ${1}.enc >& $trialfiles[$i]	
+	           if ( $status ) then
+		       echo "ttest: error with tclass"
+		       if ( $doclean ) mkclean $1
+		       exit 1
+	           endif
+		 endif	
+	        endif
+	        @ i++
+	   end
+	endif
+	#
+	#	if doing CV, now go and work out CV report, etc.
+	#
+	if ( $folds ) then
+	    @ fold++
+	    if ( $fold >= $folds ) then
+		#   exit if not working with seeds
+		if ( "$seeds" == "" ) break
+		#    compute and store summary for this CV run
+        	set i = 1
+		while ( $i <= $ntrialprunes )
+		  #   save any lines with error messages
+		  grep '[a-z]' < $trialfiles[$i] >> $rtrialfiles[$i]
+		  #   and save average of the rest
+		  grep -v '[a-z]' $trialfiles[$i] | lstat -b -q20 -a1-20 - \
+				>> $rtrialfiles[$i]
+		  @ i ++
+		end
+		#    fetch next seed, if any 
+		shift seeds
+		if ( "$seeds" == "" ) break	
+		set fold = 0
+		rm -f $trialfiles
+	    endif
+	endif
+	set nonomatch
+	rm  -f $td/$1.tree.* $td/$1.treec 
+	unset nonomatch
+end
+set nonomatch
+rm -f $td/${1}.tree.* $td/${1}.treec  ${1}.encspl
+unset nonomatch
+	
+
+if ( "$stdio" == "" ) then
+  if  ( "$rtrialfiles" == "" ) then
+	${bin}lstat $lstatopts $trialfiles
+  else
+	${bin}lstat -t ' 	~)(' $lstatopts $rtrialfiles
+  endif
+endif
+
+if ( $compressed ) compress $1.enc

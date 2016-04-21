@@ -1,0 +1,48 @@
+ ... 
+ ... TRACE MINIMIZATION ON THE
+ ... EQUIVALENT A^TA E-PROBLEM
+ ... NO. OF EQUATIONS          =        82
+ ... MAX. NO. OF ITERATIONS    =       150
+ ... MAX. POLY. DEGREE USED    =         4
+ ... NO. OF ITERATIONS TAKEN   =        19
+ ... NO. OF DESIRED EIGENPAIRS =        10
+ ... INITIAL SUBSPACE DIM.     =        12
+ ... MEMORY REQUIRED (BYTES)   =     71712
+ ... JOB: 0=NO SHIFT, 1=SHIFT, =         2
+ ... WANT S-VECTORS?   [T/F]   =         T
+ ... 
+ ... ALPHA                     =  7.80E+01
+ ... FINAL RESIDUAL TOLERANCE  =  1.00E-06
+ ... RESIDUAL REDUCTION TOL.   =  1.00E+00
+ ... MULTIPLICATIONS BY A      =       721
+ ... MULTIPLICATIONS BY A^T    =       711
+ ... TOTAL NUMBER OF MULT.     =      1432
+ ... IERR FROM SUBR. TSVD2     =         0
+ ... 
+ ... CPU TIME BREAKDOWN:        
+ ...   GRAM-SCHMIDT ORTHOG.    =  4.80E-01  ( 15%)
+ ...   SPECTRAL DECOMPOSITION  =  4.30E-01  ( 13%)
+ ...   CONVERGENCE CRITERIA    =  4.00E-01  ( 13%)
+ ...   CONJUGATE GRADIENT      =  1.88E+00  ( 59%)
+ ... TOTAL CPU  TIME (SEC)     =  3.19E+00
+ ... WALL-CLOCK TIME (SEC)     =         3
+
+ BELLCORE ADI TERM-DOCUMENT MATRIX  (TRANSPOSED)   
+                                            belladi
+ ... NO. OF DOCUMENTS (ROWS)   =      374
+ ... NO. OF TERMS     (COLS)   =       82
+ ... ORDER OF MATRIX B         =       82
+ ... 
+ ...... 
+ ......     COMPUTED SINGULAR VALUES  (RESIDUAL NORMS)  T-MIN STEPS   CG STEPS
+ ...... 
+ ......   1     2.07867600616909E+01  (   1.52E-09)           7          18
+ ......   2     1.42353401068293E+01  (   2.05E-08)           8          16
+ ......   3     1.29595299470496E+01  (   7.16E-08)           8          17
+ ......   4     1.05638763110088E+01  (   9.06E-09)           9          15
+ ......   5     9.61443992114472E+00  (   7.96E-08)           9          11
+ ......   6     8.90736696504893E+00  (   1.02E-08)          10          10
+ ......   7     8.66076291285260E+00  (   3.71E-08)          11          13
+ ......   8     8.35688414226187E+00  (   1.82E-08)          12          14
+ ......   9     8.15793400470780E+00  (   6.76E-08)          12          21
+ ......  10     7.87670807935011E+00  (   6.42E-08)          19          11

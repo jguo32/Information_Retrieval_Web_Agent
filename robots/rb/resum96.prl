@@ -1,0 +1,634 @@
+#!/usr/local/bin/perl5.003
+
+# Jon:  -w
+
+#Here's the code.  The get_url function is what you call to retrieve a 
+#url.  it returns the body of the document in the variable $body and the 
+#headers in the associative array %header.
+
+#Global stuff at top:
+#You might want to change the name of the robot so it shows up with a 
+#different id and $ROBOTNAME
+
+$|=1;
+$SIG{'INT'}='inthandler';
+$SIG{'ALRM'}='alarmhandler';
+
+sub alarmhandler {
+    print "ALARM EXPIRED: $full_url\n";
+    print ERRORLOG "ALARM EXPIRED: $full_url\n";
+    close (SERVER);
+}
+
+sub inthandler {
+    close (LOGFILE);
+    close (RESUMEFILE);
+    close (SEENFILE);
+    close (QUEUEFILE);
+    close (ERRORLOG);
+    exit(0);
+}
+
+############################################################
+# Resum-96
+# 
+#  By Richard Wicentowski richardw@cs.jhu.edu
+#
+###########################################################
+
+# Initialiize Global Constant Variables
+$MYMAIL = 'richardw@cs.jhu.edu';
+$ROBOTNAME = 'Resum-96/0.1';
+$MAXDOCNUM = 1;
+$TESTING = 1; # TRUE if want to run testing loop, False if want to run main
+$ERROR = STDERR;
+$DEBUG = STDOUT;
+
+
+# Return codes
+$OK = 1; # everything a-OK
+$NOTFOUND = -1; # document not found, or ...
+$NETERROR = -2; # General network errors (failed sockets, etc)
+$MISCERROR = 0; # any error that doesn't fall under something else
+$SERVERERROR = -3; # the web server did something wrong during a transaction
+$INVALIDPARAMETERS = -4; # function passed parameters in illegal form
+$DNSERROR = -5; # Error/failure of dns lookup
+$HTTPERROR = -6; # Server returned a HTTP error code (400-599)
+
+use Socket;
+
+###########################################################
+# Main 
+###########################################################
+{
+    $queue_current = 0;
+    $queue_last = 0;
+    $resume_num = 0;
+
+    $url = "http://128.220.13.86:80/";
+#    $url = "http://128.220.13.2:80/~swiet/mk4.html";
+
+    &resume_run;
+
+    open (LOGFILE, ">>logfile.log");
+    open (RESUMEFILE, ">>resumes.log");
+    open (SEENFILE, ">>seen.log");
+    open (QUEUEFILE, ">>queue.log");
+
+    open (ERRORLOG, ">>errors.log");
+    print ERRORLOG "\n";
+
+    $refer = "START_OF_SEARCH";
+    $clickable = $refer;
+    
+    @queue[$queue_last++] = $url;
+
+    @process{$url} = $refer."|".$url."|".$clickable;
+    $listed{$url} = $queue_last;
+    $listed{"http://128.220.13.86:80/cs-departments.html"} = -1;
+
+    while (($queue_current != $queue_last) || ($queue_last == 100000)) {
+
+	if (($queue_current % 10)== 9) {
+	    close (RESUMEFILE);
+	    close (SEENFILE);
+	    close (QUEUEFILE);
+	    close (ERRORLOG);
+	    close (LOGFILE);
+	    open (LOGFILE, ">>logfile.log");
+	    open (RESUMEFILE, ">>resumes.log");
+	    open (SEENFILE, ">>seen.log");
+	    open (QUEUEFILE, ">>queue.log");
+	    open (ERRORLOG, ">>errors.log");
+	}
+
+	$url = @queue[$queue_current];
+
+	print "Retrieving $url ($queue_current of $queue_last)\n";
+
+	$global_url = $url;
+	
+	&parse_url($url);
+
+	DNS_resolve($url_host);
+
+	&port_resolve($url_protocol);
+
+	&remove_dotdot;
+
+#	print $seen{$url}, "\n";
+	if (($seen{$url} != 1) && ($hostaddr ne "0.0.0.0") && ($port != -1)) {
+	    
+	    &retrieve($hostaddr, $url_port, $url_directory, $url_file, 'GET');
+ 	    &print_header;
+
+#	    print "$body";
+	    if (($body =~ /\Wresume\W/i) || ($body =~ /\Wcv\W/i) ||
+		($body =~ /\Wvitae\W/i) || ($body =~ /\Wc\.v\.\W/)) {
+		$resume_num++;
+		print RESUMEFILE "$url\n";
+#		print RESUMEFILE "$body\n";
+		print "Potential Resume $resume_num: $url ($queue_current/$queue_last): ";
+		if ($body =~ /\Wresume\W/i) {
+		    print "RESUME\n";
+		} elsif ($body =~ /\Wcv\W/i) {
+		    print "CV\n";
+		} elsif ($body =~ /\Wvitae\W/i) {
+		    print "VITAE\n";
+		} elsif ($body =~ /\Wc\.v\.\W/i) {
+		    print "C.V.\n";
+		}
+	    
+	    }
+	    &retrieve_URLs;
+
+	    print SEENFILE "$url\n";
+	    $seen{$url} = 1;
+#	    print "$url\n";
+	} else {
+#	    print "SEEN!\n";
+	}
+	$queue_current++;
+    }
+    print "EXAMINED $queue_current OF $queue_last URLs\n";
+    &inthandler;
+}
+
+
+sub remove_dotdot {
+    local (@temp, $out, $c);
+
+    if ($url !~ /\.\./) {
+	#Do nothing;
+    } else {
+	@temp = split(/\//, $url);
+	$out = @temp[0]."//".@temp[2];
+	for ($c = 3; $c <= $#temp; $c++) {
+	    if (@temp[$c+1] !~ /\.\./) {
+		$out = $out."/".@temp[$c];
+	    } else {
+		$c += 2;
+	    }
+	}
+	$url = $out;
+    }
+}
+
+
+sub resume_run {
+    if (open (SEENFILE, "seen.log")) {
+	print "Do you want to resume running from previous run? (Y/N)\n";
+	$answer = <STDIN>;
+	if ($answer =~ /y/i) {
+	    open (SEENFILE, "seen.log");
+	    open (QUEUEFILE, "queue.log");	
+	    while (<SEENFILE>) {
+		chop;
+		$seen{$_} = 1;
+	    }
+	    $q = 0;
+	    while (<QUEUEFILE>) {
+		chop;
+		@queue[$q++] = $_;
+		$listed{$_} = -1;
+		$queue_last++;
+	    }
+	} else {
+	    print "SURE? This will erase all logs created (ENTER = confirm)\n";
+	    $answer = <STDIN>;
+	    if ($answer !~ /^\n$/) {
+		die "QUITTING!\n";
+	    } else {
+		unlink <*.log>;
+
+		open (SEENFILE, ">seen.log");
+		open (QUEUEFILE, ">queue.log");	
+		print QUEUEFILE "$url\n";
+		print QUEUEFILE "http://128.220.13.86:80/cs-departments.html\n";
+		print SEENFILE "$url\n";
+		print SEENFILE "http://128.220.13.86:80/cs-departments.html\n";
+		close (SEENFILE);
+		close (QUEUEFILE);
+	    }
+	}
+    } else {
+	print "No previous run detected.  Starting from scratch...\n";
+    }
+}
+
+
+
+sub retrieve_URLs {
+    local ($noCR, $c);
+    local (@temp);
+
+#    print "$body\n";
+
+    $retr_directory = $url_directory;
+
+
+    $noCR = $body;
+    $noCR =~ s/\n//g;
+#    print "$noCR\n";
+    @commands = split('<', $noCR);
+
+    for ($c = 0; $c <= $#commands; $c++) {
+	@temp = split('>', @commands[$c]);
+	$curcommand = @temp[0];
+	$clickable = @temp[1];
+	$http_command = uc $curcommand;
+	if ($http_command =~ /^A HREF/) {
+#	    print "$http_command\n";
+	    if ($http_command =~ /\"/) {
+		@temp = split('"', $curcommand);
+		$URL = @temp[1];
+	    } else {
+		@temp = split('\=', $curcommand);
+		$URL = @temp[1];
+	    }
+	    
+#	    print "Clickable text:",  $clickable, "\n";
+#	    print "URL: $URL\n";
+	    &parse_url ($URL);
+	    
+	    if ($url_host =~ /^128.220/) {
+		if (($url_file !~ /\./) ||
+		    ($url_file =~ /\.ps$/i) ||
+		    ($url_file =~ /\.ps\./i) ||
+		    ($url_file =~ /\.tex$/i) ||
+		    ($url_file =~ /\.tex\./i) ||
+		    ($url_file =~ /\.txt$/i) ||
+		    ($url_file =~ /\.htm$/i) ||
+		    ($url_file =~ /\.html$/i)) {
+		    if ($listed{$potential_url}) {
+#			print ERRORLOG "ALREADY QUEUED: IGNORING $potential_url\n";
+		    } else {
+#			print "$potential_url\n";
+			$listed{$potential_url} = $queue_last+1;
+			@queue[$queue_last++] = $potential_url;
+			@process{$potential_url} = $global_url."|".$potential_url."|".$clickable;
+			print LOGFILE @process{$potential_url}, "\n";
+			print QUEUEFILE "$potential_url\n";
+		    }
+		} else {
+		    print ERRORLOG "BAD EXTENSION: IGNORING $potential_url ($url_file)\n";
+		}
+	    } else {
+#		print ERRORLOG "OUTSIDE JHU DOMAIN: IGNORING $potential_url\n";
+	    }
+	}
+    }
+
+}
+
+
+
+sub parse_url {
+    local ($orig_url) = @_;
+    local (@temp, $len, $c);
+
+#    print "$orig_url\n";
+#    print "$retr_directory\n";
+
+    $URL = uc $orig_url;
+
+    if ($URL =~ /^MAILTO\:/) {
+#	print "Ignoring MAILTO: $orig_url\n";
+	return;
+    } elsif ($URL =~ /^\#/) {
+#	print "Ignoring internal name link: $orig_url\n";
+	return;
+    } elsif ($URL !~ /:\/\//) {
+	# Does not contain a protocol or hostname
+	if ($URL =~ /\#/) {
+	    @temp = split(/\#/, $orig_url);
+#	    print "Removing name link $orig_url -> ", @temp[0],"\n";
+	    $orig_url = @temp[0];
+	    $URL = uc $orig_url;
+	}
+
+	$url_protocol = "http";
+	$url_host = $retr_host;
+	$url_port = 80;
+
+	$url_file = $orig_url;
+	$url_directory = "";
+	$dir_file = $url_file;
+
+	#Get filename
+	if ($orig_url =~ /\/$/) {	# Ends in slash
+	    $url_file = "";
+	}
+
+	$url_file =~ s/^\///;
+
+	#Get relative directory
+	if ($dir_file =~ /\/$/) { # Ends in a slash
+	    $url_directory = $dir_file;
+	} else {
+	    @temp = split(//, $dir_file);
+	    for ($c = $#temp; $c >= 0; $c--) {
+		if (@temp[$c] eq "/") {
+		    @tempfile = splice(@temp, $c+1);
+		    $c = -1;
+		    $url_directory = join ("", @temp);
+		    $url_file = join("", @tempfile);
+		}
+	    }	    
+	}
+
+	if (($url_directory eq "/") && ($url_file eq "/")) {
+	    $url_file = "";
+	}
+
+	if ($url_directory !~ /^\//) {
+	    $url_directory = $retr_directory.$url_directory;
+	}
+
+
+    } else {
+	if ($URL =~ /\#/) {
+	    @temp = split(/\#/, $orig_url);
+#	    print "Removing name link $orig_url -> ", @temp[0],"\n";
+	    $orig_url = @temp[0];
+	    $URL = uc $orig_url;
+	}
+	$len = 0;
+	@temp = split(':', $URL);
+	$url_protocol = lc @temp[0];
+	$len += length($url_protocol);
+	@temp = split('\/', $URL);
+	$url_host = lc @temp[2];
+	$len += length($url_host);
+	if ($url_host =~ /:/) {
+	    @temp = split(':', $url_host);
+	    $url_host = @temp[0];
+	    $url_port = @temp[1];
+	} else {
+	    $url_port = 80;
+	}
+
+	$len += 3;
+	@temp = split(//, $orig_url);
+	splice(@temp, 0, $len);
+	$url_file = join("", @temp);
+	if (length($url_file) == 0) {
+	    $url_file = "/";
+	}
+
+	$dir_file = $url_file;
+
+	#Get filename
+	if ($URL =~ /\/$/) {	# Ends in slash
+	    $url_file = "";
+	}
+
+	$url_file =~ s/^\///;
+
+	#Get relative directory
+	if ($dir_file =~ /\/$/) { # Ends in a slash
+	    $url_directory = $dir_file;
+	} else {
+	    @temp = split(//, $dir_file);
+	    for ($c = $#temp; $c >= 0; $c--) {
+		if (@temp[$c] eq "/") {
+		    @tempfile = splice(@temp, $c+1);
+		    $c = -1;
+		    $url_directory = join ("", @temp);
+		    $url_file = join("", @tempfile);
+		}
+	    }	    
+	}
+
+	if (($url_directory eq "/") && ($url_file eq "/")) {
+	    $url_file = "";
+	}
+
+    }
+
+
+
+    if (($url_host =~ /jhu\.edu$/i) || ($url_host =~ /^128\.220/)) {
+	if (!$DNS{$url_host}) {
+	    DNS_resolve($url_host);
+	    $DNS{$url_host} = $hostaddr;
+#	    print "DOING DNS ON $url_host\n";
+	} else {
+	    $hostaddr = $DNS{$url_host};
+#	    print "INTERNAL DNS ON $url_host\n";
+	}
+    } else {
+#	print ERRORLOG "OUT OF JHU: IGNORING $url_host\n";
+#	print "OUT OF JHU: IGNORING $url_host\n";
+	$hostaddr = "0.0.0.0";
+    }
+
+    $url_host = $hostaddr;
+
+#    print "$url_protocol   $url_host    $url_port    $url_directory    $url_file\n";
+
+    $potential_url = sprintf("%s://%s:%s%s%s", $url_protocol, $url_host,
+			     $url_port, $url_directory, $url_file);
+
+#    print "$potential_url\n";
+
+}
+			  
+sub print_header {
+    while (($tag, $value) = each %header) {
+	print "Header Data: $tag = $value\n";
+    }
+}
+
+sub retrieve {
+    local ($hostaddr, $port, $directory, $file, $type) = @_;
+
+    if ($port == -1) {
+	print "Cannot retrieve type $url_protocol\n";
+    } else {
+	get_url ($hostaddr, $port, $directory, $file, $type);
+    }
+}
+
+
+sub port_resolve {
+    local ($protocol) = @_;
+
+    if ($protocol ne "http") {
+	$port = -1;
+    } else {
+	$port = $url_port;
+    }
+}
+
+
+
+sub DNS_resolve {
+    local ($hostname) = @_;
+
+    @temptemp = split(//, $hostname);
+
+    if ($hostname =~ /\d$/) {
+	$hostaddr = $hostname;
+    } else {
+	local ($name, $aliases, $type,$len, @thisaddr) = 
+	    gethostbyname($hostname);
+	($i1,$i2,$i3,$i4) = unpack ('C4', $thisaddr[0]);
+	for ($addcount = 1; $addcount<=$#thisaddr; $addcount++) {
+	    $listed{$thisaddr[$addcount]} = -1;
+	}
+	$hostaddr = sprintf ("%d.%d.%d.%d", $i1, $i2, $i3, $i4);
+    }
+}
+    
+    
+	
+
+###########################################################
+# get_url
+# 
+# Given a parsed url it opens a connection to the host
+# sends a 'request',
+# receives the 'response'
+# and stores the header and body in a data structure for other
+# procedures to parse
+###########################################################
+
+sub get_url {
+    local($host,$port,$directory,$file,$command) = @_;
+
+    undef (%header);
+
+    $full_url = $url_protocol."://".$url_host.$url_directory.$url_file;
+
+#    print $DEBUG "About to open connection\n";    
+    $ret = &open_connection($host,$port);
+    if (!$ret) {
+	print $ERROR "Couldn't Open Connection to $host:$port\n";
+	return $NETERROR;
+    }
+#    print $DEBUG "Opened connection to $host:$port\n";
+
+
+    print SERVER "$command $directory$file HTTP/1.0\r\nAccept: */*\r\nFrom: $MYMAIL\r\nUser-Agent: $ROBOTNAME\r\n\r\n";
+
+#    $accept_type = "*/*";
+    $accept_type = "text/*";
+
+
+#    print "$command $file HTTP/1.0\r\nAccept: $accept_type\r\nFrom: $MYMAIL\r\nUser-Agent: $ROBOTNAME\r\n\r\n";
+
+# Add in a way to send the referrer field if appropiate
+
+    $SIG{'ALRM'}='alarmhandler';
+    alarm 30;
+    $_ = <SERVER>;
+    
+    if (! $_) {
+	print $ERROR "Server unexpectedly Closed connection on URL: http://$host:$port$directory$file\n";
+	return $SERVERERROR;
+    }
+#    print $DEBUG "About to read header\n";
+
+    # Store the Header 
+    if (m#^HTTP/([\.0-9]*) (\d\d\d) (.+)$#) {
+
+	$header{'http_version'} = $1;
+	$header{'status_code'} = $2;
+	$header{'response_text'} = $3;
+    } else {
+	print $ERROR "Server returned Invalid HTTP Status Line on URL: http://$host:$port$directory$file\n";
+	return $SERVERERROR;
+    }
+    $SIG{'ALRM'}='alarmhandler';
+    alarm 30;
+    while (<SERVER>) {
+	last if (/^\s*$/);
+	if (m#^([A-Za-z\-]+):(.+)$#) {
+	    $temp = lc $1;
+	    $header{$temp} = $2;
+	} else {
+    print "Bad header line found in response to URL: http://$host:$port$directory$file\n";
+	    print "Header line was: $_\n";
+	}
+    }
+#print $DEBUG "Header complete now reading file body\n"; 
+   
+    # Store the body of the reply
+    if (($header{'status_code'} >=300) && ($header{'status_code'} <=399)) {
+	#On a redirect, get new location and re-open
+	close(SERVER);
+	$moved_url = $header{'location'};
+	$moved_url =~ s/^\s+//;
+	$moved_url =~ s/\s$//;
+ 	print $DEBUG "REDIRECTING to $moved_url\n";
+	&parse_url($moved_url);
+	&DNS_resolve($url_host);
+        # print $DEBUG "ADDR  <$hostaddr>\n";
+        # print $DEBUG "PORT  <$url_port>\n";
+        # print $DEBUG "DIR   <$url_directory>\n";
+        # print $DEBUG "FILE  <$url_file>\n";
+        # print $DEBUG "COMM  <$command>\n";
+	&get_url($hostaddr, $url_port, $url_directory, $url_file, $command);
+    } else {
+	$body = "";
+	$SIG{'ALRM'}='alarmhandler';
+	alarm 30;
+	while (<SERVER>) {
+	    # Store body of document
+#	    print $_;
+	    $body .=$_;
+	    $retr_host = $host;
+	    $retr_port = $port;
+	    $retr_dire = $directory;
+	    $retr_file = $file;
+	}
+	close(SERVER);
+	return $OK;
+	
+    } # END else
+} # END get_url
+
+###########################################################
+# open_connection
+# 
+# Creates socket and opens connection to host
+# returns a filehandle to socket
+# Assumes $host is in IP notation and port is a number
+# Returns undef if error, otherwise TRUE
+###########################################################
+
+sub open_connection {
+    local($host, $port) = @_;
+    local($destaddr,$destproc);
+
+    (eval {$Inet = &AF_INET;}) || ($Inet=2);
+    (eval {$Stream = &SOCK_STREAM;}) || ($Stream=1);
+
+#    print $DEBUG "Have Inet = $Inet and Stream = $Stream\n";
+
+    if ($host =~/^(\d+)+\.(\d+)\.(\d+)\.(\d+)$/) {
+	$destaddr = pack('C4',$1,$2,$3,$4);
+    } else {
+	print $ERROR "Illegal IP address in $host\n";
+	return $INVALIDPARAMETERS;
+    }
+    
+    $Proto = (getprotobyname("tcp"))[2];
+    $Sockaddr = 'S n a4 x8';
+    $destproc = pack($Sockaddr, $Inet,$port,$destaddr);
+    if (socket(SERVER,$Inet,$Stream,$Proto)) {
+	if (connect(SERVER,$destproc)) {
+#	    print $DEBUG "Connected to Web Server\n";
+
+            # Set the flush for every print or write
+	    select((select(SERVER), $|=1)[0]);
+	    return $OK;
+	}
+    }
+    close(SERVER);
+    return $NETERROR;
+}
+
+
+

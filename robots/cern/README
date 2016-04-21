@@ -1,0 +1,60 @@
+
+
+
+THIS PROGRAM FROM CERN RETRIEVES URLS IN A VARIETY OF FORMATS, INCLUDING:
+
+    http
+    ftp
+    gopher
+
+It is an instructive example of how non-http formats may be retrieved.
+
+
+USAGE:   url_get [-bdhcl] [-o file] <url> [userid password]\n
+
+FOR EXAMPLE:
+
+  ./url_get http://cs.jhu.edu/~baruch/
+  ./url_get ftp://ftp.cs.jhu.edu/pub/admissions/brochure.ps 
+  ./url_get gopher://jhuniverse.hcf.jhu.edu:10005/11/.newslett/1995%20Housing%20Guide
+
+
+OBSERVATION:
+
+  Using the -d (debug) flag typically causes the program to dump core.
+
+
+MORE DETAIL:
+
+
+# syntax: url_get [-bdhc] <url>
+#
+# where -b means binary transfer when doing ftp transactions,
+#       -h means keep the MIME header in HTTP 1.0 transactions (url_get
+#          strips this by default). Header & data go to stdout.
+#       -d means "debug" mode on HTTP transfers (HTTP MIME header goes
+#          to stderr, body of document goes to stdout), or FTP transfers
+#          (FTP replies from remote host go to stderr, data to stdout)
+#       -c means tell the proxy server (if there is one) to refresh
+#          its cache (thanks to Yoav Freund)
+#
+# return code: url_get returns 0 upon successful completion. If the
+#              server returns an HTTP error, url_get returns one of
+#              the following codes:
+#
+#              HTTP code:       url_get returns:
+#              ---------        ---------------
+#               400              1
+#               401              2
+#               402              3
+#               403              4
+#               404              5
+#               500              6
+#               501              7
+#               502              8
+#               503              9
+#
+
+
+
+

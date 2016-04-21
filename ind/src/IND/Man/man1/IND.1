@@ -1,0 +1,45 @@
+.TH COMMAND 1 local
+.SH NAME
+IND \- describes the
+.B IND 
+family of programs
+.SH SYNOPSIS
+A family of programs for building, displaying and testing tree and
+graph classifiers.
+
+.SH DESCRIPTION
+.sp
+.SH Overview
+.PP
+A common approach to supervised classification and prediction in
+artificial intelligence and statistical pattern recognition
+is the use of decision trees.  A tree is "grown" from
+data using a recursive partitioning algorithm to create a tree
+which (hopefully) has good prediction of classes on new data.
+Standard algorithms are CART (by Breiman, Friedman, Olshen and Stone)
+and Id3 and its successor C4 (by Quinlan).  As well as reimplementing
+parts of these algorithms and offering experimental control
+suites, IND also introduces Bayesian and MML methods and more
+sophisticated search in growing trees and for graphs.  
+.PP
+IND consist of four basic kinds of routines; data manipulation
+routines, tree generation routines, tree testing routines, and
+tree display routines.  The data manipulation routines are used
+to partition a single large data set into smaller training and
+test sets.  The generation routines are used to build
+classifiers.  The test routines are used to evaluate classifiers
+and to classify data using a classifier.  And the display
+routines are used to display classifiers in various formats.
+.PP
+Additional documentation can be found in compressed Postscript form
+in the "IND/Doc" directory.
+To print these use the command sequence
+"zcat file.ps | lpr -Ppostscript-printer",
+directing the outout to a Postscript printer.
+
+.SH "SEE ALSO"
+.IR attr (1),
+.IR mktree (1).
+.IR ttest (1).
+.IR "IND/Doc/*.ps.Z"
+

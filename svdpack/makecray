@@ -1,0 +1,624 @@
+#! /bin/csh -f
+#####################################################################
+#                                                                   #
+#                    (C) COPYRIGHT 1992                             #
+#                     MICHAEL W. BERRY                              #
+#                    ALL RIGHTS RESERVED                            #
+#                                                                   #
+#      PERMISSION TO COPY ALL OR PART OF ANY OF THIS                #
+#      SOFTWARE IS ONLY GRANTED UPON APPROVAL FROM THE              #
+#      AUTHOR: MICHAEL W. BERRY, DEPT. OF COMPUTER                  #
+#      SCIENCE, UNIVERSITY OF TENNESSEE,  107 AYRES HALL,           #
+#      KNOXVILLE, TN,  37996-1301 (BERRY@CS.UTK.EDU)                #
+#                                                                   #
+#                                                                   #
+#####################################################################
+# Script for converting SVDPACK to CRAY FORTRAN  (M. Berry 3-13-92) #
+# Run this csh script within a directory containing all SVDPACK     #
+# source and input files.  A subdirectory named "cray" will contain #
+# the converted files for any CRAY system (CRAY-2, CRAY-YMP, etc.). #
+#####################################################################
+if(! -d cray) then
+   mkdir ./cray
+endif
+#####################################################################
+rehash
+start:
+clear
+cat << HERE2
+
+
+
+
+
+
+
+  	  	   SVDPACK Conversion Program for CRAY Machines
+
+                                     by 
+
+                               Michael W. Berry
+
+                      Department of Computer Science
+                         University of Tennessee
+                        Knoxville, TN  37996-1301
+
+
+
+
+
+
+
+
+
+
+HERE2
+echo -n "	              Hit any key to begin ... "
+set a =$<
+menu:
+clear
+cat << HERE1
+
+0. Convert LAS1 and LAI5 files.       4. Convert SIS1 and SII5 files.
+
+1. Convert LAS2 and LAI1 files.       5. Convert SIS2 and SII1 files.
+
+2. Convert BLS1 and BLI5 files.       6. Convert TMS1 and TMI5 files.
+
+3. Convert BLS2 and BLI1 files.       7. Convert TMS2 and TMI1 files.
+
+              8. LEAVE the Conversion Program.
+
+-------------------------------------------------------------------------------
+HERE1
+echo -n "               Enter selection number and press <RETURN>.  "
+set testnum=$<
+if ( $testnum == "" ) goto menu
+
+switch ( $testnum[1] )
+        case "0":
+        clear
+        echo  "Processing files (please wait) ... "
+#
+#       CONVERT LAS1, LAI5 to CRAY FORTRAN 
+#
+     if(-e LAS1) then
+        cp LAS1 ./cray
+        cd ./cray
+        cp LAS1 tmp1
+#
+        sed s/D0/E0/g                                       tmp1  > tmp
+        sed s/DABS/ABS/g                                    tmp   > tmp1
+        sed s/DSQRT/SQRT/g                                  tmp1  > tmp
+        sed s/DAXPY/SAXPY/g                                 tmp   > tmp1
+        sed s/DCOPY/SCOPY/g                                 tmp1  > tmp
+        sed s/DSCAL/SSCAL/g                                 tmp   > tmp1
+        sed s/DDOT/SDOT/g                                   tmp1  > tmp
+        sed s/IDAMAX/ISAMAX/g                               tmp   > tmp1
+        sed s/'IRAND = 918272+J'/'DUMMY=RANSET(918272+J)'/g tmp1  > tmp
+        sed s/'RANDOM(IRAND)'/'RANF()'/g                    tmp   > tmp1
+        sed s/DSWAP/SSWAP/g                                 tmp1  > tmp
+        sed s/'REAL\*8'/'REAL  '/g                          tmp   > tmp1
+        sed s/ETIME/SECOND/g                                tmp1  > tmp 
+        sed s/'SECOND(TMP(1))'/'SECOND()'/g                 tmp   > tmp1
+        sed s/'TMP(2),'//g                                  tmp1  > tmp 
+        sed s/DSIGN/SIGN/g                                  tmp   > tmp1
+        sed s/DMAX1/AMAX1/g                                 tmp1  > tmp 
+        sed s/DMIN1/AMIN1/g                                 tmp   > tmp1
+        sed s/IDINT/IFIX/g                                  tmp1  > tmp 
+        sed s/DATAN/ATAN/g                                  tmp   > tmp1
+        sed s/'REAL\*4'/'REAL  '/g                          tmp1  > tmp
+        sed s/DBLE/FLOAT/g                                  tmp   > tmp1
+        sed s/'FUNCTION TIMER()'/'FUNCTION TIMER(DUMMY)'/g  tmp1  > tmp 
+#
+        mv tmp  LAS1.f
+        rm LAS1
+     else
+        echo " File LAS1 not found."
+        echo " Hit any key to continue ... "
+        set testnum=$<
+        goto menu
+     endif
+     if(-e ../LAI5) then
+        cp ../LAI5 tmp
+        sed s/D-/E-/g                                       tmp   > tmp1
+        sed s/BELLADI/\'BELLADI\'/g                         tmp1  > tmp
+        mv tmp LAI5
+        rm tmp1
+        cd ..
+     else
+        echo "File LAI5 not found."
+        echo "Hit any key to continue ... "
+        set testnum=$<
+        goto menu
+     endif
+        breaksw
+#
+        case "1":
+        clear
+        echo  "Processing files (please wait) ... "
+#
+#       CONVERT LAS2, LAI1 to CRAY FORTRAN
+#
+     if(-e LAS2) then
+        cp LAS2 ./cray
+        cd ./cray
+        cp LAS2 tmp1
+#
+        sed s/D0/E0/g                                       tmp1  > tmp
+        sed s/DABS/ABS/g                                    tmp   > tmp1
+        sed s/DSQRT/SQRT/g                                  tmp1  > tmp
+        sed s/DAXPY/SAXPY/g                                 tmp   > tmp1
+        sed s/DCOPY/SCOPY/g                                 tmp1  > tmp
+        sed s/DSCAL/SSCAL/g                                 tmp   > tmp1
+        sed s/DDOT/SDOT/g                                   tmp1  > tmp
+        sed s/IDAMAX/ISAMAX/g                               tmp   > tmp1
+        sed s/'IRAND = 918272+J'/'DUMMY=RANSET(918272+J)'/g tmp1  > tmp
+        sed s/'RANDOM(IRAND)'/'RANF()'/g                    tmp   > tmp1
+        sed s/DSWAP/SSWAP/g                                 tmp1  > tmp
+        sed s/'REAL\*8'/'REAL  '/g                          tmp   > tmp1
+        sed s/ETIME/SECOND/g                                tmp1  > tmp
+        sed s/'SECOND(TMP(1))'/'SECOND()'/g                 tmp   > tmp1
+        sed s/'TMP(2),'//g                                  tmp1  > tmp
+        sed s/DSIGN/SIGN/g                                  tmp   > tmp1
+        sed s/DMAX1/AMAX1/g                                 tmp1  > tmp
+        sed s/DMIN1/AMIN1/g                                 tmp   > tmp1
+        sed s/IDINT/IFIX/g                                  tmp1  > tmp
+        sed s/DATAN/ATAN/g                                  tmp   > tmp1
+        sed s/'REAL\*4'/'REAL  '/g                          tmp1  > tmp
+        sed s/DBLE/FLOAT/g                                  tmp   > tmp1
+        sed s/'FUNCTION TIMER()'/'FUNCTION TIMER(DUMMY)'/g  tmp1  > tmp
+#
+        mv tmp  LAS2.f
+        rm LAS2
+     else
+        echo " File LAS2 not found."
+        echo " Hit any key to continue ... "
+        set testnum=$<
+        goto menu
+     endif
+     if(-e ../LAI1) then
+        cp ../LAI1 tmp
+        sed s/D-/E-/g                                       tmp   > tmp1
+        sed s/BELLADI/\'BELLADI\'/g                         tmp1  > tmp
+        mv tmp LAI1
+        rm tmp1
+        cd ..
+     else
+        echo "File LAI1 not found."
+        echo "Hit any key to continue ... "
+        set testnum=$<
+        goto menu
+     endif
+        breaksw
+#
+        case "2":
+        clear
+        echo  "Processing files (please wait) ... "
+#
+#       CONVERT BLS1, BLI5 to CRAY FORTRAN
+#
+     if(-e BLS1) then
+        cp BLS1 ./cray
+        cd ./cray
+        cp BLS1 tmp1
+#
+        sed s/D0/E0/g                                       tmp1  > tmp
+        sed s/DABS/ABS/g                                    tmp   > tmp1
+        sed s/DSQRT/SQRT/g                                  tmp1  > tmp
+        sed s/DAXPY/SAXPY/g                                 tmp   > tmp1
+        sed s/DCOPY/SCOPY/g                                 tmp1  > tmp
+        sed s/DSCAL/SSCAL/g                                 tmp   > tmp1
+        sed s/DDOT/SDOT/g                                   tmp1  > tmp
+        sed s/'IRAND = 91827211'/'DUMMY=RANSET(91827211)'/g tmp   > tmp1
+        sed s/'RANDOM(IRAND)'/'RANF()'/g                    tmp1  > tmp 
+        sed s/DSWAP/SSWAP/g                                 tmp   > tmp1
+        sed s/'REAL\*8'/'REAL  '/g                          tmp1  > tmp
+        sed s/ETIME/SECOND/g                                tmp   > tmp1
+        sed s/DGEMV/SGEMV/g                                 tmp1  > tmp
+        sed s/DTBMV/STBMV/g                                 tmp   > tmp1
+        sed s/DSIGN/SIGN/g                                  tmp1  > tmp
+        sed s/DMAX1/AMAX1/g                                 tmp   > tmp1
+        sed s/DMIN1/AMIN1/g                                 tmp1  > tmp
+        sed s/IDINT/IFIX/g                                  tmp   > tmp1
+        sed s/DATAN/ATAN/g                                  tmp1  > tmp
+        sed s/'REAL\*4'/'REAL  '/g                          tmp   > tmp1
+        sed s/DBLE/FLOAT/g                                  tmp1  > tmp 
+        sed s/DGEMM/SGEMM/g                                 tmp   > tmp1
+        sed s/',TMP2(2)'//g                                 tmp1  > tmp 
+        sed s/'TMP2(1)'//g                                  tmp   > tmp1
+        sed s/DNRM2/SNRM2/g                                 tmp1  > tmp 
+        sed s/DROTG/SROTG/g                                 tmp   > tmp1
+        sed s/DROT/SROT/g                                   tmp1  > tmp 
+#
+        mv tmp BLS1.f
+        rm BLS1
+     else
+        echo " File BLS1 not found."
+        echo " Hit any key to continue ... "
+        set testnum=$<
+        goto menu
+     endif
+     if(-e ../BLI5) then
+        cp ../BLI5 tmp
+        sed s/D-/E-/g                                       tmp   > tmp1
+        sed s/BELLADI/\'BELLADI\'/g                         tmp1  > tmp
+        mv tmp BLI5
+        rm tmp1
+        cd ..
+     else
+        echo "File BLI5 not found."
+        echo "Hit any key to continue ... "
+        set testnum=$<
+        goto menu
+     endif
+        breaksw
+
+        case "3":
+        clear
+        echo  "Processing files (please wait) ... "
+#
+#       CONVERT BLS2, BLI1 to CRAY FORTRAN
+#
+     if(-e BLS2) then
+        cp BLS2 ./cray
+        cd ./cray
+        cp BLS2 tmp1
+#
+        sed s/D0/E0/g                                       tmp1  > tmp
+        sed s/DABS/ABS/g                                    tmp   > tmp1
+        sed s/DSQRT/SQRT/g                                  tmp1  > tmp
+        sed s/DAXPY/SAXPY/g                                 tmp   > tmp1
+        sed s/DCOPY/SCOPY/g                                 tmp1  > tmp
+        sed s/DSCAL/SSCAL/g                                 tmp   > tmp1
+        sed s/DDOT/SDOT/g                                   tmp1  > tmp
+        sed s/'IRAND = 91827211'/'DUMMY=RANSET(91827211)'/g tmp   > tmp1
+        sed s/'RANDOM(IRAND)'/'RANF()'/g                    tmp1  > tmp 
+        sed s/DSWAP/SSWAP/g                                 tmp   > tmp1
+        sed s/'REAL\*8'/'REAL  '/g                          tmp1  > tmp
+        sed s/ETIME/SECOND/g                                tmp   > tmp1
+        sed s/DGEMV/SGEMV/g                                 tmp1  > tmp
+        sed s/DTBMV/STBMV/g                                 tmp   > tmp1
+        sed s/DSIGN/SIGN/g                                  tmp1  > tmp
+        sed s/DMAX1/AMAX1/g                                 tmp   > tmp1
+        sed s/DMIN1/AMIN1/g                                 tmp1  > tmp
+        sed s/IDINT/IFIX/g                                  tmp   > tmp1
+        sed s/DATAN/ATAN/g                                  tmp1  > tmp
+        sed s/'REAL\*4'/'REAL  '/g                          tmp   > tmp1
+        sed s/DBLE/FLOAT/g                                  tmp1  > tmp 
+        sed s/DGEMM/SGEMM/g                                 tmp   > tmp1
+        sed s/',TMP2(2)'//g                                 tmp1  > tmp 
+        sed s/'TMP2(1)'//g                                  tmp   > tmp1
+        sed s/DNRM2/SNRM2/g                                 tmp1  > tmp 
+        sed s/DROTG/SROTG/g                                 tmp   > tmp1
+        sed s/DROT/SROT/g                                   tmp1  > tmp 
+#
+        mv tmp BLS2.f
+        rm BLS2
+     else
+        echo " File BLS2 not found."
+        echo " Hit any key to continue ... "
+        set testnum=$<
+        goto menu
+     endif
+     if(-e ../BLI1) then
+        cp ../BLI1 tmp
+        sed s/D-/E-/g                                       tmp   > tmp1
+        sed s/BELLADI/\'BELLADI\'/g                         tmp1  > tmp
+        mv tmp BLI1
+        rm tmp1
+        cd ..
+     else
+        echo "File BLI1 not found."
+        echo "Hit any key to continue ... "
+        set testnum=$<
+        goto menu
+     endif
+        breaksw
+#
+        case "4":
+        clear
+        echo  "Processing files (please wait) ... "
+#
+#       CONVERT SIS1, SII5 to CRAY FORTRAN
+#
+     if(-e SIS1) then
+        cp SIS1 ./cray
+        cd ./cray
+        cp SIS1 tmp1
+#
+        sed s/D0/E0/g                                       tmp1  > tmp
+        sed s/DABS/ABS/g                                    tmp   > tmp1
+        sed s/DSQRT/SQRT/g                                  tmp1  > tmp
+        sed s/DAXPY/SAXPY/g                                 tmp   > tmp1
+        sed s/DSCAL/SSCAL/g                                 tmp1  > tmp 
+        sed s/DDOT/SDOT/g                                   tmp   > tmp1
+        sed s/DFLOAT/FLOAT/g                                tmp1  > tmp
+        sed s/DSCAL/SSCAL/g                                 tmp   > tmp1
+        sed s/'REAL\*8'/'REAL  '/g                          tmp1  > tmp
+        sed s/ETIME/SECOND/g                                tmp   > tmp1
+        sed s/DGEMV/SGEMV/g                                 tmp1  > tmp
+        sed s/DSIGN/SIGN/g                                  tmp   > tmp1
+        sed s/DMAX1/AMAX1/g                                 tmp1  > tmp 
+        sed s/DMIN1/AMIN1/g                                 tmp   > tmp1
+        sed s/IDINT/IFIX/g                                  tmp1  > tmp 
+        sed s/'REAL\*4'/'REAL  '/g                          tmp   > tmp1
+        sed s/DGEMM/SGEMM/g                                 tmp1  > tmp
+        sed s/', TMP(2)'//g                                 tmp   > tmp1
+        sed s/'TMP(1)'//g                                   tmp1  > tmp
+        sed s/DEXP/EXP/g                                    tmp   > tmp1
+        sed s/DLOG/ALOG/g                                   tmp1  > tmp
+        sed s/D-/E-/g                                       tmp   > tmp1
+        sed s/'DOUBLE PRECISION'/'REAL'/g                   tmp1  > tmp 
+#
+        mv tmp SIS1.f
+        rm SIS1
+     else
+        echo " File SIS1 not found."
+        echo " Hit any key to continue ... "
+        set testnum=$<
+        goto menu
+     endif
+     if(-e ../SII5) then
+        cp ../SII5 tmp
+        sed s/D-/E-/g                                       tmp   > tmp1
+        sed s/BELLADI/\'BELLADI\'/g                         tmp1  > tmp
+        mv tmp SII5
+        rm tmp1
+        cd ..
+     else
+        echo "File LAI5 not found."
+        echo "Hit any key to continue ... "
+        set testnum=$<
+        goto menu
+     endif
+        breaksw
+#
+        case "5":
+        clear
+        echo  "Processing files (please wait) ... "
+#
+#       CONVERT SIS2, SII1 to CRAY FORTRAN
+#
+     if(-e SIS2) then
+        cp SIS2 ./cray
+        cd ./cray
+        cp SIS2 tmp1
+#
+        sed s/D0/E0/g                                       tmp1  > tmp
+        sed s/DABS/ABS/g                                    tmp   > tmp1
+        sed s/DSQRT/SQRT/g                                  tmp1  > tmp
+        sed s/DAXPY/SAXPY/g                                 tmp   > tmp1
+        sed s/DSCAL/SSCAL/g                                 tmp1  > tmp 
+        sed s/DDOT/SDOT/g                                   tmp   > tmp1
+        sed s/DFLOAT/FLOAT/g                                tmp1  > tmp
+        sed s/DSCAL/SSCAL/g                                 tmp   > tmp1
+        sed s/'REAL\*8'/'REAL  '/g                          tmp1  > tmp
+        sed s/ETIME/SECOND/g                                tmp   > tmp1
+        sed s/DGEMV/SGEMV/g                                 tmp1  > tmp
+        sed s/DSIGN/SIGN/g                                  tmp   > tmp1
+        sed s/DMAX1/AMAX1/g                                 tmp1  > tmp 
+        sed s/DMIN1/AMIN1/g                                 tmp   > tmp1
+        sed s/IDINT/IFIX/g                                  tmp1  > tmp 
+        sed s/'REAL\*4'/'REAL  '/g                          tmp   > tmp1
+        sed s/DGEMM/SGEMM/g                                 tmp1  > tmp
+        sed s/', TMP(2)'//g                                 tmp   > tmp1
+        sed s/'TMP(1)'//g                                   tmp1  > tmp
+        sed s/DEXP/EXP/g                                    tmp   > tmp1
+        sed s/DLOG/ALOG/g                                   tmp1  > tmp
+        sed s/D-/E-/g                                       tmp   > tmp1
+        sed s/'DOUBLE PRECISION'/'REAL'/g                   tmp1  > tmp 
+#
+        mv tmp SIS2.f
+        rm SIS2
+     else
+        echo "File SIS2 not found."
+        echo "Hit any key to continue ... "
+        set testnum=$<
+        goto menu
+     endif
+     if(-e ../SII1) then
+        cp ../SII1 tmp
+        sed s/D-/E-/g                                       tmp   > tmp1
+        sed s/BELLADI/\'BELLADI\'/g                         tmp1  > tmp
+        mv tmp SII1
+        rm tmp1
+        cd ..
+     else
+        echo "File SII1 not found."
+        echo "Hit any key to continue ... "
+        set testnum=$<
+        goto menu
+     endif
+        breaksw
+#
+        case "6":
+        clear
+        echo  "Processing files (please wait) ... "
+#
+#       CONVERT TMS1, TMI5 to CRAY FORTRAN
+#
+     if(-e TMS1) then
+        cp TMS1 ./cray
+        cd ./cray
+        cp TMS1 tmp1
+#
+        sed s/D0/E0/g                                       tmp1  > tmp
+        sed s/DABS/ABS/g                                    tmp   > tmp1
+        sed s/DSQRT/SQRT/g                                  tmp1  > tmp
+        sed s/DAXPY/SAXPY/g                                 tmp   > tmp1
+        sed s/DSCAL/SSCAL/g                                 tmp1  > tmp 
+        sed s/DDOT/SDOT/g                                   tmp   > tmp1
+        sed s/'IRAND = 91827211'/'DUMMY=RANSET(91827211)'/g tmp1  > tmp
+        sed s/DSCAL/SSCAL/g                                 tmp   > tmp1
+        sed s/'REAL\*8'/'REAL  '/g                          tmp1  > tmp
+        sed s/'MOD(TIME(),1000000)'/'SECONDR()'/g            tmp   > tmp1
+        sed s/DGEMV/SGEMV/g                                 tmp1  > tmp
+        sed s/DSIGN/SIGN/g                                  tmp   > tmp1
+        sed s/DMAX1/AMAX1/g                                 tmp1  > tmp 
+        sed s/DMIN1/AMIN1/g                                 tmp   > tmp1
+        sed s/IDINT/IFIX/g                                  tmp1  > tmp 
+        sed s/'REAL\*4'/'REAL  '/g                          tmp   > tmp1
+        sed s/DGEMM/SGEMM/g                                 tmp1  > tmp
+        sed s/'RANDOM(IRAND)'/'RANF()'/g                    tmp   > tmp1
+        sed s/DLOG/ALOG/g                                   tmp1  > tmp
+        sed s/D+/E+/g                                       tmp   > tmp1
+        sed s/'DOUBLE PRECISION'/'REAL'/g                   tmp1  > tmp 
+        sed s/D-/E-/g                                       tmp   > tmp1
+        sed s/DNRM2/SNRM2/g                                 tmp1  > tmp
+        sed s/'(DT(1))'/'()'/g                              tmp   > tmp1
+        sed s/DASUM/SASUM/g                                 tmp1  > tmp
+        sed s/'LDWI, LDW1, LDW2, LDW3, LDW4, LDW5,'//g      tmp   > tmp1
+        sed s/' LDY, MAX,'/' MAX,'/g                        tmp1  > tmp
+        sed s/' ISMAX, NMAX, NZMAX,'//g                     tmp   > tmp1
+        sed s/' MAXI, MXV(3),'/'MXV(3),'/g                  tmp1  > tmp 
+        sed s/DATAN/ATAN/g                                  tmp   > tmp1
+        sed s/', NMAX, NZMAX'//g                            tmp1  > tmp
+        sed s/',NCG,LEFT'/',LEFT'/g                         tmp   > tmp1
+        sed s/'SIGOLE'/'SIGOLD'/g                           tmp1  > tmp
+        sed s/DCOPY/SCOPY/g                                 tmp   > tmp1
+#
+        echo 'C     DTIME RETURNS ELAPSED USER CPU TIME IN SECONDS.' >> tmp1
+        echo 'C     (CRAY FORTRAN)                                 ' >> tmp1
+        echo '      REAL FUNCTION DTIME()                          ' >> tmp1
+        echo '      COMMON /PREV/ LAST                             ' >> tmp1
+        echo '      REAL T,T0,T1,LAST                              ' >> tmp1
+        echo '      T0=SECOND()                                    ' >> tmp1
+        echo '      T1=LAST                                        ' >> tmp1
+        echo '      LAST=T0                                        ' >> tmp1
+        echo '      DTIME=T0-T1                                    ' >> tmp1
+        echo '      RETURN                                         ' >> tmp1
+        echo '      END                                            ' >> tmp1
+        mv tmp1  TMS1.f
+        rm TMS1
+     else
+        echo " File TMS1 not found."
+        echo " Hit any key to continue ... "
+        set testnum=$<
+        goto menu
+     endif
+     if(-e ../TMI5) then
+        cp ../TMI5 tmp
+        sed s/D-/E-/g                                       tmp   > tmp1
+        sed s/D0/E0/g                                       tmp1  > tmp
+        mv tmp TMI5
+        rm tmp1
+        cd ..
+     else
+        echo " File TMI5 not found."
+        echo " Hit any key to continue ... "
+        set testnum=$<
+        goto menu
+     endif
+        breaksw
+#
+        case "7":
+        clear
+        echo  "Processing files (please wait) ... "
+#
+#       CONVERT TMS2, TMI1 to CRAY FORTRAN
+#
+        if(-e TMS2) then
+        cp TMS2 ./cray
+        cd ./cray
+        cp TMS2 tmp1
+#
+        sed s/D0/E0/g                                       tmp1  > tmp
+        sed s/DABS/ABS/g                                    tmp   > tmp1
+        sed s/DSQRT/SQRT/g                                  tmp1  > tmp
+        sed s/DAXPY/SAXPY/g                                 tmp   > tmp1
+        sed s/DSCAL/SSCAL/g                                 tmp1  > tmp 
+        sed s/DDOT/SDOT/g                                   tmp   > tmp1
+        sed s/'IRAND = 91827211'/'DUMMY=RANSET(91827211)'/g tmp1  > tmp
+        sed s/DSCAL/SSCAL/g                                 tmp   > tmp1
+        sed s/'REAL\*8'/'REAL  '/g                          tmp1  > tmp
+        sed s/'MOD(TIME(),1000000)'/'SECONDR()'/g            tmp   > tmp1
+        sed s/DGEMV/SGEMV/g                                 tmp1  > tmp
+        sed s/DSIGN/SIGN/g                                  tmp   > tmp1
+        sed s/DMAX1/AMAX1/g                                 tmp1  > tmp 
+        sed s/DMIN1/AMIN1/g                                 tmp   > tmp1
+        sed s/IDINT/IFIX/g                                  tmp1  > tmp 
+        sed s/'REAL\*4'/'REAL  '/g                          tmp   > tmp1
+        sed s/DGEMM/SGEMM/g                                 tmp1  > tmp
+        sed s/'RANDOM(IRAND)'/'RANF()'/g                    tmp   > tmp1
+        sed s/DLOG/ALOG/g                                   tmp1  > tmp
+        sed s/D+/E+/g                                       tmp   > tmp1
+        sed s/'DOUBLE PRECISION'/'REAL'/g                   tmp1  > tmp 
+        sed s/D-/E-/g                                       tmp   > tmp1
+        sed s/DNRM2/SNRM2/g                                 tmp1  > tmp
+        sed s/'(DT(1))'/'()'/g                              tmp   > tmp1
+        sed s/DASUM/SASUM/g                                 tmp1  > tmp
+        sed s/'LDWI, LDW1, LDW2, LDW3, LDW4, LDW5,'//g      tmp   > tmp1
+        sed s/' LDY, MAX,'/' MAX,'/g                        tmp1  > tmp
+        sed s/' ISMAX, NMAX, NZMAX,'//g                     tmp   > tmp1
+        sed s/' MAXI, MXV(3),'/'MXV(3),'/g                  tmp1  > tmp 
+        sed s/DATAN/ATAN/g                                  tmp   > tmp1
+        sed s/', NMAX, NZMAX'//g                            tmp1  > tmp
+        sed s/',NCG,LEFT'/',LEFT'/g                         tmp   > tmp1
+        sed s/'SIGOLE'/'SIGOLD'/g                           tmp1  > tmp
+        sed s/DCOPY/SCOPY/g                                 tmp   > tmp1
+#
+        echo 'C     DTIME RETURNS ELAPSED USER CPU TIME IN SECONDS.' >> tmp1
+        echo 'C     (CRAY FORTRAN)                                 ' >> tmp1
+        echo '      REAL FUNCTION DTIME()                          ' >> tmp1
+        echo '      COMMON /PREV/ LAST                             ' >> tmp1
+        echo '      REAL T,T0,T1,LAST                              ' >> tmp1
+        echo '      T0=SECOND()                                    ' >> tmp1
+        echo '      T1=LAST                                        ' >> tmp1
+        echo '      LAST=T0                                        ' >> tmp1
+        echo '      DTIME=T0-T1                                    ' >> tmp1
+        echo '      RETURN                                         ' >> tmp1
+        echo '      END                                            ' >> tmp1
+        mv tmp1  TMS2.f
+        rm TMS2
+     else
+        echo " File TMS2 not found."
+        echo " Hit any key to continue ... "
+        set testnum=$<
+        goto menu
+     endif
+     if(-e ../TMI1) then
+        cp ../TMI1 tmp
+        sed s/D-/E-/g                                       tmp   > tmp1
+        sed s/D0/E0/g                                       tmp1  > tmp
+        mv tmp TMI1
+        rm tmp1
+        cd ..
+     else
+        echo " File TMI1 not found."
+        echo " Hit any key to continue ... "
+        set testnum=$<
+        goto menu
+     endif
+        breaksw
+#
+        case "8":
+        clear
+        cat << HERE3
+                 The following kernels may be available in the Cray 
+
+                 Scientific Library you use.  You may wish to delete 
+
+                 these kernels from the SVDPACK source code:        
+
+                 SSCAL,  SDOT,  SAXPY, SCOPY, SSWAP, ISAMAX, IMTQL2,
+                 SGEMV,  SGEMM, SBTMV, SNRM2, SROT,  SROTG,  XERBLA,
+                 PYTHAG, LSAME, TRED2, TQL2,  SASUM                
+
+
+
+                     [Terminating CRAY Conversion program ...]
+
+
+HERE3
+         set dir = `printenv  PWD`/cray
+         echo '  Your converted CRAY files are in' $dir '.'
+         echo ' '
+         exit
+         breaksw
+
+        default:
+                echo -n "^G"
+                goto menu
+endsw
+goto menu

@@ -1,0 +1,164 @@
+.\" Wray Buntine 5/89 and 9/91
+.TH COMMAND 1 local
+.SH NAME
+tprint \- print a decision tree
+.SH SYNOPSIS
+.B tprint
+[\fBoptions\fR] \fIattribute_file tree_file\fR
+.PP
+.B tprint
+[\fBoptions\fR] \fIstem\fR
+.SH DESCRIPTION
+.PP
+.B tprint 
+displays a decision tree built by
+.BR tgen ,
+or pruned by 
+.BR tprune .
+The second form uses the \fIstem\fR instead of explicitly specifying
+the attribute and tree files, and assumes the filenames
+"\fIstem\fR.attr" and "\fIstem\fR.tree".
+Some options only apply to counts trees
+(usually "\fIstem\fR.treec"), and some only apply to
+class probability trees (usually "\fIstem\fR.tree").
+.PP
+The tree is printed with a pre-order traversal.
+Each line contains information about a node:
+test details that lead to that node,
+and details about the counts, probabilities or other statistics
+stored at that node.
+Counts or probabilities are displayed in the same order as
+they appear in the attribute file.
+Various options allow details printed of 
+leaf posteriors and code lengths, standard deviations of probabilities, and
+classification probabilities (in an averaged tree, leaf probabilities
+usually differ from final probabilities for examples at that leaf).
+.PP
+Using the \-t
+option, a test set can be run through the data to display, at a
+glance, how the tree classifies the test set.
+Useful for finding out where in the tree are the most errors made.
+.PP
+To print smoothing details of class probability trees
+(output using "\fBtprune\fR \-b"),
+including the intermediate leaf probabilities, etc.,
+use the \-b option with the \-p and \-q options.
+To see an option tree without being swamped by options,
+use the \-O option repeatedly to see different
+trees extracted from the option structure.
+
+.SH OPTIONS
+.TP
+.B \-b
+By default, probabilities displayed using the
+.B \-p
+option are for those at the node as used by the classifer
+\fBtclass\fR. 
+This option instead 
+displays the intermediate probabilities used by the smoothing routines.
+Should be used with the \-p, \-q and \-i  options on class probability trees.
+.TP
+.B \-c
+Display counts of training set examples in each class.
+The counts are printed out in the same order as the classes
+appear in the attribute file.
+.TP
+.B \-D \fIn\fR
+Only print out tree to depth \fIn\fR.
+.TP
+.B \-d
+Display the best class (the decision).
+Takes account of utilities to choose the least cost decision.
+.TP
+.B \-g
+Display log. posterior probabilities (or code lengths) stored in the nodes
+of a counts tree.
+Tree must have been grown with the \-t flag to \fBtgen\fR.
+At each leaf node, L labels the log. posterior probability for the leaf.
+At each test node, SP labels the  log. posterior probability of that subtree,
+N labels the log. prior probability of the test,
+and dN labels the log. posterior probability of choosing the
+parameters to the test (the cut or the subset, or 0 for other tests).
+.TP
+.B \-i
+Display counts, etc., for interior (non-leaf) nodes as well.
+.TP
+.B \-l
+Create line numbers and print with each node.
+.TP
+.B \-O
+An option tree is a compact and-or representation of
+many different trees.
+Randomly extract a single tree from the option tree in 
+class probability form in \fItree_file\fR.
+The tree will be extracted in proportion to its posterior probability
+and the generation probability
+(the probability of extracting this tree from the full option tree)
+displayed.
+.TP
+.B \-p
+Display probability of each class,
+as would be used during classification.  
+If the tree is printed with a depth bound then the probabilities printed
+for non-leaf nodes
+represent local probabilities at that node, and may inaccurately
+represent probabilities used in classification.
+If the option occurs twice, then display
+standard deviations as well.
+See also the \-b option.
+.TP
+.B \-q
+Display posteriors used by tree averaging routine
+at each node.
+At each leaf node, L labels the posterior probability
+of that leaf node being in a tree (leaf probability).
+For options, N labels the posterior probability of that
+option being the test occurring in a tree (test probability).
+Use with the \-b option to see the details used by the smoothing algorithm.
+.TP
+.B \-t \fItest_file\fR
+This processes a test file 
+.IR test_file ,
+as text file of examples
+as would normally be done by
+.BR tclass ,
+to produce vectors of class counts at each node.
+These are printed as for the \-c option.
+The method of handling unknowns can be set using the  \-U option.
+.TP 
+.B \-U \fIn\fR
+How to handle unknowns when classifying.
+The available methods are: 
+.RS 
+.TP 
+1 
+Send the unknown down each branch with proportion
+as found in the training set at that node.
+.TP 
+3 
+Send unknown down the most common branch (the default). 
+.TP 
+4 
+Send the unknown down a single branch chosen
+with probability proportional to
+that found in the training set at that node.
+.RE
+.TP
+.B \-v
+Verbose option, display a few extra details about the tree.
+.TP
+.B \-Z
+In regular non-smoothed trees, leaf nodes which have zero count
+are assigned the same class probabilities as their parent.
+With this flag set, zero-count nodes
+are assigned the class probabilities found at the root of the tree.
+In smoothed trees, produced with the \-b option to \fBtprune\fR,
+this option is ignored because smoothing makes class probabilities
+at empty nodes equal to the priors.
+
+.SH "SEE ALSO"
+.br
+.IR tgen (1),
+.IR thead (1),
+.IR tclass (1),
+.IR tprune (1).

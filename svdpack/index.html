@@ -1,0 +1,342 @@
+<head>
+<title>SVDPACK</title>
+<meta name="waisindex" value="nse">
+</head>
+
+<h1>SVDPACK</h1>
+There have been
+<!-- Don't edit this line--> <A HREF="http://www.netlib.org/netlib/master_counts.html">8,046</A> accesses to this library.  (Count updated 04/09/96 at 02:12:09)
+<p>
+
+SVDPACK comprises four numerical (iterative) methods
+for computing the singular value decomposition (SVD)
+of large sparse matrices using double precision ANSI Fortran-77.
+A compatible ANSI-C version (SVDPACKC) is also available.
+This software package implements Lanczos and subspace iteration-based
+methods for determining several of the largest
+singular triplets (singular values and corresponding left- and
+right-singular vectors) for large sparse matrices.  The package
+has been ported to a variety of machines ranging from supercomputers
+to workstations: CRAY Y-MP, CRAY-2S, Alliant FX/80, SPARCstation 10,
+IBM RS/6000-550, DEC 5000-100, and HP 9000-750.  The development
+of SVDPACK wa motivated by the need to compute large rank approximations
+to sparse term-document matrices from information retrieval applications.
+Future updates to SVDPACK(C), will include
+out-of-core updating strategies, which can be used,
+for example, to handle extremely large sparse matrices (on the
+order of a million rows or columns)
+associated with extremely large databases
+in query-based information retrieval applications.
+<P>
+The email address <em>svdpack@cs.utk.edu</em> may be used for
+general discussions.  Comments and questions may also be sent
+to the author at <em>berry@cs.utk.edu</em>.
+<hr>
+
+<pre>
+file	<a href="/svdpack/readme">svdpack/readme</a>
+for	description of SVDPACK
+
+file    <a href="/svdpack/ijsa.ps">svdpack/ijsa.ps</a>
+for     M. Berry, "Large Scale Singular Value Computations",
+,       International Journal of Supercomputer Applications
+,       6:1, (1992), pp. 13-49
+
+file    <a href="/svdpack/las1">svdpack/las1</a>
+for     SVD of large sparse matrices
+by      Michael W. Berry
+ref     M. Berry, "Large Scale Singular Value Computations",
+,       International Journal of Supercomputer Applications 
+,       6:1, (1992), pp. 13-49.
+prec    double
+lang    Fortran77
+alg     Single vector Lanczos for equivalent 2-cyclic eigensystems
+
+file    <a href="/svdpack/lad1">svdpack/lad1</a>
+for     Documentation for las1 from SVDPACK
+by      Michael W. Berry
+see     svdpack/las1
+
+file    <a href="/svdpack/lai5">svdpack/lai5</a>
+for     Sample parameter file for las1 from SVDPACK
+by      Michael W. Berry
+see     svdpack/las1
+
+file    <a href="/svdpack/lai7">svdpack/lai7</a>
+for     SVDPACK sample input file (sparse matrix A)
+#       used in SVDPACK driver programs
+by      Michael W. Berry
+
+file    <a href="/svdpack/lao9">svdpack/lao9</a>
+for     Sample output file of singular values and statistics
+#       for las1 from SVDPACK
+by      Michael W. Berry
+see     svdpack/las1
+
+file    <a href="/svdpack/las2">svdpack/las2</a>
+for     SVD of large sparse matrices
+by      Michael W. Berry
+ref     M. Berry, "Large Scale Singular Value Computations",
+,       International Journal of Supercomputer Applications
+,       6:1, (1992), pp. 13-49.
+prec    double
+lang    Fortran77
+alg     Single vector Lanczos for A'A eigensystems
+
+file    <a href="/svdpack/lad2">svdpack/lad2</a>
+for     Documentation for las2 from SVDPACK
+by      Michael W. Berry
+see     svdpack/las2
+
+file    <a href="/svdpack/lai1">svdpack/lai1</a>
+for     Sample parameter file for las2 from SVDPACK
+by      Michael W. Berry
+see     svdpack/las2
+
+file    <a href="/svdpack/lao2">svdpack/lao2</a>
+for     Sample output file of singular values and statistics
+#       for las2 from SVDPACK
+by      Michael W. Berry
+see     svdpack/las2
+
+file    <a href="/svdpack/bls1">svdpack/bls1</a>
+for     SVD of large sparse matrices
+by      Michael W. Berry
+ref     M. Berry, "Large Scale Singular Value Computations",
+,       International Journal of Supercomputer Applications 
+,       6:1, (1992), pp. 13-49.
+prec    double
+lang    Fortran77
+alg     Block Lanczos for equivalent 2-cyclic eigensystems
+
+file    <a href="/svdpack/bld1">svdpack/bld1</a>
+for     Documentation for bls1 from SVDPACK
+by      Michael W. Berry
+see     svdpack/bls1
+
+file    <a href="/svdpack/bli5">svdpack/bli5</a>
+for     Sample parameter file for bls1 from SVDPACK
+by      Michael W. Berry
+see     svdpack/bls1
+
+file    <a href="/svdpack/blo9">svdpack/blo9</a>
+for     Sample output file of singular values and statistics
+#       for bls1 from SVDPACK
+by      Michael W. Berry
+see     svdpack/bls1
+
+file    <a href="/svdpack/bls2">svdpack/bls2</a>
+for     SVD of large sparse matrices
+by      Michael W. Berry
+ref     M. Berry, "Large Scale Singular Value Computations",
+,       International Journal of Supercomputer Applications
+,       6:1, (1992), pp. 13-49.
+prec    double
+lang    Fortran77
+alg     Block Lanczos for A'A eigensystems
+
+file    <a href="/svdpack/bld2">svdpack/bld2</a>
+for     Documentation for bls2 from SVDPACK
+by      Michael W. Berry
+see     svdpack/bls2
+
+file    <a href="/svdpack/bli1">svdpack/bli1</a>
+for     Sample parameter file for bls2 from SVDPACK
+by      Michael W. Berry
+see     svdpack/bls2
+
+file    <a href="/svdpack/blo2">svdpack/blo2</a>
+for     Sample output file of singular values and statistics
+#       for bls2 from SVDPACK
+by      Michael W. Berry
+see     svdpack/bls2
+
+file    <a href="/svdpack/sis1">svdpack/sis1</a>
+for     SVD of large sparse matrices
+by      Michael W. Berry
+ref     M. Berry, "Large Scale Singular Value Computations",
+,       International Journal of Supercomputer Applications 
+,       6:1, (1992), pp. 13-49.
+prec    double
+lang    Fortran77
+alg     Subspace iteration (Rutishauser's ritzit) for equivalent 
+,       2-cyclic eigensystems
+
+file    <a href="/svdpack/sid1">svdpack/sid1</a>
+for     Documentation for sis1 from SVDPACK
+by      Michael W. Berry
+see     svdpack/sis1
+
+file    <a href="/svdpack/sii5">svdpack/sii5</a>
+for     Sample parameter file for sis1 from SVDPACK
+by      Michael W. Berry
+see     svdpack/sis1
+
+file    <a href="/svdpack/sio4">svdpack/sio4</a>
+for     Sample output file of convergence statistics
+#       for sis1 from SVDPACK
+by      Michael W. Berry
+see     svdpack/sis1
+
+file    <a href="/svdpack/sio9">svdpack/sio9</a>
+for     Sample output file of singular values and statistics
+#       for sis1 from SVDPACK
+by      Michael W. Berry
+see     svdpack/sis1
+
+file    <a href="/svdpack/sis2">svdpack/sis2</a>
+for     SVD of large sparse matrices
+by      Michael W. Berry
+ref     M. Berry, "Large Scale Singular Value Computations",
+,       International Journal of Supercomputer Applications
+,       6:1, (1992), pp. 13-49.
+prec    double
+lang    Fortran77
+alg     Subspace iteration (Rutishauser's ritzit) for A'A 
+,       eigensystems
+
+file    <a href="/svdpack/sid2">svdpack/sid2</a>
+for     Documentation for sis2 from SVDPACK
+by      Michael W. Berry
+see     svdpack/sis2
+
+file    <a href="/svdpack/sii1">svdpack/sii1</a>
+for     Sample parameter file for sis2 from SVDPACK
+by      Michael W. Berry
+see     svdpack/sis2
+
+file    <a href="/svdpack/sio2">svdpack/sio2</a>
+for     Sample output file of singular values and statistics
+#       for sis2 from SVDPACK
+by      Michael W. Berry
+see     svdpack/sis2
+
+file    <a href="/svdpack/sio5">svdpack/sio5</a>
+for     Sample output file of convergence statistics
+#       for sis2 from SVDPACK
+by      Michael W. Berry
+see     svdpack/sis2
+
+file    <a href="/svdpack/csis3.tar.Z">svdpack/csis3.tar.Z</a>
+for     SVD of large sparse nonhermitian complex matrices
+by      Sowmini Varadhan and Michael W. Berry
+ref     M. Berry, "Large Scale Singular Value Computations",
+,       International Journal of Supercomputer Applications
+,       6:1, (1992), pp. 13-49.
+prec    single complex
+lang    Fortran77
+alg     Subspace iteration (Rutishauser's ritzit) for A'A 
+,       eigensystems with restarting capability
+see     svdpack/sis3.tar.Z
+
+file    <a href="/svdpack/sis3.tar.Z">svdpack/sis3.tar.Z</a>
+for     Incremental SVD of large sparse matrices 
+by      Sowmini Varadhan and Michael W. Berry
+ref     M. Berry, "Large Scale Singular Value Computations",
+,       International Journal of Supercomputer Applications
+,       6:1, (1992), pp. 13-49.
+prec    double
+lang    Fortran77
+alg     Subspace iteration (Rutishauser's ritzit) for A'A
+,       eigensystems with restarting capability
+see     svdpack/csis3.tar.Z
+
+file    <a href="/svdpack/tms1">svdpack/tms1</a>
+for     SVD of large sparse matrices
+by      Michael W. Berry
+ref     M. Berry, "Large Scale Singular Value Computations",
+,       International Journal of Supercomputer Applications 
+,       6:1, (1992), pp. 13-49.
+prec    double
+lang    Fortran77
+alg     Trace minimization for shifted 2-cyclic eigensystems
+,       using Ritz-shifting
+
+file    <a href="/svdpack/tmd1">svdpack/tmd1</a>
+for     Documentation for tms1 from SVDPACK
+by      Michael W. Berry
+see     svdpack/tms1
+
+file    <a href="/svdpack/tmi5">svdpack/tmi5</a>
+for     Sample parameter file for tms1 from SVDPACK
+by      Michael W. Berry
+see     svdpack/tms1
+
+file    <a href="/svdpack/tmo9">svdpack/tmo9</a>
+for     Sample output file of singular values and statistics
+#       for las1 from SVDPACK
+by      Michael W. Berry
+see     svdpack/tms1
+
+file    <a href="/svdpack/tms2">svdpack/tms2</a>
+for     SVD of large sparse matrices
+by      Michael W. Berry
+ref     M. Berry, "Large Scale Singular Value Computations",
+,       International Journal of Supercomputer Applications
+,       6:1, (1992), pp. 13-49.
+prec    double
+lang    Fortran77
+alg     Trace minimization for shifted A'A eigensystems using
+,       Ritz-shifting and Chebyshev polynomial acceleration
+
+file    <a href="/svdpack/tmd2">svdpack/tmd2</a>
+for     Documentation for tms2 from SVDPACK
+by      Michael W. Berry
+see     svdpack/tms2
+
+file    <a href="/svdpack/tmi1">svdpack/tmi1</a>
+for     Sample parameter file for tms2 from SVDPACK
+by      Michael W. Berry
+see     svdpack/tms2
+
+file    <a href="/svdpack/tmo2">svdpack/tmo2</a>
+for     Sample output file of singular values and statistics
+#       for tms2 from SVDPACK
+by      Michael W. Berry
+see     svdpack/tms2
+
+file    <a href="/svdpack/blas">svdpack/blas</a>
+for     Level 1, 2, and 3 Basic Linear Algebra Subroutines
+,       from LAPACK used by SVDPACK routines
+by      Michael W. Berry
+see     svdpack/bls1, svdpack/bls2, svdpack/sis1, svdpack/sis2,
+,       svdpack/tms1, svdpack/tms2
+
+file    <a href="/svdpack/dat1">svdpack/dat1</a>
+for     SVDPACK sample sparse matrix in Harwell-Boeing format
+,       3206 by 44 term-document matrix from an information
+,       retrieval application
+by      Apple Computer Inc.
+
+file    <a href="/svdpack/dat2">svdpack/dat2</a>
+for     SVDPACK sample sparse matrix in Harwell-Boeing format
+,       1472 by 294 term-document matrix from an information
+,       retrieval application
+by      Apple Computer Inc.
+
+file    <a href="/svdpack/dat3">svdpack/dat3</a>
+for     SVDPACK sample sparse matrix in Harwell-Boeing format
+,       1436 by 330 Jacobian matrix from a seismic tomography
+,       application
+by      Amoco Research Inc.
+
+file    <a href="/svdpack/makecray">svdpack/makecray</a>
+for     UNIX c-shell script for producing Cray Fortran
+,       equivalent SVDPACK routines and input files
+by      Michael W. Berry
+
+file    <a href="/svdpack/makefile">svdpack/makefile</a>
+for     UNIX makefile for SVDPACK executables
+,       (e.g., issue "make las1.x" to create las1.x)
+by      Michael W. Berry
+
+file    <a href="/svdpack/svdpackc.tar.Z">svdpack/svdpackc.tar.Z</a>
+for     C version of SVDPACK for computing the SVD of large 
+,       sparse real matrices
+by      Michael W. Berry et al.
+ref     M. Berry et al., "SVDPACKC (Version 1.0) User's
+,       Guide", Univ. of Tennessee Tech. Report CS-93-194,
+,       April 1993 (Revised March 1996)
+</pre>
+</body>
+</html>

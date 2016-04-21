@@ -1,0 +1,149 @@
+Explanation of robot_base.pl and Assignment 4 part 2.
+
+robot_base.pl is a very basic robot which walks down an HTML directory. For
+each page of text/html it reads it extracts two items-- links and the text 
+immediately associated with the links. For example, given the following
+
+	<a href="some_link.html"> Some link you might like </a>
+
+It will extract
+
+		$link = some_link.html
+		$text = Some link you might like
+
+If there is no plain text embedded between the <a href...> ... </a> tag then
+nothing is retrieved for $text.
+
+The links are pushed onto a stack and traversed in order of their discovery.
+That is the robot performs a breadth-first search of the HTML directory.
+
+The robot is relatively robust in that it will not trapse down broken or 
+non-existant links. It also will not attempt to parse for links anything other
+than text/html. It is also relatively nice in that it only will contact a
+particular server once every minute. There is a way to contact the server's
+more frequently but I don't recommended it (unless you like your mailbox filled
+with nasty email from web sys admins).
+
+The robot _will_ traverse recursive and non-local links. You should change this
+function (and will be graded down if you don't). We want to stay within the
+"cs.jhu.edu" domain.
+
+Your job is to modify the robot so that it seeks out and prints links to 
+postscript documents. To verify if a page is postscript use the method
+	
+	my $response = $ua->request( $request );
+	$response->content_type =~ m@application/postscript@;
+
+There are two methods which you should modify
+
+#
+# wanted_content
+#
+#    UNIMPLEMENTED
+#
+#  this function should check to see if the current URL content
+#  is something which is either
+#
+#    a) something we are looking for (e.g. postscript, jpegs,
+#       etc.). In this case we should save the URL in the
+#       @wanted_urls array.
+#
+#    b) something we can traverse and search for links such as 
+#       text/html
+#
+ 
+sub wanted_content {
+    my $content = shift;
+ 
+    #
+    # right now we only accept text/html
+    #
+ 
+    return $content =~ m@text/html@;
+}
+ 
+
+and
+
+#
+# grab_urls
+#
+#    PARTIALLY IMPLEMENTED
+#
+#   this function parses through the content of a passed HTML page and
+#   picks out all links and any immediately related text.
+#
+#   Relevancy based on both the link itself and the related text should
+#   be calculated and stored in the %relevance hash
+#
+#   Example:
+#
+#      $relevance{ $link } = &your_relevance_method( $link, $text );
+#
+#   Currently _no_ relevance calculations are made and each link is 
+#   given a relevance value of 1.
+#
+ 
+sub grab_urls {
+    my $content = shift;
+    my @urls    = ();
+ 
+    
+  skip:
+    while ($content =~ s/<\s*[aA] ([^>]*)>\s*(?:<[^>]*>)*(?:([^<]*)(?:<[^aA>]*>)
+*<\/\s*[aA]\s*>)?//) {
+            
+        my $tag_text = $1;    # ex: <a href="some_link"> ...
+        my $reg_text = $2;    # ex: <a href ... > Some plain text </a>
+        my $link = "";
+ 
+        if (defined $reg_text) {
+            $reg_text =~ s/[\n\r]/ /;
+            $reg_text =~ s/\s{2,}/ /;
+ 
+            #
+            # compute some relevancy function here for related text
+            #
+        }
+ 
+        if ($tag_text =~ /href\s*=\s*(?:["']([^"']*)["']|([^\s])*)/i) {
+            $link = $1 || $2;
+ 
+	    #
+	    # compute some relevancy function here for the link itself
+	    # 
+	    # Note: this is also an excellent place to check for non-
+	    #       local or self-referencing links.
+	    #
+
+            $relevance{ $link } = 1;    # apply the relevance total here
+            push @urls, $link;
+        }
+    }
+ 
+    return @urls;
+}
+
+
+All links found are then sorted base upon the numeric value of their relevance
+and trapsed in the sorted order. This order may be modified as more relevant
+links are discovered. The robot stops when it runs out of links.
+
+Note in the above function (grab_urls) that $content is the ENTIRE CONTENT of
+a text/html page. It is therefore possible to use surrounding text other than
+$reg_text and $tag_text to determine relevancy of a link.
+
+
+Summary
+
+	1) Modify the robot to only traverse local ("jhu.edu" domain) and non
+	   self-referencing links.
+
+	2) modify the sub wanted_content { } function to check for postscript
+	   content or text/html content to determine whether the current URL
+	   is either traversable or contains postscript.
+
+	3) modify the sub grab_urls { } function to rank all links found by
+	   some relevancy function of your own design. All unvisited links
+	   will then be sorted based upon this relevancy function to determine
+	   where the robot will visit next.

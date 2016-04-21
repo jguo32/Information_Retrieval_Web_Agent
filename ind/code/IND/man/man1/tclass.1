@@ -1,0 +1,246 @@
+.TH COMMAND 1 local
+.SH NAME
+tclass \- classify a test set using a decision tree
+.SH SYNOPSIS
+.B tclass 
+[\fBoptions\fR] \fIattribute_file tree_file(s)\fR [\fItest_file\fR]
+.PP
+.B tclass 
+[\fBoptions\fR] \fIstem\fR
+.SH DESCRIPTION
+.PP
+.B tclass 
+takes a test set and classifies it according to the given tree(s).
+The test set has the same format as the input data for \fBtgen\fR
+so a decision attribute must be given.  The second form uses the stem
+instead of explicitly specifying the attribute, examples and output
+files and assumes files
+"\fIstem\fR.attr", "\fIstem\fR.enc" and "\fIstem\fR.tree"
+exist.
+
+If multiple \fIn\fR
+trees are input, the final class probability vectors from each tree
+are merged (by default, averaged) to give an
+\fI(n+1)\fR-th
+prediction.  This is termed the "multiple tree".  Statistics can be
+reported for both the individual trees and/or the multiple tree.
+The facilities in 
+.B tgen
+for generating multiple trees are currently under repair.
+.PP
+If the \fIattribute\_file\fR contains a utilities specification, then average
+utility is also printed with any statistics and the best decision is
+calculated to maximize expected utility.  Otherwise, the class with
+maximum probability is chosen (i.e., minimum errors utility).
+.PP
+The usual output mode for 
+.B tclass
+is fairly verbose.
+Output will be brief and restricted to a single line with the
+\-b option.
+The order of output in this case
+is mostly the same as for verbose mode
+except that no explanation, etc. will be given,
+simply a line of numbers.
+So run the verbose mode first to determine the order,
+before using the brief mode,
+then compare the numbers see the precise order fields are printed 
+for the brief mode.
+The order for a single tree is as follows:
+percentage correct, half-brier score, predicted percentage correct
+(with \-s option),
+standard deviation of prediction (with \-v option),
+log posterior probability (with \-g option),
+if the tree was grown with cross validation,
+the cross validation estimate of
+percentage accuracy and its standard deviation (with \-G option),
+node count and expected number of nodes (with \-l option),
+and utility on training sample (if utilities exist in \fIattribute_file\fR.).
+.PP
+If trees were pruned with the \-b option then tree smoothing
+is done during classification.
+During classification, an example falls down a given branch.
+Without smoothing, the class probability for the example
+is taken from the leaf to which the example falls.
+With smoothing, the class probabilities are averaged
+along the entire branch.  The averaged is weighted
+according to a Bayesian formula computed by \fBtprune\fR
+and stored in the class probability tree.
+Usually the nodes lower down the tree will dominate in the weights.
+
+.SH OPTIONS
+.TP
+.B \-b
+Make summary of performance briefer.
+Useful if the output is later piped to a statistics program.
+.TP
+.B \-c
+Print for each example the given class.  This option combines nicely
+with option \-d.
+.TP
+.B \-D
+Print for each example the decision for each tree 
+(use with the \-m option).
+.TP
+.B \-d
+Print for each example the decision for the single tree, or if several
+trees exist, the multiple tree.  This option combines nicely with
+option \-c.
+.TP
+.B \-e
+By default
+.B tclass
+assumes the example file is encoded and to be sampled automatically
+(see \fBenc\fR(1) and \fBencsmpl\fR(1)).
+This flag makes
+.B tclass
+read in the example file as a text file complete.
+.TP
+.B \-f
+Print for each example and for each tree
+whether the decision agreed with the actual class (1=yes, 0=no).
+Useful for comparative statistical analysis of tree accuracy.
+.TP
+.B \-g
+Print out the posterior for the trees as well (taken from the header).
+Can print garbage if the tree was pruned with the \-n option,
+or grown with a cost-complexity pruning option.
+.TP
+.B \-G
+Assuming the tree was generated using the \-C option of
+\fBtgen\fR 
+using cost-complexity pruning,
+this prints out the error estimate for the tree
+calculated during the cross validation procedure.
+Only works if the tree was pruned with the \-n
+option rather than Bayes pruning.
+Notice the estimate will be biased because the cost-complexity
+tradeoff parameter was selected to minimise errors.
+.TP
+.B \-l
+Print out the leafcount (both the expected and actual sizes) for each tree.
+.TP
+.B \-m \fIn\fR
+Classify multiple trees,
+where \fIn\fR is the number of trees.
+The \fIn\fR trees are listed in the \fItree_file\fR(s) argument.
+If the \-m option is not used,
+one tree is assumed.
+.TP
+.B \-o
+Choose best decision simply by picking the class with highest probability
+(i.e. ignore utilities).
+.TP
+.B \-P
+For each example,
+print out the probability estimates for each class and for each tree
+(use with the \-m option).
+.TP
+.B \-p
+For each example,
+print out the probability estimates for each class 
+for the single tree, or if several trees exist, the multiple tree.
+When coupled with the \-v option prints their variance as well.
+.TP
+.B \-Q
+Print out details of the tree prior (assumed constant across multiple trees)
+once at the beginning.
+.TP
+.B \-q
+When using multiple trees, prints out a matrix representing 
+differences between trees.
+The second row and column of the matrix represents the differences
+of other trees with the second tree, etc.
+(the last row and column, the multiple tree).
+Useful for determining which single tree is most similar to the multiple tree.
+Differences are measured in terms of the proportion of examples
+on whose classification two trees disagree
+(in the upper triagonal)
+and the average over the examples of the manhattan distance
+between class probability vectors produced by two trees
+on an example (in the lower triagonal).
+.TP
+.B \-S
+Print out a summary of performance for each tree
+(use with the \-m option).
+.TP
+.B \-s
+Print a summary of performance
+for the single tree, or if several trees exist, the multiple tree.
+This includes
+accuracy, mean square error, expected accuracy
+(the classifier's prediction of what accuracy it should have got,
+found by averaging the class probabilities at the leaves)
+and an optional average utility. 
+Expected accuracy is usually an over estimate,
+except in the case of a small tree with "lots" of data,
+or in the case of an option tree built using
+the \-J option to \fBtgen\fR and realistic prior parameters.
+.TP
+.B \-t
+Print out with the other statistics a misclassification matrix
+of predicted classes by actual classes for trees
+(either the \-s or the \-S options must be used).
+Classes appear in the order they are given in 
+\fIattribute\_file\fR.
+.TP
+.B \-U \fIn\fR
+How to handle unknowns when classifying.
+The methods available are:
+.RS
+.TP 
+1  
+Send the unknown down each branch with proportion
+as found in the training set at that node.
+.TP  
+3  
+Send unknown down the most common branch (the default).  
+.TP  
+4  
+Send the unknown down a single branch chosen
+with probability proportional to
+that found in the training set at that node.
+.RE
+.TP
+.B \-v
+For each example, a standard deviation of the expected accuracy
+is calculated.
+The average of these variances is then printed.
+Unfortunately, this is not a standard deviation for the
+expected accuracy of the sample
+(this much more complicated formula is not calculated),
+but the value gives a generous over-estimate of the imprecision in the
+expected accuracy of the sample.
+If the tree was pruned by \fBtprune\fR with \-bD options together,
+then the value returned will be meaningless.
+.TP
+.B \-w
+When averaging class probabilities from multiple trees,
+calculate weights by ratioing the posterior for each tree
+(which is stored in the tree header).
+By default, weights are all equal.
+.TP
+.B \-W
+"\fIw1 ... wm\fR"
+.br
+When averaging class probabilities from multiple trees,
+weight the i-th tree by the weight \fIwi\fR
+(only use with the \-m option).
+Weights are white space delimited
+(so the argument must be enclosed in quotes).
+.TP
+.B \-Z 
+In regular non-smoothed trees, leaf nodes which have zero count
+are assigned the same class probabilities as their parent. 
+With this flag set, zero-count nodes
+are assigned the class probabilities found at the root of the tree.
+In smoothed trees, produced with the \-b option to \fBtprune\fR,
+this option is ignored because smoothing makes class probabilities
+equal to the priors.
+
+.SH "SEE ALSO"
+.br
+.IR tgen (1),
+.IR tprune (1),
+.IR mktree (1),
+.IR ttest (1).

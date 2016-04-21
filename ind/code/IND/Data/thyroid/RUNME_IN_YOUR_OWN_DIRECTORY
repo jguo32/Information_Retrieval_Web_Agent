@@ -1,0 +1,45 @@
+
+
+
+BIN=/home/1/yarowsky/cs466/ind/code/IND/bin
+ORIG_DATA=/home/1/yarowsky/cs466/ind/code/IND/Data/thyroid
+
+DNAME=hypo
+
+echo "========================================================================"
+echo "COPYING DATA FILES TO DIRECTORY " $MY_DATA
+echo "========================================================================"
+
+cp -p $ORIG_DATA/$DNAME.attr $ORIG_DATA/$DNAME.desc $ORIG_DATA/$DNAME.dta.Z .
+
+echo "========================================================================"
+echo "ENCODING DATA SET " $DNAME
+echo "========================================================================"
+
+$BIN/enc $DNAME
+
+echo "========================================================================"
+echo "SAMPLING VALUES IN DATA SET " $DNAME " (for display purposes)"
+echo "========================================================================"
+
+$BIN/encsmpl -vg S,20,13579 $DNAME ; echo 
+
+echo "========================================================================"
+echo "SAMPLING VALUES IN DATA SET " $DNAME " (for training purposes)"
+echo "========================================================================"
+
+$BIN/encsmpl S,400,13579 $DNAME ; echo 
+
+echo "========================================================================"
+echo "GENERATING TREE FOR: " $DNAME
+echo "========================================================================"
+
+
+$BIN/mktree -O $BIN/ -o "-tB2,2 -A1 -Pmml -d6" -p -b -c -slvgt $DNAME ; echo 
+
+echo "========================================================================"
+echo "PRINTING TREE FOR: " $DNAME
+echo "========================================================================"
+
+$BIN/tprint -ipq $DNAME ; echo
+

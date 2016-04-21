@@ -1,0 +1,25 @@
+
+SVDPACK comprises four numerical (iterative) methods
+for computing the singular value decomposition (SVD)
+of large sparse matrices using double precision ANSI Fortran-77.
+A compatible ANSI-C version (SVDPACKC) is also available.
+This software package implements Lanczos and subspace iteration-based
+methods for determining several of the largest
+singular triplets (singular values and corresponding left- and
+right-singular vectors) for large sparse matrices.  The package
+has been ported to a variety of machines ranging from supercomputers
+to workstations: CRAY Y-MP, CRAY-2S, Alliant FX/80, SPARCstation 10,
+IBM RS/6000-550, DEC 5000-100, and HP 9000-750.  The development
+of SVDPACK wa motivated by the need to compute large rank approximations
+to sparse term-document matrices from information retrieval applications.
+Future updates to SVDPACK(C), will include
+out-of-core updating strategies, which can be used,
+for example, to handle extremely large sparse matrices (on the
+order of a million rows or columns)
+associated with extremely large databases
+in query-based information retrieval applications.
+
+The email address svdpack@cs.utk.edu may be used for
+general discussions.  Comments and questions may also be sent
+to the author at berry@cs.utk.edu.
+

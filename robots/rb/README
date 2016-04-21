@@ -1,0 +1,26 @@
+
+
+
+THIS ROBOT WAS WRITTEN BY RICHARD WICENTOWSKI 
+   as part of his 600.466 final project in 1996.
+
+
+To run:
+
+    FIRST COPY THIS PROGRAM TO AN EMPTY DIRECTORY
+        (it writes temporary queue files and logs
+          in the current directory)
+
+    THEN EXECUTE THE PROGRAM:
+
+      ./resum96.prl
+
+ 
+    IF YOU RE-RUN THE PROGRAM AFTER YOU HAVE QUEUE/LOG FILES
+       in the current directory, you will be asked if you
+       want to continue where the program was aborted last
+       time.
+
+
+
+

@@ -1,0 +1,40 @@
+.\" Wray Buntine 9/1991
+.TH COMMAND 1 local
+.SH NAME
+mkclean \- clean up mess from 
+.B mktree,
+etc.
+.SH SYNOPSIS
+.B mkclean
+[\fB\-crt\fR] [\fIstem\fR]
+.SH DESCRIPTION
+.PP
+.B mkclean 
+is a  C shell script that 
+cleans up any mess due to abnormal termination
+of
+.B mktree
+or 
+.B ttest.
+This means deleting any files 
+"\fIstem\fR.bld", "\fIstem\fR.tst", "\fIstem\fR.tree*", and 
+compressing the data files
+"\fIstem\fR.dta" or "\fIstem\fR.enc", etc.
+\fIstem\fR should be a simple file name and not a path name.
+
+.SH OPTIONS
+.TP
+.B \-c
+Don't bother compressing data files.
+.TP
+.B \-r
+Tar and compress any "\fIstem\fR.trial.*" files.
+.TP
+.B \-t
+Don't delete tree or classifier files.
+
+.SH "SEE ALSO"
+.br
+.IR mktree (1),
+.IR ttest (1).
+

@@ -1,0 +1,67 @@
+
+Effective 11 May 1992, domestic and foreign availability of the AutoClass III 
+program is only through COSMIC, NASA's software distribution agency.
+
+Request "AutoClass III - Automatic Class Discovery from Data (ARC-13180)".
+
+COSMIC
+University of Georgia
+382 East Broad Street
+Athens, GA  30602  USA
+voice: (706) 542-3265  fax: (706) 542-4807
+telex: 41- 190 UGA IRC ATHENS
+e-mail:	cosmic@@uga.bitnet  or service@@cossack.cosmic.uga.edu								    
+	or Tom H. Broom tom@cosmic.cosmic.uga.edu
+
+-----------------------------------------------------------------------
+
+If you have any questions about the procedures, please contact:
+
+Will Taylor		
+e-mail: taylor@@ptolemy.arc.nasa.gov
+voice: (415)604-3364
+fax: (415)604-3594
+
+----------------------------------------------------------------------
+ARC-13180 - AutoClass: Automatic Class Discovery from Data
+-------------------------------------------------------------
+The standard approach to classification in much of artificial
+intelligence and statistical pattern recognition research
+involves partitioning of the data into separate subsets, known as
+classes.  AUTOCLASS III, from NASA Ames Research Center, uses the
+Bayesian approach in which classes are described by probability
+distributions over the attributes of the objects, specified by a
+model function and its parameters.  The calculation of the
+probability of each object's membership in each class provides a
+more intuitive classification than absolute partitioning
+techniques.
+
+AUTOCLASS III is applicable to most data sets consisting of
+independent instances, each described by a fixed length vector of
+attribute values.  An attribute value may be a number, one of a
+set of attribute specific symbols, or omitted.  The user
+specifies a class probability distribution function by
+associating attribute sets with supplied likelihood function
+terms.  AUTOCLASS then searches in the space of class numbers and
+parameters for the maximally probable combination.  It returns
+the set of class probability function parameters, and the class
+membership probabilities for each data instance.
+
+AUTOCLASS III, ARC-13180, is written in Common Lisp, and is
+designed to be platform independent.  This program has been
+successfully run on Symbolics and Explorer Lisp machines.  It has
+been successfully used with the following implementations of
+Common LISP on the Sun: Franz Allegro CL, Lucid Common Lisp, and
+Austin Kyoto Common Lisp and similar UNIX platforms; under the
+Lucid Common Lisp implementations on VAX/VMS v5.4, VAX/Ultrix
+v4.1, and MIPS/Ultrix v4, rev. 179; and on the Macintosh personal
+computer.  The minimum Macintosh required is the IIci.  This
+program will not run under CMU Common Lisp or VAX/VMS DEC Common
+Lisp.  A minimum of 8Mb of RAM is required for Macintosh
+platforms and 16Mb for workstations.  The standard distribution
+medium for this program is a .25 inch streaming magnetic tape
+cartridge in UNIX tar format.  It is also available on a 3.5 inch
+diskette in UNIX tar format and a 3.5 inch diskette in Macintosh
+format.  An electronic copy of the documentation is included on
+the distribution medium.  Program $900; documentation $21.
+----------------------------------------------------------------------

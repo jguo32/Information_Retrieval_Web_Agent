@@ -1,0 +1,67 @@
+#!/bin/csh
+# IND-version2.0
+#    IND 2.0 released 9/15/92   contact: ind@kronos.arc.nasa.gov
+#    by Wray Buntine (and others, see IND/README)
+#    NASA Ames Research Center, MS 269-2, Moffett Field, CA 94035
+#  
+#
+#!/bin/csh
+# print from (file $2 or stdin) only those fields with number listed in $1
+#   -s	=	pipe output through sort
+#   -u	=	pipe output through sort & uniq
+#   -c	=	pipe output through sort & uniq -c
+#   -n	=	sort is numeric
+
+set sort
+set uniq
+set num
+
+while ( 1 )
+switch ( $1 )
+case "-s":
+	set sort = 1
+	shift
+	breaksw
+case "-n":
+	set num = "-n"
+	shift
+	breaksw
+case "-u":
+	set uniq = 1
+	set uniqflg 
+	shift
+	breaksw
+case "-c":
+	set uniq = 1
+	set uniqflg = "-c"
+	shift
+	breaksw
+default:
+	break
+endsw
+end
+
+if ( $#argv > 2 || $#argv < 1 ) then
+    echo "cut:  wrong arguments: $*"
+    echo "cut:  [-s -n -u -c] field-no [file]"
+    exit 1
+endif
+
+if ( $uniq ) then
+    awk 'BEGIN  { n = split("'$1'", rec, ",") } \
+        {  s = $(rec[1]) \
+	   for (i=2; i<= n; i++) s = s " " $(rec[i]) \
+	   print s }'  $2  | sort $num | uniq $uniqflg
+else
+if ( $sort ) then
+    awk 'BEGIN  { n = split("'$1'", rec, ",") } \
+        {  s = $(rec[1]) \
+	   for (i=2; i<= n; i++) s = s " " $(rec[i]) \
+	   print s }'  $2  | sort $num 
+else
+    awk 'BEGIN  { n = split("'$1'", rec, ",") } \
+        {  s = $(rec[1]) \
+	   for (i=2; i<= n; i++) s = s " " $(rec[i]) \
+	   print s }'  $2  
+endif
+endif

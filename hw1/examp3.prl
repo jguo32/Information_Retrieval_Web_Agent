@@ -1,0 +1,48 @@
+#!/usr/local/bin/perl
+ 
+##########################################################
+##  EXAMPLE SHELL FOR END-OF-SENTENCE CLASSIFIER
+##
+##  (this version shows performance just using the simple
+##    rule EOS only if 2 spaces or paragraph break after period.)
+##
+##   Failures of this approach are due to text where all words and 
+##   punctution end with a single space (increasingly common), and
+##   in text that was nroffed/justified, and hence has internal
+##   spaces.
+##
+##    examp2.prl < sent.data.train | more
+##
+##  Suggestion: run in a wide window
+##########################################################
+ 
+
+while (<>) {
+   @words = split(' ',$_);
+   ($class,$id,$L3,$L2,$L1,$C,$R1,$R2,$R3,$Llength,$Rlength,$Nspaces) = @words;
+ 
+   if    ($Nspaces==2 || ($R1 eq "<P>")) { &ret(1,$class,$id,'EOS');} 
+   else                                  { &ret(0,$class,$id,'NEOS');   
+   }
+}
+print "Your score is: ", $correct/($correct+$incorrect), "\n";
+ 
+##########################################################
+## RET - prints full line for errors and keeps score
+##     - $where indicates the rule number responsible for an error
+##########################################################
+
+sub ret {
+   local($where,$trueclass,$id,$givenclass) = @_;
+   
+   if ($trueclass eq $givenclass) {
+      ### print ".. (at ",$where,") -  ", $_;
+      $correct++; 
+   }
+   else {
+      print "XX (at ",$where,") -  ", $_;
+      $incorrect++;
+   }
+   next;
+}
+ 

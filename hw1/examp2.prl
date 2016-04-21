@@ -1,0 +1,48 @@
+#!/usr/local/bin/perl
+
+##########################################################
+##  EXAMPLE SHELL FOR END-OF-SENTENCE CLASSIFIER
+##
+##  (this version shows performance just using the simple
+##    rule Not-EOS only if +1 is lower case or new paragraph)
+##
+##    examp2.prl < sent.data.train | more
+##
+##  Suggestion: run in a wide window
+##########################################################
+ 
+while (<>) {
+   @words = split(' ',$_);
+   ($class,$id,$L3,$L2,$L1,$C,$R1,$R2,$R3,$Llength,$Rlength,$Nspaces) = @words;
+ 
+   if    ($R1 =~ /^[a-z]/) { &ret(1,$class,$id,'NEOS');} # +1 is lower case
+   elsif ($R1 eq "<P>")    { &ret(2,$class,$id,'EOS');}  # +1 is new paragraph
+   else                    { &ret(0,$class,$id,'EOS');   
+   }
+}
+print "Your score is: ", $correct/($correct+$incorrect), "\n";
+
+ 
+##########################################################
+## RET - prints full line for errors and keeps score
+##     - $where indicates the rule number responsible for the classification
+##
+##  This is a useful debugging tool, as after each change in
+##  the program one can identify the remaining misclassified
+##  training examples and the patterns responsible for them. 
+##########################################################
+ 
+sub ret {
+   local($where,$trueclass,$id,$givenclass) = @_;
+   
+   if ($trueclass eq $givenclass) {
+      ### print ".. (at ",$where,") -  ", $_;
+      $correct++; 
+   }
+   else {
+      print "XX (at ",$where,") -  ", $_;
+      $incorrect++;
+   }
+   next;
+}
+ 

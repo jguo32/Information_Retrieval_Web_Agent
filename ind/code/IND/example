@@ -1,0 +1,20 @@
+
+
+BIN=/home/1/yarowsky/cs466/ind/code/IND/bin
+ORIG_DATA=/home/1/yarowsky/cs466/ind/code/IND/Data/thyroid
+MY_DATA=/home/1/yarowsky/test4
+
+cp -p $ORIG_DATA/hypo.rawattr $ORIG_DATA/hypo.attr $ORIG_DATA/hypo.desc $ORIG_DATA/hypo.dta.Z $MY_DATA
+
+cd $MY_DATA
+
+pwd
+
+$BIN/enc hypo
+$BIN/encsmpl -vg S,20,13579 hypo ; echo 
+$BIN/encsmpl S,400,13579 hypo ; echo 
+
+$BIN/mktree -O $BIN/ -o "-tB2,2 -A1 -Pmml -d6" -p -b -c -slvgt hypo ; echo 
+
+$BIN/tprint -ipq hypo ; echo
+

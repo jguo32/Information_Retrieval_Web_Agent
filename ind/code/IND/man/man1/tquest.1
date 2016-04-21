@@ -1,0 +1,46 @@
+.\" Wray Buntine 10/92
+.TH COMMAND 1 local
+.SH NAME
+tquest \- classify an example using a decision tree
+.SH SYNOPSIS
+.B tquest 
+[\fB-pvul\fR] \fIattribute_file tree_file\fR
+.PP
+.B tquest 
+[\fB-pvul\fR] \fIstem\fR
+.SH DESCRIPTION
+.PP
+.B tquest 
+is an interactive program to classify an example.
+The example is classified according to the given tree.
+The user will be prompted to enter attribute values as they are required.
+The second form uses the stem
+instead of explicitly specifying the files,
+and assumes files
+"\fIstem\fR.attr" and "\fIstem\fR.tree" exist.
+
+If the \fIattribute\_file\fR contains a utilities specification, then average
+utility is also printed with any statistics and the best decision is
+calculated to maximize expected utility.  Otherwise, the class with
+maximum probability is chosen (i.e., minimum errors utility).
+
+.SH OPTIONS
+.TP
+.B \-l
+Loop indefinitely, so keep querying for more examples.
+.TP
+.B \-p
+For each example,
+print out the probability estimates for each class.
+When coupled with the \-v option prints their variance as well.
+.TP
+.B \-u
+Print the expected utility or error for this example.
+.TP
+.B \-v
+A standard deviation of the probability estimates is calculated
+and printed as well.
+
+.SH "SEE ALSO"
+.br
+.IR tclass (1).

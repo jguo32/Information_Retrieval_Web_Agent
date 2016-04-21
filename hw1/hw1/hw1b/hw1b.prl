@@ -1,0 +1,344 @@
+#!/usr/local/bin/perl -w
+
+#use strict;
+
+############################################################
+##  hw1b.prl
+##
+##  hw1b.prl < segment.data.train
+## 
+##  Suggestion: run in a wide window
+############################################################
+
+my @test_lines = ( );    # the current line that we are testing
+my @real_lines = ( );    # the correct classification for the current line
+my $numb_lines = 0;      # the number of lines in the block that we testing
+
+my $correct   = 0;       # number of correct classifications
+my $incorrect = 0;       # number of incorrect classifications
+my @rule_correct = ();
+my @rule_incorrect = ();
+my $line      = undef;
+
+while (defined ($line = <STDIN>)) {
+    chomp $line;
+
+    if ($line =~ /^#BLANK#/) {
+		&process_segment if $numb_lines;     # if we are at a blank line then
+												 # process the previous block
+		@test_lines  = ( );   # make sure that we clear memory here or else
+		@real_lines  = ( );   #  these arrays may hold old data which will
+		$numb_lines  = 0;     #  screw up calculations of their length
+    }
+    else {
+		($test_lines[ $numb_lines ]) = ($line =~ m/^[^\t]+\t(.*)/);
+		($real_lines[ $numb_lines ]) = ($line =~ m/^([^\t]+)\t/  );
+		$numb_lines += 1;
+    }
+}
+
+my $util_sum = $correct + $incorrect;
+
+for ($i = 1; $i < 10; $i++) {
+	if (!$rule_correct[$i]) {
+		$rule_correct[$i] = 0;
+	}
+	if (!$rule_incorrect[$i]) {
+		$rule_incorrect[$i] = 0;
+	}
+	$sum = $rule_correct[$i] + $rule_incorrect[$i];
+	if ($sum == 0) { $sum++;} # In case the rule is never used
+	print "Rule $i utilization: ", $rule_correct[$i] + $rule_incorrect[$i], " = ", ($rule_correct[$i] + $rule_incorrect[$i])*100/$util_sum,  "%  correct: ", $rule_correct[$i], " = ", $rule_correct[$i]*100/$sum, "% incorrect: ", $rule_incorrect[$i], " = ", $rule_incorrect[$i]*100/$sum, "%\n";
+}
+
+print "### HW1B jguo32 - OVERALL CORRECT: ", $correct, " = ", $correct*100/($correct+$incorrect), "%  INCORRECT: ", $incorrect, " = ", $incorrect*100/($correct + $incorrect),"%.\n";
+
+
+############################################################
+## Process segments by applying specialized detectors/
+## classifiers to the array of the text lines in the segment 
+############################################################
+
+sub process_segment {
+    my $cnt;
+	# We detect each type of text from the most frequently appeared to least appeared
+	# E.g. "ADDRESS" only appears 58 times so we detect this type at the end
+    if    ( &quoted_detector ) {
+		for ($cnt = 0; $cnt < scalar @test_lines; $cnt++) {
+			&ret( 1, $real_lines[$cnt], "QUOTED", $test_lines[$cnt] );
+		}
+    }
+    elsif	 ( &nnhead_detector ) {
+		for ($cnt = 0; $cnt < scalar @test_lines; $cnt++) {
+			&ret( 2, $real_lines[$cnt], "NNHEAD", $test_lines[$cnt] );
+		}
+	}
+	elsif	 ( &table_detector ) {
+		for ($cnt = 0; $cnt < scalar @test_lines; $cnt++) {
+			&ret( 3, $real_lines[$cnt], "TABLE", $test_lines[$cnt] );
+		}
+	}
+	elsif	 ( &sig_detector ) {
+		for ($cnt = 0; $cnt < scalar @test_lines; $cnt++) {
+			&ret( 4, $real_lines[$cnt], "SIG", $test_lines[$cnt] );
+		}
+	}
+	elsif	 ( &item_detector ) {
+		for ($cnt = 0; $cnt < scalar @test_lines; $cnt++) {
+			&ret( 5, $real_lines[$cnt], "ITEM", $test_lines[$cnt] );
+		}
+	}	
+	elsif	 ( &address_detector ) {
+		for ($cnt = 0; $cnt < scalar @test_lines; $cnt++) {
+			&ret( 6, $real_lines[$cnt], "ADDRESS", $test_lines[$cnt] );
+		}
+	}	
+	elsif	 ( &headl_detector ) {
+		for ($cnt = 0; $cnt < scalar @test_lines; $cnt++) {
+			&ret( 7, $real_lines[$cnt], "HEADL", $test_lines[$cnt] );
+		}
+	}	
+	elsif	 ( &graphic_detector ) {
+		for ($cnt = 0; $cnt < scalar @test_lines; $cnt++) {
+			&ret( 8, $real_lines[$cnt], "GRAPHIC", $test_lines[$cnt] );
+		}
+	}
+
+
+	else{
+		for($cnt = 0; $cnt < scalar @test_lines ; $cnt++) {
+			&ret( 9, $real_lines[$cnt], "PTEXT" , $test_lines[$cnt] );
+		}
+	}
+}
+
+
+############################################################
+## This is a quotation detector
+## Precision: 783/787
+## Recall: 783/785
+############################################################
+ 
+sub quoted_detector {
+
+    my $score  = 0;
+    my $weight = 0.75;   # weight is a variable so that it is easy to find
+    my $cnt;             #  and change.
+	
+    my $quote1 = ">";	# we need to quote meta twice here becasue this
+    my $quote2 = ":";	# regex's is evaluated first here and then at $block-
+    my $quote3 = "\\|>"; # _quote below.
+
+    my $block_quote1 = "$quote1|$quote2|$quote3";
+    my $block_quote2 = "$quote1|$quote2";
+
+    my $test_quote1  = "^($block_quote1)(\\s*($block_quote2))*";
+    my $test_quote2  = "^.+(wrote:|writes:|write:)";	# Three cases for "xx writes:"
+	my $test_quote3  = "^@";	# lines started by '@'
+	my $test_quote4  = "^\\s?(\\w)+\\s?>";	# lines started by words or spaces but have '>'
+	my $test_quote5  = "^(In article)";
+    
+    for ($cnt = 0; $cnt < scalar @test_lines; $cnt++) {
+
+		if ( $test_lines[$cnt] =~ /$test_quote1/ ||
+			 $test_lines[$cnt] =~ /$test_quote2/ ||
+			 $test_lines[$cnt] =~ /$test_quote3/ ||
+			 $test_lines[$cnt] =~ /$test_quote4/ ||
+			 $test_lines[$cnt] =~ /$test_quote5/) {
+
+			$score++;
+		}
+    }
+	
+    return (($score / (scalar @test_lines)) > $weight);
+}
+
+############################################################
+## This is a NNHEAD detector
+## Precision: 1610/1626
+## Recall: 100%
+############################################################
+sub nnhead_detector {
+    my $score  = 0;
+    my $weight = 0.4;
+    my $cnt;
+	
+	for ($cnt = 0; $cnt < scalar @test_lines; $cnt++) {
+		if ( $test_lines[$cnt] =~ /^(\w)*:/) {
+			$score++;
+		}
+    }
+	return (($score / (scalar @test_lines)) > $weight);
+}
+
+############################################################
+## This is a table detector
+## Recall: 702/742
+## Precision: 702/712
+############################################################
+sub table_detector {
+    my $score  = 0;
+    my $weight = 0.5;
+    my $cnt;
+	
+	
+	for ($cnt = 0; $cnt < scalar @test_lines; $cnt++) {
+		if ( $test_lines[$cnt] =~ /^[\w.,-]+\s{2,}\s?/ ||	#	tables separated by two or more spaces
+			 $test_lines[$cnt] =~ /^[0-9]+\.\s?/ ||	#	tables separated by one space, starting with a number
+			 $test_lines[$cnt] =~ /^\t+[\w\s]+\t+\w*/ ||	# tables started by tab
+			 $test_lines[$cnt] =~ /^\t+[\w\s]+\t+\w*/ ||	# tables started by tab
+			 $test_lines[$cnt] =~ /^\w+\t+/ ||#	tables started by a word and a tab
+			 $test_lines[$cnt] =~ /^\w+\s+[\w\(\)]+\s{2,}/ 	# the first two columns are separated by space
+			 ) {
+			$score++;
+		}
+    }
+	return (($score / (scalar @test_lines)) > $weight);
+}
+
+############################################################
+## Signature detector
+## Recall: 227/242
+## Precision: 227/240
+############################################################
+sub sig_detector {
+	# Lines followed by a line that only contains "--" are most 
+	# likely to be signature
+	if (($test_lines[0] =~/^--/ &&  scalar @test_lines < 12 && scalar @test_lines > 1)) {
+		return 1;
+	}
+	
+	# Single line signatures like "RNA"
+	if ($test_lines[0] =~ /^[A-Z]{3}$|^[A-Z]{1}$/ && scalar @test_lines < 2) {
+		return 1;
+	}
+	
+	my $cnt;
+	# Signatures that are contained in long sequence of delimiters
+	# works fine after filtering out all tables
+	# could be dangerous if there are many graphics or headlines
+	for ($cnt = 0; $cnt < scalar @test_lines; $cnt++) {
+		if ($test_lines[$cnt] =~ /-{20}|={20}|_{20}/) {
+			return 1;
+		}
+	
+	}
+}
+
+############################################################
+## ITEM detector
+## Recall: 146/153
+## Precision: 146/156
+############################################################
+sub item_detector {
+	my $cnt;
+    my $score  = 0;
+    my $return = 0;
+    
+    if ($test_lines[0] =~ /^\s*\([0-9]\)+/ || $test_lines[0] =~ /^[0-9]+\./) {
+      return 1; 
+    }
+
+    else {
+      for ($cnt = 0; $cnt < scalar @test_lines; $cnt++) {
+        if ( $test_lines[$cnt] =~ /^\s*-\s+/) {
+          $score++;
+        }
+      }
+    }
+    return ($score  >= 1);
+}
+
+############################################################
+## ADDRESS detector
+## Recall: 56/58
+## Precision: 1
+############################################################
+sub address_detector {   
+    my $cnt;  
+	# Check the address by the line with zipcode
+    for ($cnt = 0; $cnt < scalar @test_lines; $cnt++) {
+      if ( $test_lines[$cnt] =~ /\w, [A-Za-z]+ \d{5}/ || # America address
+			$test_lines[$cnt] =~ /\w, [A-Za-z]+\s*[A-Za-z]\d[A-Za-z]\s*\d[A-Za-z]\d/ # Canadian address
+		) {
+            return 1;
+        }
+    }
+}
+
+############################################################
+## HEADL detector
+## Recall: 51/69
+## Precision: 51/73
+############################################################
+sub headl_detector {
+    my $score  = 0;
+    my $weight = 0.6;
+    my $cnt;
+	
+	# Typically a headline starts with multiple spaces and most words
+	# start with a capitcal letter
+	for ($cnt = 0; $cnt < scalar @test_lines; $cnt++) {
+		if ($test_lines[$cnt] =~ /\s{2,}/) {
+			my $capital_count = () = $test_lines[$cnt] =~ /[A-Z]/g;
+			my $word_count = () = $test_lines[$cnt] =~ /\w+\s/g;
+			if ($word_count == 0) {
+				next;
+			}
+			elsif (($capital_count/$word_count) > 0.6) {
+				$score++;
+			}
+		}
+    }
+	return (($score / (scalar @test_lines)) > $weight);
+}
+
+############################################################
+## Graphic detector
+## Recall: 58/68
+## Precision: 58/91
+############################################################
+sub graphic_detector {
+    my $weight = 0.5;   
+    my $cnt;  
+	my $nonchar_count = 0;
+	my $total_count = 0;
+
+	# Count the line block with majority of non characters as graphic
+    for ($cnt = 0; $cnt < scalar @test_lines; $cnt++) {
+		my $nonchar  = () = $test_lines[$cnt] =~ /[\w]/g;
+		$nonchar_count += $nonchar;
+		$total_count += length($test_lines[$cnt]);
+    }
+	return (($nonchar_count / $total_count) < $weight);
+}
+
+
+############################################################
+## RET - prints full line for errors and keeps score $rule
+##     - indicates the rule number responsible for the 
+##     - classification
+##
+############################################################
+ 
+sub ret {
+
+    my $rule       = shift;   # which rule did I use here
+    my $trueclass  = shift;   # what is the true sentence class ('NEOS','EOS')
+    my $givenclass = shift;   # what is the sentence class my rule gives
+    my $line       = shift;   # the actual line tested
+
+    if ($trueclass eq $givenclass) {
+
+	#printf(".. (%2d) %s\t%s\t%s\n",$rule,$givenclass,$trueclass,$line);
+	$correct++;
+	$rule_correct[$rule]++;
+    }
+    else {
+	
+	printf("XX (%2d) %s\t%s\t%s\n",$rule,$givenclass,$trueclass,$line);
+	$incorrect++;
+	$rule_incorrect[$rule]++;
+    }
+}
+

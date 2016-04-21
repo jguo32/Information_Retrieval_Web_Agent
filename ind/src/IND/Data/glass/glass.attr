@@ -1,0 +1,10 @@
+class:	1,2,3,4,5,6,7.	|  see glass.desc for explanation
+RI:     cont   1.5110 .. 1.5340.
+Na:     cont   10.70 .. 17.40.
+Mg:     cont   0 .. 4.50.
+Al:     cont   0.29 .. 3.5.
+Si:     cont   69.80 .. 75.45.
+K:      cont   0 .. 6.25.
+Ca:     cont   5.40 .. 16.20.
+Ba:     cont   0 .. 3.15.
+Fe:     cont   0 .. 0.51.

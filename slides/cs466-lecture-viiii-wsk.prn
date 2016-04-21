@@ -1,0 +1,2559 @@
+%-12345X@PJL JOB
+@PJL SET RESOLUTION = 600
+@PJL ENTER LANGUAGE = POSTSCRIPT 
+%!PS-Adobe-3.0
+%%Title: Microsoft PowerPoint - cs466-lecture-viiii-wsk.ppt
+%%Creator: Pscript.dll Version 5.0
+%%CreationDate: 2/21/2002 14:26:0
+%%BoundingBox: (atend)
+%%Pages: (atend)
+%%Orientation: Landscape
+%%PageOrder: Special
+%%DocumentNeededResources: (atend)
+%%DocumentSuppliedResources: (atend)
+%%DocumentData: Clean7Bit
+%%TargetDevice: (HP LaserJet 5P) (2014.103) 1
+%%LanguageLevel: 2
+%%EndComments
+
+%%BeginDefaults
+%%PageBoundingBox: 13 13 599 780
+%%EndDefaults
+
+
+%%BeginProlog
+%%BeginResource: file Pscript_WinNT_ErrorHandler 5.0 0
+/currentpacking where{pop/oldpack currentpacking def/setpacking where{pop false
+setpacking}if}if/$brkpage 64 dict def $brkpage begin/prnt{dup type/stringtype
+ne{=string cvs}if dup length 6 mul/tx exch def/ty 10 def currentpoint/toy exch
+def/tox exch def 1 setgray newpath tox toy 2 sub moveto 0 ty rlineto tx 0
+rlineto 0 ty neg rlineto closepath fill tox toy moveto 0 setgray show}bind def
+/nl{currentpoint exch pop lmargin exch moveto 0 -10 rmoveto}def/=={/cp 0 def
+typeprint nl}def/typeprint{dup type exec}readonly def/lmargin 72 def/rmargin 72
+def/tprint{dup length cp add rmargin gt{nl/cp 0 def}if dup length cp add/cp
+exch def prnt}readonly def/cvsprint{=string cvs tprint( )tprint}readonly def
+/integertype{cvsprint}readonly def/realtype{cvsprint}readonly def/booleantype
+{cvsprint}readonly def/operatortype{(--)tprint =string cvs tprint(-- )tprint}
+readonly def/marktype{pop(-mark- )tprint}readonly def/dicttype{pop
+(-dictionary- )tprint}readonly def/nulltype{pop(-null- )tprint}readonly def
+/filetype{pop(-filestream- )tprint}readonly def/savetype{pop(-savelevel- )
+tprint}readonly def/fonttype{pop(-fontid- )tprint}readonly def/nametype{dup
+xcheck not{(/)tprint}if cvsprint}readonly def/stringtype{dup rcheck{(\()tprint
+tprint(\))tprint}{pop(-string- )tprint}ifelse}readonly def/arraytype{dup rcheck
+{dup xcheck{({)tprint{typeprint}forall(})tprint}{([)tprint{typeprint}forall(])
+tprint}ifelse}{pop(-array- )tprint}ifelse}readonly def/packedarraytype{dup
+rcheck{dup xcheck{({)tprint{typeprint}forall(})tprint}{([)tprint{typeprint}
+forall(])tprint}ifelse}{pop(-packedarray- )tprint}ifelse}readonly def/courier
+/Courier findfont 10 scalefont def end errordict/handleerror{systemdict begin
+$error begin $brkpage begin newerror{/newerror false store vmstatus pop pop 0
+ne{grestoreall}if showpage initgraphics courier setfont lmargin 720 moveto
+errorname(VMError)eq{PrtVMMsg}{(ERROR: )prnt errorname prnt nl
+(OFFENDING COMMAND: )prnt/command load prnt $error/ostack known{nl nl(STACK:)
+prnt nl nl $error/ostack get aload length{==}repeat}if}ifelse systemdict
+/showpage get exec(%%[ Error: )print errorname =print(; OffendingCommand: )
+print/command load =print( ]%%)= flush}if end end end}dup 0 systemdict put dup
+4 $brkpage put bind readonly put/currentpacking where{pop/setpacking where{pop
+oldpack setpacking}if}if
+%%EndResource
+userdict /Pscript_WinNT_Incr 230 dict dup begin put
+%%BeginResource: file Pscript_FatalError 5.0 0
+/FatalErrorIf{{initgraphics findfont 1 index 0 eq{exch pop}{dup length dict
+begin{1 index/FID ne{def}{pop pop}ifelse}forall/Encoding{ISOLatin1Encoding}
+stopped{StandardEncoding}if def currentdict end/ErrFont-Latin1 exch definefont}
+ifelse exch scalefont setfont counttomark 3 div cvi{moveto show}repeat showpage
+quit}{cleartomark}ifelse}bind def
+%%EndResource
+userdict begin/PrtVMMsg{vmstatus exch sub exch pop gt{[
+(This job requires more memory than is available in this printer.)100 500
+(Try one or more of the following, and then print again:)100 485
+(For the output format, choose Optimize For Portability.)115 470
+(In the Device Settings page, make sure the Available PostScript Memory is accurate.)
+115 455(Reduce the number of fonts in the document.)115 440
+(Print the document in parts.)115 425 12/Times-Roman showpage
+(%%[ PrinterError: Low Printer VM ]%%)= true FatalErrorIf}if}bind def end
+version cvi 2016 ge{/VM?{pop}bind def}{/VM? userdict/PrtVMMsg get def}ifelse
+105000 VM?
+%%BeginResource: file Pscript_Win_Basic 5.0 0
+/d/def load def/,/load load d/~/exch , d/?/ifelse , d/!/pop , d/`/begin , d/^
+/index , d/@/dup , d/+/translate , d/$/roll , d/U/userdict , d/M/moveto , d/-
+/rlineto , d/&/currentdict , d/:/gsave , d/;/grestore , d/F/false , d/T/true ,
+d/N/newpath , d/E/end , d/Ac/arc , d/An/arcn , d/A/ashow , d/D/awidthshow , d/C
+/closepath , d/V/div , d/O/eofill , d/L/fill , d/I/lineto , d/-c/curveto , d/-M
+/rmoveto , d/+S/scale , d/Ji/setfont , d/Lc/setlinecap , d/Lj/setlinejoin , d
+/Lw/setlinewidth , d/Lm/setmiterlimit , d/sd/setdash , d/S/show , d/LH/showpage
+, d/K/stroke , d/W/widthshow , d/R/rotate , d/L2? false/languagelevel where{pop
+languagelevel 2 ge{pop true}if}if d L2?{/xS/xshow , d/yS/yshow , d/zS/xyshow ,
+d}if/b{bind d}bind d/bd{bind d}bind d/xd{~ d}bd/ld{, d}bd/bn/bind ld/lw/Lw ld
+/lc/Lc ld/lj/Lj ld/sg/setgray ld/ADO_mxRot null d/self & d/OrgMx matrix
+currentmatrix d/reinitialize{: OrgMx setmatrix[/TextInit/GraphInit/UtilsInit
+counttomark{@ where{self eq}{F}?{cvx exec}{!}?}repeat cleartomark ;}b
+/initialize{`{/ADO_mxRot ~ d/TextInitialised? F d reinitialize E}{U
+/Pscript_Win_Data 230 dict @ ` put/ADO_mxRot ~ d/TextInitialised? F d
+reinitialize}?}b/terminate{!{& self eq{exit}{E}?}loop E}b/suspend/terminate , d
+/resume{` Pscript_Win_Data `}b U `/lucas 21690 d/featurebegin{countdictstack
+lucas[}b/featurecleanup{stopped{cleartomark @ lucas eq{! exit}if}loop
+countdictstack ~ sub @ 0 gt{{E}repeat}{!}?}b E/snap{transform 0.25 sub round
+0.25 add ~ 0.25 sub round 0.25 add ~ itransform}b/dsnap{dtransform round ~
+round ~ idtransform}b/nonzero_round{@ 0.5 ge{round}{@ -0.5 lt{round}{0 ge{1}
+{-1}?}?}?}b/nonzero_dsnap{dtransform nonzero_round ~ nonzero_round ~
+idtransform}b U<04>cvn{}put/rr{1 ^ 0 - 0 ~ - neg 0 - C}b/irp{4 -2 $ + +S fx 4 2
+$ M 1 ^ 0 - 0 ~ - neg 0 -}b/rp{4 2 $ M 1 ^ 0 - 0 ~ - neg 0 -}b/solid{[]0 sd}b/g
+{@ not{U/DefIf_save save put}if U/DefIf_bool 2 ^ put}b/DefIf_El{if U/DefIf_bool
+get not @{U/DefIf_save get restore}if}b/e{DefIf_El !}b/UDF{L2?{undefinefont}{!}
+?}b/UDR{L2?{undefineresource}{! !}?}b/freeVM{/Courier findfont[40 0 0 -40 0 0]
+makefont Ji 2 vmreclaim}b
+%%EndResource
+%%BeginResource: file Pscript_Win_Utils_L2 5.0 0
+/rf/rectfill , d/fx{1 1 dtransform @ 0 ge{1 sub 0.5}{1 add -0.5}? 3 -1 $ @ 0 ge
+{1 sub 0.5}{1 add -0.5}? 3 1 $ 4 1 $ idtransform 4 -2 $ idtransform}b/BZ{4 -2 $
+snap + +S fx rf}b/rs/rectstroke , d/rc/rectclip , d/UtilsInit{currentglobal{F
+setglobal}if}b/scol{! setcolor}b/colspA/DeviceGray d/colspABC/DeviceRGB d
+/colspRefresh{colspABC setcolorspace}b/SetColSpace{colspABC setcolorspace}b
+/resourcestatus where{!/ColorRendering/ProcSet resourcestatus{! ! T}{F}?}{F}?
+not{/ColorRendering<</GetHalftoneName{currenthalftone @/HalftoneName known{
+/HalftoneName get}{!/none}?}bn/GetPageDeviceName{currentpagedevice @
+/PageDeviceName known{/PageDeviceName get @ null eq{!/none}if}{!/none}?}bn
+/GetSubstituteCRD{!/DefaultColorRendering/ColorRendering resourcestatus{! !
+/DefaultColorRendering}{(DefaultColorRendering*){cvn exit}127 string
+/ColorRendering resourceforall}?}bn>>/defineresource where{!/ProcSet
+defineresource !}{! !}?}if/buildcrdname{/ColorRendering/ProcSet findresource `
+mark GetHalftoneName @ type @/nametype ne ~/stringtype ne and{!/none}if(.)
+GetPageDeviceName @ type @/nametype ne ~/stringtype ne and{!/none}if(.)5 ^ 0 5
+-1 1{^ length add}for string 6 1 $ 5 ^ 5{~ 1 ^ cvs length 1 ^ length 1 ^ sub
+getinterval}repeat ! cvn 3 1 $ ! ! E}b/definecolorrendering{~ buildcrdname ~
+/ColorRendering defineresource !}b/findcolorrendering where{!}{
+/findcolorrendering{buildcrdname @/ColorRendering resourcestatus{! ! T}{
+/ColorRendering/ProcSet findresource ` GetSubstituteCRD E F}?}b}?
+/selectcolorrendering{findcolorrendering !/ColorRendering findresource
+setcolorrendering}b
+%%EndResource
+end
+%%EndProlog
+
+%%BeginSetup
+statusdict begin (%%[ ProductName: ) print product print ( ]%%)= flush end
+[ 0 1 -1 0 0 0 ] false Pscript_WinNT_Incr dup /initialize get exec
+featurebegin{
+%%BeginNonPPDFeature: JobTimeout 0
+0 /languagelevel where{pop languagelevel}{1}ifelse 2 ge{1 dict dup/JobTimeout  4 -1 roll put setuserparams}{statusdict/setjobtimeout get exec}ifelse
+%%EndNonPPDFeature
+}featurecleanup
+
+featurebegin{
+%%BeginNonPPDFeature: WaitTimeout 120
+120 /languagelevel where{pop languagelevel}{1}ifelse 2 ge{1 dict dup/WaitTimeout 4 -1 roll put setuserparams}{statusdict/waittimeout 3 -1 roll put}ifelse
+%%EndNonPPDFeature
+}featurecleanup
+
+featurebegin{
+%%BeginFeature: *HPHalftone PrintersDefault
+
+%%EndFeature
+}featurecleanup
+featurebegin{
+%%BeginFeature: *Smoothing PrinterDefault
+
+%%EndFeature
+}featurecleanup
+featurebegin{
+%%BeginFeature: *PageSize Letter
+
+             <</DeferredMediaSelection true /PageSize [612 792] /ImagingBBox null>> setpagedevice
+%%EndFeature
+}featurecleanup
+featurebegin{
+%%BeginFeature: *OutputBin OnlyOne
+
+%%EndFeature
+}featurecleanup
+1 setlinecap 1 setlinejoin
+/mysetup [ 0 0.11999 0.11999 0 12.99968 12.99968 ] def 
+%%EndSetup
+
+%%Page: 1 1
+%%PageBoundingBox: 13 13 599 780
+%%EndPageComments
+%%BeginPageSetup
+/DeviceRGB dup setcolorspace /colspABC exch def
+mysetup concat colspRefresh
+%%EndPageSetup
+
+Pscript_WinNT_Incr begin
+%%BeginResource: file Pscript_Win_GdiObject 5.0 0
+/SavedCTM null d/CTMsave{/SavedCTM SavedCTM currentmatrix d}b/CTMrestore
+{SavedCTM setmatrix}b/mp null d/ADO_mxRot null d/GDIHMatrix null d
+/GDIHPatternDict 22 dict d GDIHPatternDict `/PatternType 1 d/PaintType 2 d/Reps
+L2?{1}{5}? d/XStep 8 Reps mul d/YStep XStep d/BBox[0 0 XStep YStep]d/TilingType
+1 d/PaintProc{` 1 Lw[]0 sd PaintData , exec E}b/FGnd null d/BGnd null d
+/HS_Horizontal{horiz}b/HS_Vertical{vert}b/HS_FDiagonal{fdiag}b/HS_BDiagonal
+{biag}b/HS_Cross{horiz vert}b/HS_DiagCross{fdiag biag}b/MaxXYStep XStep YStep
+gt{XStep}{YStep}? d/horiz{Reps{0 4 M XStep 0 - 0 8 +}repeat 0 -8 Reps mul + K}b
+/vert{Reps{4 0 M 0 YStep - 8 0 +}repeat 0 -8 Reps mul + K}b/biag{Reps{0 0 M
+MaxXYStep @ - 0 YStep neg M MaxXYStep @ - 0 8 +}repeat 0 -8 Reps mul + 0 YStep
+M 8 8 - K}b/fdiag{Reps{0 0 M MaxXYStep @ neg - 0 YStep M MaxXYStep @ neg - 0 8
++}repeat 0 -8 Reps mul + MaxXYStep @ M 8 -8 - K}b E/makehatch{4 -2 $/yOrg ~ d
+/xOrg ~ d GDIHPatternDict/PaintData 3 -1 $ put CTMsave GDIHMatrix setmatrix
+GDIHPatternDict matrix xOrg yOrg + mp CTMrestore ~ U ~ 2 ^ put}b/h0{/h0
+/HS_Horizontal makehatch}b/h1{/h1/HS_Vertical makehatch}b/h2{/h2/HS_FDiagonal
+makehatch}b/h3{/h3/HS_BDiagonal makehatch}b/h4{/h4/HS_Cross makehatch}b/h5{/h5
+/HS_DiagCross makehatch}b/GDIBWPatternMx null d/pfprep{save 8 1 $
+/PatternOfTheDay 8 1 $ GDIBWPatternDict `/yOrg ~ d/xOrg ~ d/PaintData ~ d/yExt
+~ d/Width ~ d/BGnd ~ d/FGnd ~ d/Height yExt RepsV mul d/mx[Width 0 0 Height 0
+0]d E build_pattern ~ !}b/pfbf{/fEOFill ~ d pfprep hbf fEOFill{O}{L}? restore}b
+/GraphInit{GDIHMatrix null eq{/SavedCTM matrix d : ADO_mxRot concat 0 0 snap +
+: 0.48 @ GDIHPatternDict ` YStep mul ~ XStep mul ~ nonzero_dsnap YStep V ~
+XStep V ~ E +S/GDIHMatrix matrix currentmatrix readonly d ; : 0.24 -0.24 +S
+GDIBWPatternDict ` Width Height E nonzero_dsnap +S/GDIBWPatternMx matrix
+currentmatrix readonly d ; ;}if}b
+%%EndResource
+%%BeginResource: file Pscript_Win_GdiObject_L2 5.0 0
+/GDIBWPatternDict 25 dict @ `/PatternType 1 d/PaintType 1 d/RepsV 1 d/RepsH 1 d
+/BBox[0 0 RepsH 1]d/TilingType 1 d/XStep 1 d/YStep 1 d/Height 8 RepsV mul d
+/Width 8 d/mx[Width 0 0 Height neg 0 Height]d/FGnd null d/BGnd null d
+/SetBGndFGnd{BGnd null ne{BGnd aload ! scol BBox aload ! 2 ^ sub ~ 3 ^ sub ~
+rf}if FGnd null ne{FGnd aload ! scol}if}b/PaintProc{` SetBGndFGnd RepsH{Width
+Height F mx PaintData imagemask Width 0 +}repeat E}b E d/mp/makepattern , d
+/build_pattern{CTMsave GDIBWPatternMx setmatrix/nupangle where{! nupangle -90
+eq{nupangle R}if}if GDIBWPatternDict @ ` Width Height ne{Width Height gt{Width
+Height V 1}{1 Height Width V}? +S}if xOrg yOrg E matrix + mp CTMrestore}b/hbf
+{setpattern}b/hf{:/fEOFill ~ d ~ ! setpattern fEOFill{O}{L}? ;}b/pbf{: !
+/fEOFill ~ d GDIBWPatternDict `/yOrg ~ d/xOrg ~ d/PaintData ~ d/OutputBPP ~ d
+/Height ~ d/Width ~ d/PaintType 1 d/PatternType 1 d/TilingType 1 d/BBox[0 0
+Width Height]d/XStep Width d/YStep Height d/mx xOrg yOrg matrix + d 20 dict @ `
+/ImageType 1 d/Width Width d/Height Height d/ImageMatrix[1 0 0 1 0 0]d
+/BitsPerComponent 8 d OutputBPP 24 eq{/Decode[0 1 0 1 0 1]d}{OutputBPP 8 eq{
+/Decode[0 1]d}{/Decode[0 1 0 1 0 1 0 1]d}?}?/DataSource{PaintData}d E/ImageDict
+~ d/PaintProc{` ImageDict image E}b & mx makepattern setpattern E fEOFill{O}{L}
+? ;}b/mask_pbf{:/fEOFill ~ d 20 dict `/yOrg ~ d/xOrg ~ d/PaintData ~ d/Height ~
+d/Width ~ d/PatternType 1 d/PaintType 2 d/TilingType 1 d/BBox[0 0 Width Height]
+d/XStep Width d/YStep Height d/mx xOrg yOrg matrix + d/PaintProc{` Width Height
+T[1 0 0 1 0 0]{PaintData}imagemask E}b & mx makepattern setpattern E fEOFill{O}
+{L}? ;}b
+%%EndResource
+end reinitialize
+/DeviceGray dup setcolorspace /colspABC exch def
+: N 196 191 6000 4500 rp C 
+1 0 scol  L ; 0 0 scol Pscript_WinNT_Incr begin
+%%BeginResource: file Pscript_Text 5.0 0
+/TextInit{TextInitialised? not{/Pscript_Windows_Font & d/TextInitialised? T d
+/fM[1 0 0 1 0 0]d/mFM matrix d/iMat[1 0 0.212557 1 0 0]d}if}b/copyfont{1 ^
+length add dict `{1 ^/FID ne{d}{! !}?}forall & E}b/EncodeDict 11 dict d/bullets
+{{/bullet}repeat}b/rF{3 copyfont @ ` ~ EncodeDict ~ get/Encoding ~ 3 ^/0 eq{&
+/CharStrings known{CharStrings/Eth known not{! EncodeDict/ANSIEncodingOld get}
+if}if}if d E}b/mF{@ 7 1 $ findfont ~{@/Encoding get @ StandardEncoding eq{! T}{
+{ISOLatin1Encoding}stopped{! F}{eq}?{T}{@ ` T 32 1 127{Encoding 1 ^ get
+StandardEncoding 3 -1 $ get eq and}for E}?}?}{F}?{1 ^ ~ rF}{0 copyfont}? 6 -2 $
+! ! ~ !/pd_charset @ where{~ get 128 eq{@ FDV 2 copy get @ length array copy
+put pd_CoverFCRange}if}{!}? 2 ^ ~ definefont fM 5 4 -1 $ put fM 4 0 put fM
+makefont Pscript_Windows_Font 3 1 $ put}b/sLT{: Lw -M currentpoint snap M 0 - 0
+Lc K ;}b/xUP null d/yUP null d/uW null d/xSP null d/ySP null d/sW null d/sSU{N
+/uW ~ d/yUP ~ d/xUP ~ d}b/sU{xUP yUP uW sLT}b/sST{N/sW ~ d/ySP ~ d/xSP ~ d}b/sT
+{xSP ySP sW sLT}b/sR{: + R 0 0 M}b/sRxy{: matrix astore concat 0 0 M}b/eR/; , d
+/AddOrigFP{{&/FontInfo known{&/FontInfo get length 6 add}{6}? dict `
+/WinPitchAndFamily ~ d/WinCharSet ~ d/OrigFontType ~ d/OrigFontStyle ~ d
+/OrigFontName ~ d & E/FontInfo ~ d}{! ! ! ! !}?}b/mFS{makefont
+Pscript_Windows_Font 3 1 $ put}b/mF42D{0 copyfont `/FontName ~ d 2 copy ~ sub 1
+add dict `/.notdef 0 d 2 copy 1 ~{@ 3 ^ sub Encoding ~ get ~ d}for & E
+/CharStrings ~ d ! ! & @ E/FontName get ~ definefont}b/mF42{15 dict ` @ 4 1 $
+FontName ~ d/FontType 0 d/FMapType 2 d/FontMatrix[1 0 0 1 0 0]d 1 ^ 254 add 255
+idiv @ array/Encoding ~ d 0 1 3 -1 $ 1 sub{@ Encoding 3 1 $ put}for/FDepVector
+Encoding length array d/CharStrings 2 dict `/.notdef 0 d & E d 0 1 Encoding
+length 1 sub{@ @ 10 lt{! FontName length 1 add string}{100 lt{FontName length 2
+add string}{FontName length 3 add string}?}? @ 0 FontName @ length string cvs
+putinterval @ 3 -1 $ @ 4 1 $ 3 string cvs FontName length ~ putinterval cvn 1 ^
+256 mul @ 255 add 3 -1 $ 4 ^ findfont mF42D FDepVector 3 1 $ put}for & @ E
+/FontName get ~ definefont ! ! ! mF}b/mF_OTF_V{3{~ !}repeat 3 -1 $ ! findfont 1
+^ ~ definefont fM @ @ 5 0 put 4 0 put 90 matrix R matrix concatmatrix makefont
+Pscript_Windows_Font 3 1 $ put}b/UmF{L2?{Pscript_Windows_Font ~ undef}{!}?}b
+/UmF42{@ findfont/FDepVector get{/FontName get undefinefont}forall
+undefinefont}b
+%%EndResource
+end reinitialize
+Pscript_WinNT_Incr begin
+%%BeginResource: file Pscript_Encoding256 5.0 0
+/CharCol256Encoding[/.notdef/breve/caron/dotaccent/dotlessi/fi/fl/fraction
+/hungarumlaut/Lslash/lslash/minus/ogonek/ring/Zcaron/zcaron/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/exclam/quotedbl/numbersign
+/dollar/percent/ampersand/quotesingle/parenleft/parenright/asterisk/plus/comma
+/hyphen/period/slash/zero/one/two/three/four/five/six/seven/eight/nine/colon
+/semicolon/less/equal/greater/question/at/A/B/C/D/E/F/G/H/I/J/K/L/M/N/O/P/Q/R/S
+/T/U/V/W/X/Y/Z/bracketleft/backslash/bracketright/asciicircum/underscore/grave
+/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y/z/braceleft/bar/braceright
+/asciitilde/.notdef/Euro/.notdef/quotesinglbase/florin/quotedblbase/ellipsis
+/dagger/daggerdbl/circumflex/perthousand/Scaron/guilsinglleft/OE/.notdef
+/.notdef/.notdef/.notdef/quoteleft/quoteright/quotedblleft/quotedblright/bullet
+/endash/emdash/tilde/trademark/scaron/guilsinglright/oe/.notdef/.notdef
+/Ydieresis/.notdef/exclamdown/cent/sterling/currency/yen/brokenbar/section
+/dieresis/copyright/ordfeminine/guillemotleft/logicalnot/.notdef/registered
+/macron/degree/plusminus/twosuperior/threesuperior/acute/mu/paragraph
+/periodcentered/cedilla/onesuperior/ordmasculine/guillemotright/onequarter
+/onehalf/threequarters/questiondown/Agrave/Aacute/Acircumflex/Atilde/Adieresis
+/Aring/AE/Ccedilla/Egrave/Eacute/Ecircumflex/Edieresis/Igrave/Iacute
+/Icircumflex/Idieresis/Eth/Ntilde/Ograve/Oacute/Ocircumflex/Otilde/Odieresis
+/multiply/Oslash/Ugrave/Uacute/Ucircumflex/Udieresis/Yacute/Thorn/germandbls
+/agrave/aacute/acircumflex/atilde/adieresis/aring/ae/ccedilla/egrave/eacute
+/ecircumflex/edieresis/igrave/iacute/icircumflex/idieresis/eth/ntilde/ograve
+/oacute/ocircumflex/otilde/odieresis/divide/oslash/ugrave/uacute/ucircumflex
+/udieresis/yacute/thorn/ydieresis]def EncodeDict/256 CharCol256Encoding put
+%%EndResource
+end reinitialize
+
+%%IncludeResource: font Times-Roman
+F /F0 0 /256 T /Times-Roman mF 
+/F0S75 F0 [117 0 0 -117 0 0 ] mFS
+F0S75 Ji 
+706 4434 M (CS466)[78 65 58 59  0]xS 
+1024 4434 M (-)S 
+1063 4434 M (9)S 
+5626 4434 M (1)S 
+/F0S16F F0 [367 0 0 -367 0 0 ] mFS
+F0S16F Ji 
+1882 881 M (Issues/Parameters )[122 143 143 183 163 143 101 204 163 122 163 284 163 102 163 122 142  0]xS 
+: N 1882 921 2626 18 rp C 
+ L ; 1983 1321 M (in Vector Model)[102 184 92 264 163 162 102 184 122 92 325 183 184 163  0]xS 
+: N 1983 1361 2424 18 rp C 
+ L ; /F0S10B F0 [267 0 0 -267 0 0 ] mFS
+F0S10B Ji 
+706 1778 M (1.)[134  0]xS 
+1106 1778 M (Term weighting)[163 119 88 208 66 193 118 74 134 134 74 73 133  0]xS 
+706 2161 M (2.)[134  0]xS 
+1106 2161 M (Term selection)[163 119 88 208 67 104 119 73 119 119 74 74 133  0]xS 
+/F0SC8 F0 [200 0 0 -200 0 0 ] mFS
+F0SC8 Ji 
+1306 2465 M (\(special case of term weighting)[67 78 100 89 88 56 88 56 49 89 89 78 88 50 100 66 50 56 89 67 154 50 144 89 56 100 100 55 56 100  0]xS 
+1356 2752 M (stop words = words with weight 0\))[78 56 100 100 50 144 100 67 100 78 50 113 50 144 100 67 100 78 50 144 56 55 100 50 144 89 56 100 100 56 50 99
+ 0]xS 
+F0S10B Ji 
+706 3120 M (3.)[134  0]xS 
+1106 3120 M (Vector similarity functions)[193 119 119 73 134 89 67 104 73 208 74 74 118 89 74 74 133 67 88 134 133 119 74 74 133 134  0]xS 
+F0SC8 Ji 
+1306 3423 M (\(Dice, )[67 144 56 89 89 50  0]xS 
+1851 3423 M (Jaccard)[77 89 88 89 88 67  0]xS 
+2449 3423 M (, Cosine\))[50 50 133 100 78 56 100 89  0]xS 
+F0S10B Ji 
+706 3791 M (4.)[134  0]xS 
+1106 3791 M (Clustering approach)[178 74 134 104 74 119 89 73 133 134 67 118 133 134 88 134 118 119  0]xS 
+F0SC8 Ji 
+1306 4094 M (\(Agglomerative hierarchical clustering\))[67 144 100 100 56 100 154 89 67 89 55 56 100 89 50 99 55 89 67 88 67 89 99 55 89 88 56 50 88 56 100 77
+56 89 66 56 99 100  0]xS 
+LH
+(%%[Page: 1]%%) = 
+%%PageTrailer
+
+%%Page: 2 2
+%%PageBoundingBox: 13 13 599 780
+%%EndPageComments
+%%BeginPageSetup
+/DeviceRGB dup setcolorspace /colspABC exch def
+mysetup concat colspRefresh
+%%EndPageSetup
+
+/DeviceGray dup setcolorspace /colspABC exch def
+: N 196 191 6000 4500 rp C 
+1 0 scol  L ; 0 0 scol F0S75 Ji 
+706 4434 M (CS466)[78 65 58 59  0]xS 
+1024 4434 M (-)S 
+1063 4434 M (9)S 
+5626 4434 M (2)S 
+F0S16F Ji 
+1209 1020 M (Term Weighting Strategies)[224 163 122 285 91 346 163 102 183 183 102 102 184 183 92 204 102 122 163 102 162 184 102 162  0]xS 
+: N 1209 1060 3971 18 rp C 
+ L ; 103743 VM?
+Pscript_WinNT_Incr begin
+%%BeginResource: file Pscript_T42Hdr 5.0 0
+/asc42 0.0 d/sF42{/asc42 ~ d Ji}bind d/bS42{0 asc42 -M}bind d/eS42{0 asc42 neg
+-M}b/Is2015?{version cvi 2015 ge}bind d/AllocGlyphStorage{Is2015?{!}{{string}
+forall}?}bind d/Type42DictBegin{25 dict `/FontName ~ d/Encoding ~ d 4 array
+astore cvx/FontBBox ~ d/PaintType 0 d/FontType 42 d/FontMatrix[1 0 0 1 0 0]d
+/CharStrings 256 dict `/.notdef 0 d & E d/sfnts}bind d/Type42DictEnd{& @
+/FontName get ~ definefont ! E}bind d/RDS{string currentfile ~ readstring !}
+executeonly d/PrepFor2015{Is2015?{/GlyphDirectory 16 dict d sfnts 0 get @ 2 ^
+(glyx)putinterval 2 ^(locx)putinterval ! !}{! !}?}bind d/AddT42Char{Is2015?
+{findfont/GlyphDirectory get ` d E ! !}{findfont/sfnts get 4 ^ get 3 ^ 2 ^
+putinterval ! ! ! !}?}bind d/IDStrNull{1 add 2 mul @ string 0 1 3 ^ 1 sub{1 ^ ~
+0 put}for ~ !}bind d/IDStr{@ 1 add 2 mul string 0 1 3 ^{1 ^ ~ @ 2 mul ~ 3 copy
+256 idiv put ~ 1 add ~ 256 mod put}for ~ !}bind d/IDStr2{~ @ 1 add 2 mul string
+0 1 3 ^{1 ^ ~ @ 2 mul ~ 5 ^ add 3 copy 256 idiv put ~ 1 add ~ 256 mod put}for ~
+! ~ !}bind d/CIDT42Begin{25 dict ` @/WMode ~ d 0 gt{/Metrics2 16 dict d
+/FontMatrix[0 1 -1 0 0 0]d}{/FontMatrix[1 0 0 1 0 0]d}?/CIDMap ~ d/CIDCount ~ d
+/CIDSystemInfo 3 dict @ ` 3 -1 $/Supplement ~ d 3 -1 $/Ordering ~ d 3 -1 $
+/Registry ~ d E d/CIDFontName ~ d/Encoding ~ d 4 array astore cvx/FontBBox ~ d
+/CharStrings 2 dict @ `/.notdef 0 d E d/GDBytes 2 d/CIDFontType 2 d/FontType 42
+d/PaintType 0 d/sfnts}bind d/CIDT42End{CIDFontName & E/CIDFont defineresource
+!}bind d/T42CIDCP32K{/CIDFont findresource @ length dict copy @/FID undef `
+/CIDFontName ~ d/CIDMap ~ d/CIDCount ~ d/Metrics2 8 dict d CIDFontName & E
+/CIDFont defineresource !}bind d/T42CIDCPR{/CIDFont findresource @ length dict
+copy @/FID undef `/CDevProc{!}d/CIDFontName ~ d CIDFontName & E/CIDFont
+defineresource !}bind d/T0AddT42Char{/CIDFont findresource/GlyphDirectory get `
+d E ! !}bind d/T0AddT42Mtx2{/CIDFont findresource/Metrics2 get ` d E}bind d
+/UpdateCIDMap{/CIDFont findresource/CIDMap get 3 1 $ putinterval}d/AddXUID
+{version cvi 3011 ge{/XUID ~ d}{!}?}bind d/AddFontInfoBegin{/FontInfo 16 dict @
+`}bind d/AddFontInfo{/GlyphNames2Unicode 16 dict d}bind d/AddFontInfoEnd{E d}
+bind d/G2UBegin{findresource/FontInfo get/GlyphNames2Unicode get `}bind d
+/G2UEnd{E}bind d
+%%EndResource
+end reinitialize
+0 -0.207 1.109 0.844
+ 256 array 0 1 255 {1 index exch /.notdef put} for  /TTE1ECB468t00
+Type42DictBegin
+[<00010000000a000a000a000a6376742067f27898000000ac000004ea6670
+676dc4f43bb0000005980000045f676c7966a245e921000012ac0000a170
+68656164bb5dea54000009f800000036686865610fa5082400000a300000
+0024686d7478b4f691a400000a54000003706c6f636194236d9400000dc4
+000001ba6d6178700931057400000f80000000207072657046ea08bb0000
+0fa00000030b676469720000000000000000000000000000000000000000
+00000000103805e20000000000ee00040000000000000000000000000000
+000000000000000000000000000000000000000000000000000000000000
+0000000000000000ffffffffffffffffffffffffffffffffffffffffffff
+ffff00000000000000000000000000000000000000000000000000000000
+000000000000ffffffffffff00000000007d000000000000000000000000
+0000000000000000000000000281003100c2009400310063003100620062
+0044009405c80275003100c5006300af003100310031004400f70031003e
+05c8007d0031012802c205c80031003105c80031007b02c20094012d05c8
+00310128003300630094009e0031004a006000940237025d0031006200ff
+025005c800010032004a0062009400c6018a018b00020032008300b500c5
+00c500fc012801da02b30031003100310032003400620062008f00940094
+00b90128012802b302b305c800010029005f0062007b0086009400c500f5
+00f6011e0138018b0250029a043e05c805ee06120612068b00010032003b
+00490056006000620062007a008900940094009400c500c500c500f200f6
+0121012601420146018a018b018b01bc01d501ed01ed01ee021e02370281
+0284028c029a02b302fd043e043e0454057405c8068b004e006d006d006e
+007b007b00a100bf00de00f6012801680178018a018a018a018a018b01a0
+01a301b601bc01be01d4024102590269028102860455045c05010503052e
+057405c8062f0783004a005c00630078007b007b007b0081008500870094
+0099009d009f00ab00b800ba00bb00bc00c100c200c500c500cb00d000de
+00df00f700f7010b01110111012201220128012f01320133013e01430146
+01480150015301660169016a016b017201730178018b018b018b018b018d
+01ac01bc01c301ce01ed01ed01ed01ed01ee01ee01f501f601f602060206
+021e021e021f021f022c022e023802380241024d0250025c0269026b027c
+0290029102a702a702d802d802e402e402ed0320032c032c0341036c0378
+038903cd03d4043d043e046f04a0053a05420558057e05c8061206390760
+07cf000100010007001700180018002f003100310031003a003c004a004a
+004c00570073007400780084008f00a100a300b100b800bc00c500c500c6
+00c900db00de00ea00f700f7010c010c0115011801280128012d01570159
+015a015a015a015a017001720172018a018a018b018b018b01a201a201a3
+01a301ba01bc01bc01bf01bf01ee02150219022e0288028802b302b302b3
+02b302b302e402e402ec030003150315031503160316031f0322032b0360
+0378038b039b03db0401040c04160417043d047f048004a004a204c504c6
+04e804e8050205020514052e053a05570558057f05900592059d05af05b0
+06120613065d065d068b068b068b06d50753076c0786079207aa08000800
+0800080008000800084300a4009e00a50000000000000000000000000000
+00af0063014d01d5002a00940094075300ad01ee0063076c01d501bc00f7
+030300ba03410071065d0401039b032c08430590065d00890222064407cf
+043e013b024b00170165004a015000bd010400c600190042005100a400dc
+004c00c600c60051004c00060612045400de080003d403cd080008000800
+0800031601ed0237015a02b3045c04160557021e021f047f048004a205af
+05010455057f053a017202e4017200b900e5034500004037383734333231
+302f2e2d2c2b2a292827262524232221201f1e1d1c1b1a19181716151413
+1211100f0e0d0c0b0a090807060504030201002c4523466020b02660b004
+262348482d2c452346236120b02661b004262348482d2c45234660b02061
+20b04660b004262348482d2c4523462361b0206020b02661b02061b00426
+2348482d2c45234660b0406120b06660b004262348482d2c4523462361b0
+406020b02661b04061b004262348482d2c0110203c003c2d2c20452320b0
+cd442320b8015a51582320b08d44235920b0ed51582320b04d44235920b0
+042651582320b00d44235921212d2c20204518684420b001602045b04676
+688a4560442d2c01b10b0a432343650a2d2c00b10a0b4323430b2d2c00b0
+462370b101463e01b0462370b10246453ab10200080d2d2c45b04a234445
+b04923442d2c2045b00325456164b050515845441b2121592d2cb0014363
+2362b0002342b00f2b2d2c2045b0004360442d2c01b00643b00743650a2d
+2c2069b04061b0008b20b12cc08a8cb8100062602b0c642364615c58b003
+61592d2c45b0112bb0472344b0477ae4182d2cb801a65458b00943b80100
+5458b9004aff80b14980444459592d2cb01243588745b0112bb0172344b0
+177ae41b038a45186920b01723448a8a8720b0a05158b0112bb0172344b0
+177ae41b21b0177ae45959182d2c2d2c4b52582145441b23458c20b00325
+455258441b212159592d2c01182f2d2c20b0032545b049234445b04a2344
+4565234520b00325606a20b009234223688a6a606120b01a8ab000527921
+b21a4a40b9ffe0004a45208a54582321b03f1b235961441cb114008a5279
+b34940204945208a54582321b03f1b235961442d2cb110114323430b2d2c
+b10e0f4323430b2d2cb10c0d4323430b2d2cb10c0d432343650b2d2cb10e
+0f432343650b2d2cb11011432343650b2d2c4b525845441b2121592d2c01
+20b003252349b04060b0206320b000525823b002253823b002256538008a
+63381b212121212159012d2c4569b00943608a103a2d2c01b00525102320
+8af500b0016023edec2d2c01b005251023208af500b0016123edec2d2c01
+b0062510f500edec2d2c20b001600110203c003c2d2c20b001610110203c
+003c2d2cb02b2bb02a2a2d2c00b00743b006430b2d2c3eb02a2a2d2c352d
+2c76b04b23701020b04b4520b0005058b00161593a2f182d2c21210c6423
+648bb84000622d2c21b08051580c6423648bb82000621bb200402f2b59b0
+02602d2c21b0c051580c6423648bb81555621bb200802f2b59b002602d2c
+0c6423648bb84000626023212d2cb4000100000015b00826b00826b00826
+b008260f10161345683ab001162d2cb4000100000015b00826b00826b008
+26b008260f1016134568653ab001162d2c4523204520b10405258a505826
+618a8b1b26608a8c59442d2c462346608a8a462320468a608a61b8ff8062
+232010238ab14b4b8a70456020b0005058b00161b8ffc08b1bb0408c5968
+013a2d2cb0332bb02a2a2d2cb0134358031b02592d2cb0134358021b0359
+2d00000100000001000094bb29645f0f3cf5001b080000000000a5b714b3
+00000000ad958b910000fe5008e306bf0000000c00010000000000000001
+000006bffe50000009280000ffcf08e30001000000000000000000000000
+000000dc040000800000000004d2000008000000083e004a082a004a0819
+004a0826004a0928009407fd009408ac00ad03dd00c5059700ad059700ad
+072200ad059700ad059700ad072200ad059700ad059700ad072200ad0597
+00ad059700ad091000ad08c600ad072200ad072200ad072200ad091000ad
+087a004a087a004a056500ad056500ad079200ad079200ad079200ad0792
+00ad078800ad078800ad078800ad078800ad041700c5041700c5041700c5
+041700c5049a00ad049a00ad049a00ad049a00ad072200ad052900940620
+0094072200ad072200ad072200ad072200ad072100ad072100ad072200ad
+072200ad08b200a006bf002b060c005d062b005003d80056040b003d0360
+001b03fa0039080000190800001908000019080000190800005008000050
+0800005008000050072200ad072200ad072200ad072200ad072200ad0722
+00ad072200ad072200ad072200ad072200ad072200ad072200ad072200ad
+072200ad072200ad072200ad072200ad072200ad072200ad072200ad0722
+00ad072200ad076b00ad076b00ad05ad00ad05ad00ad068900ad053400ad
+059700ad072100ad072100ad072100ad072100ad072100ad072100ad0721
+00ad072100ad072100ad072100ad072100ad072100ad0800000008000000
+021e00ad02e400ad046f00ad072100ad072100ad072100ad072100ad0721
+00ad072100ad072100ad021e00ad02e400ad046f00ad072100ad072100ad
+072100ad072100ad072100ad072100ad072100ad072100ad072100ad0270
+00ad02fc00ad038700ad05b500ad07e400ad07e400ad07e400ad07e400ad
+07e400ad021e00ad028100ad02e400ad046f00ad05f900ad05f900ad043d
+00ad043d00ad072100ad072100ad07210185072100ad072100d1072100d1
+072100ad07210110072100e5072100ad072100ad072100ad072100ad0721
+00ad072100ad072100ad072100ad07210162072101510721013f0721012e
+0721011d072100fa072100d7072100c2072100ba072100b2072100ab0721
+00a307210094072100f7072100eb072100de072100d2072100c6072100ad
+072100ad072100ad072100ad072100ac072100ad07210110072101100721
+00ad072100ad072100d1072100d10721010f0721010f072100ad072100ad
+072100ad072100ad07210110072100ad072100d10721010f072100ad0721
+00ad0721017d05d800ad072100ad0000002600260026002600c801ac021f
+028203d0048d0619069d06da0700076a07df084008db0918093e09aa0a2d
+0afe0b560ba10c4d0d0f0d720e360ecb0f78105c10661145115011b511c0
+1284134813a7140614131420142d143a144714541461146e158c15ea1627
+16a41708175917aa181b188818db192e19d01a831aee1b611bd11c4c1cb1
+1d201dd11ddc1e8b1e961f501f5b2013201e2095210f219d224a22ff2389
+24292494253525d5268626e2274727cc285d28e7296629f02a472ad02b54
+2be72c3b2c812cce2d1b2ddb2e0f2e452f573074319032a633b734f73502
+350d35183523352e364937a43914393339523972399739dc3a213a623ab9
+3b173b753b8a3ba03bb83bcc3bf13c1a3c463c723cac3ce63d203d783d94
+3db03dce3dec3e253e6d3eb63eff3f563f703f8a3faa3fc83ff5403b405e
+407f40a140c340db40f74118413a415c418041a841d04200423042644298
+42cc4304433d437643af43e84421445a449244c845074543458245c34606
+464b469146e14727477547c6480f486648bc4921498149db4a014a274a4f
+4a784aab4ade4b164b514b954bd24c2f4c954cda4d294d9a4e174f044f44
+4f86500750b800000001000000dc009e000f0060000e0002001000140039
+000007e8045f00060001400c004646000000121108404820b801a2b24832
+20b80125b2483220b80123b2483220b80122b2483220b80121b2483220b8
+0120b2483220b8011eb2483220b8011cb2483220b8011bb2483220b80118
+405b483220f6483220f5483220f2483220ce483220c9483220b5483220b3
+483220b2483220b1483220a8483220a44832209148322089483220854832
+207f483220794832206e483220644832205f4832205d4832205a48322058
+483220b801a1b2483220b801a0b2483220b8019db2483220b8019bb24832
+20b8011db2483220b8011ab2483220b80119b2483220b80117404c483220
+f4483220d0483220cf483220cd483220cc483220cb483220ca483220c848
+3220b4483220a7483220a548322098483220904832208448322081483220
+804832205c4832260926093790be01cd0007009001450007009001034043
+0790e80790d707909707907a079077079065079061079057079055072408
+220820081e081c081a08180816081408120810080e080c080a0808080608
+04080208000800b013034b024b5342014bb0c063004b6220b0f65323b801
+0a515ab005234201b0124b004b544218b9000107c0858d16b0382bb00288
+b801005458b801ffb101018e851bb0124358b9000101ff858d1bb9000101
+ff858d5959002b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b182b2b2b2b
+2b2b2b2b2b2b2b2b2b4b5079410f001f01a30007001f01500007001f012a
+0007001f01260007001f011f00072b2b2b2b2b4b5379410f009001a30007
+0090015000070090012a00070090012600070090011f00072b2b2b2b2b18
+01b25000324b618b601d002b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b
+2b2b2b2b2b2b012b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b
+2b2b2b2b2b2b2b2b2b0145695342014b5058b108004259435c58b1080042
+59b3020b0a124358601b2159421610703eb0124358b93b21187e1bba0400
+01a8000b2b59b00c2342b00d2342b0124358b92d412d411bba0400040000
+0b2b59b00e2342b00f2342b0124358b9187e3b211bba01a80400000b2b59
+b0102342b0112342010000>
+[16033 16077 9221 ] AllocGlyphStorage
+]def 
+108 44 
+PrepFor2015
+AddFontInfoBegin
+/OrigFontType /TrueType def 
+/OrigFontName <57696E6764696E67732032> def
+/OrigFontStyle () def
+/FSType 14 def
+AddFontInfoEnd
+[16#2c 16#d0ae1b28 ] AddXUID
+Type42DictEnd
+2 650 77 <000300ad0000067505c8000b0017002a0054b2297c2aba02410018022640
+0915c8037b091d207c1fb80245400a0fc80900127f068c001db80228b519
+f52524291fba022800240240b20c7f002ffdf6f43c103cfde410fded003f
+fdf6fd3c10fdfdf6fced3130131000212000111000212000131000212000
+11100021200025111416171715213537323635113426272735ad01b10133
+013301b1fe4ffecdfecdfe4f630177010a010a0178fe88fef6fef6fe8902
+c8185142fe254a511818514a02e4013301b1fe4ffecdfecdfe4f01b10133
+fef6fe890177010a010a0178fe88d5fd034e1904013e3e011952023c4e19
+04013e00>/TTE1ECB468t00 AddT42Char 
+1 0 0 <000200800000038005c8000300070023400f078001048001ae000004b300
+05b303b901da00002ffeed10ed003feeed10ed3130331121112521112180
+0300fd800200fe0005c8fa388004c800>/TTE1ECB468t00 AddT42Char 
+/TTE1ECB468t00 findfont /CharStrings get begin
+/one 77 def
+/.notdef 0 def
+end
+/TTE1ECB468t00 findfont /Encoding get
+dup 1 /one put
+pop
+F /F1 0 /0 F /TTE1ECB468t00 mF 
+/F1SC8 F1 [200 0 0 -200 0 0 ] mFS
+F1SC8 Ji 
+859 1466 M <01>S 
+F0SC8 Ji 
+1087 1466 M (Boolean weighting)[133 100 100 56 89 89 100 49 144 89 56 100 100 55 56 100  0]xS 
+952 1766 M (Weight)[187 89 56 100 100  0]xS 
+/F0S85 F0 [133 0 0 -133 0 0 ] mFS
+F0S85 Ji 
+1540 1816 M (t)S 
+1577 1816 M (,d )[33 67  0]xS 
+F0SC8 Ji 
+1710 1766 M (=     1    if term )[113 50 50 50 50 50 100 50 50 50 50 56 66 50 56 88 67 154  0]xS 
+2960 1766 M (t)S 
+: N 2960 1788 56 10 rp C 
+ L ; 3116 1766 M (present in document )[100 66 89 78 89 99 56 49 56 100 49 100 100 89 100 154 89 100 56  0]xS 
+4785 1766 M (d )[100  0]xS 
+: N 4785 1788 100 10 rp C 
+ L ; 2062 2005 M (0    if term )[100 50 50 50 50 56 66 50 56 88 67 154  0]xS 
+2949 2005 M (t)S 
+: N 2949 2027 56 10 rp C 
+ L ; 3105 2005 M (NOT)[145 144  0]xS 
+: N 3105 2027 411 10 rp C 
+ L ; 3566 2005 M (present in document )[100 67 89 78 88 100 56 49 56 100 50 100 100 89 100 154 89 100 56  0]xS 
+5237 2005 M (d)S 
+: N 5237 2027 99 10 rp C 
+ L ; 1 Lj 1 Lc 6 Lw solid N 2027 1641 M 2008 1641 1993 1656 1993 1674 -c 1993 1804 I 1993 1822 1977 1836 1958 1836 -c 1977 1836 1993 1851 1993 1869 -c 1993 1999 I 1993 2017 2008 2032 2027 2032 -c : [ 1 0 0 1 196 191 ] concat K 
+; 2 894 78 <000300ad0000067505c8000b00170035005fbb0028022000290196400a22
+7c2b7f15c8037b0933b80119400b18800fc80900348d1ff52eb802424009
+127f068c0033191827b80243b2288d18b80242b30c7f00641d2ffdf6f4ed
+11333310fdfdf6ede4003ffdf6ed10fdfdf6edfced313013100021200011
+100021200013100021200011100021200001353637373636353426232207
+0607072335363332161514070706072115ad01b10133013301b1fe4ffecd
+fecdfe4f630177010a010a0178fe88fef6fef6fe890165376d437a4b5757
+47381806024a887280a1b24bb71401c402e4013301b1fe4ffecdfecdfe4f
+01b10133fef6fe890177010a010a0178fe88fd2e4c9d633d6f734d605f21
+0f6a1bbc388f719877327a798200>/TTE1ECB468t00 AddT42Char 
+/TTE1ECB468t00 findfont /CharStrings get begin
+/two 78 def
+end
+/TTE1ECB468t00 findfont /Encoding get
+dup 2 /two put
+pop
+F1SC8 Ji 
+859 2305 M <02>S 
+F0SC8 Ji 
+1087 2305 M (Term weight )[122 89 67 154 50 144 89 56 100 100 56  0]xS 
+
+%%IncludeResource: font Symbol
+F /F2 0 /2 F /Symbol mF 
+/F2SC8 F2 [200 0 0 -200 0 0 ] mFS
+F2SC8 Ji 
+2164 2305 M <B5>S 
+F0SC8 Ji 
+2356 2305 M (term frequency)[56 88 67 154 50 67 67 89 100 100 89 99 89  0]xS 
+2 1178 79 <000300ad0000067505c8000b001700430080b73c257c2828423633ba0220
+00340241400a2e7c367f15c8037b0919ba022000180241400e1f7c427f0f
+c809003c3f182bf539b80191b222f53fb80244b5127f068c0026b80221b2
+338d18b801c2b70c7f00640c7f00641d2fed1d2ffdf6e4e410fdfdf6edf4
+ed111239003ffdf6edf4ed10fdfdf6edf4ed1112392fed39313013100021
+200011100021200013100021200011100021200001353317161716333236
+353426232335333236353426232206070723353633321615140607161615
+14062322ad01b10133013301b1fe4ffecdfecdfe4f630177010a010a0178
+fe88fef6fef6fe8901944a020316364b53637c7d4d2984845455572e0602
+4a657f8c8c50505e5ea7908802e4013301b1fe4ffecdfecdfe4f01b10133
+fef6fe890177010a010a0178fe88fd28b81a500d20766268673f605f5655
+264b16a2246e6e4f7223197960839800>/TTE1ECB468t00 AddT42Char 
+/TTE1ECB468t00 findfont /CharStrings get begin
+/three 79 def
+end
+/TTE1ECB468t00 findfont /Encoding get
+dup 3 /three put
+pop
+F1SC8 Ji 
+859 3466 M <03>S 
+F0SC8 Ji 
+1087 3466 M (Normalized term frequency)[144 100 68 154 89 56 55 88 89 100 50 55 89 67 154 50 66 67 89 100 100 89 100 89  0]xS 
+952 2697 M (Weight)[187 89 56 100 100  0]xS 
+F0S85 Ji 
+1540 2747 M (t)S 
+1577 2747 M (,d )[33 67  0]xS 
+F0SC8 Ji 
+1710 2697 M (= Freq )[113 50 111 67 89 100  0]xS 
+F0S85 Ji 
+2290 2747 M (t,d )[37 33 67  0]xS 
+/F0SA7 F0 [167 0 0 -167 0 0 ] mFS
+F0SA7 Ji 
+1140 3041 M (term    document)[46 74 56 128 42 42 42 41 83 84 74 84 128 74 84  0]xS 
+2416 3041 M (raw frequency of term in document)[56 74 121 41 55 56 73 84 84 73 84 74 83 41 84 55 42 46 73 56 128 42 46 84 41 84 83 74 83 128 74 84
+ 0]xS 
+N 1340 2948 M 1479 2797 I : [ 1 0 0 1 196 191 ] concat K 
+; N 1501 2822 M 1522 2751 I 1453 2778 I C 
+ O N 1883 2937 M 1736 2805 I : [ 1 0 0 1 196 191 ] concat K 
+; N 1761 2784 M 1690 2763 I 1717 2832 I C 
+ O N 2521 2937 M 2173 2798 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2189 2768 M 2116 2775 I 2164 2829 I C 
+ O F0SC8 Ji 
+1184 3839 M (Weight)[187 89 56 100 100  0]xS 
+F0S85 Ji 
+1772 3889 M (t)S 
+1809 3889 M (,d )[33 67  0]xS 
+F0SC8 Ji 
+1942 3839 M (=)S 
+N 2202 3822 M 3040 3822 I : [ 1 0 0 1 196 191 ] concat K 
+; 2360 3766 M (Freq )[111 67 89 100  0]xS 
+F0S85 Ji 
+2777 3816 M (t,d      )[37 33 67 33 33 33 34 33  0]xS 
+F0SC8 Ji 
+2210 4005 M (Freq )[111 67 89 100  0]xS 
+F0S85 Ji 
+2627 4055 M (t,corpus)[37 33 59 67 44 67 67  0]xS 
+F0SA7 Ji 
+3415 3876 M (normalized term frequency )[84 83 56 128 74 46 46 74 74 84 41 46 74 55 128 42 56 56 74 83 84 73 84 74 83  0]xS 
+3415 4076 M (by overall corpus frequency)[84 83 42 83 84 73 56 74 46 45 42 74 83 55 83 84 65 41 55 56 73 84 84 73 84 74  0]xS 
+N 3354 3916 M 3103 3916 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3106 3884 M 3040 3917 I 3106 3949 I C 
+ O LH
+(%%[Page: 2]%%) = 
+%%PageTrailer
+
+%%Page: 3 3
+%%PageBoundingBox: 13 13 599 780
+%%EndPageComments
+%%BeginPageSetup
+/DeviceRGB dup setcolorspace /colspABC exch def
+mysetup concat colspRefresh
+%%EndPageSetup
+
+/DeviceGray dup setcolorspace /colspABC exch def
+: N 196 191 6000 4500 rp C 
+1 0 scol  L ; 0 0 scol F0S75 Ji 
+706 4434 M (CS466)[78 65 58 59  0]xS 
+1024 4434 M (-)S 
+1063 4434 M (9)S 
+5626 4434 M (3)S 
+F0S16F Ji 
+1209 1020 M (Term Weighting Strategies)[224 163 122 285 91 346 163 102 183 183 102 102 184 183 92 204 102 122 163 102 162 184 102 162  0]xS 
+: N 1209 1060 3971 18 rp C 
+ L ; 129380 VM?
+0 -0.207 1.359 0.898
+ 256 array 0 1 255 {1 index exch /.notdef put} for  /TTE1E72AE8t00
+Type42DictBegin
+[<00010000000a000a000a000a63767420ae2fa9a9000000ac0000053a6670
+676dc4f43bb0000005e80000045f676c7966fef43883000013680000cd36
+68656164c987665400000a48000000366868656112130a8e00000a800000
+0024686d747849428a8900000aa4000003886c6f636125baef7c00000e2c
+000001c66d6178700356062a00000ff400000020707265704fc7275f0000
+101400000354676469720000000000000000000000000000000000000000
+000000000000000000000000000000000000000000000000000000000000
+000000000000000000000000000000000000000000000000000000000000
+000000000000000000000000000000000000000000000000000000000000
+000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000d1000000000000000000000000
+00000000000000000000000000310031006301580281025a0031009b0062
+0031009a00310064003100990094009402b30031003100630033006300b0
+0031004a00e705c800320072003100310033007c0031004400f801a80086
+00310031003c006205c80062006300c505c8003e0044006305c800010031
+00630094018c00310063007d0084009400f102b302c202c205c80001003f
+004a004a0063009400940094009402b305c805c800310031008300ae00de
+01c00001007b0093009400b900d102c202c2003e009400ad00f701280128
+018b01e501ed025002c20001003c00620063006b007b009400b000be00d9
+00f30114013e018a01bc01ed0212028100010031004a004a006300800094
+00c500c500d10128012801280128014d016c016f01720189018b01e40203
+02350250026f028802a002b002c20359043e05c806120637076c00010001
+0002000300110044004a004a004e00530062006200710080009400c500c5
+00c500c500c500d00102015101540168019601a001bc01c501ed01ed01f4
+022d023f02810281028102950360040c04e8056b05a205a205c80655079d
+0806000200050006001a002000250034003c0045004a005100630064006a
+007a007a007a007b007b007c007d0082009f00a000a100a900b100ba00c1
+00c500d000db00de00f700f7010f010f0128012801370139015701570159
+01590172017e0184018a018b018b018b018b018b018b018d019c01b301ba
+01bc01cb01d5021f0250025002500250026c026f0281028102810283029a
+02b402cb02cc02df02e402ea02f103000309035f0362037303a503aa03cf
+03cf044804a004a104dc04dc050105b005c8061206120614065d068b068b
+068c0709076b07840791079d07b60a2e00170025002c003c004a00570063
+0079007c007c0088008a009400b000b100b100b400b500b500c800ea00f7
+00f700f700ff010f0128012801280128013901440146015501550159015a
+0160016d01730178018a018b018b018b01a401a601a801b401bc01d501d5
+01d801db01e101eb01ee01ee01ee01f702060216022b0250025002500250
+025002530257026b02960299029c02ab02b302b302bc02d802de02e402e4
+02f50300030b03120315031e0345034603460354035b0378038303ad03c2
+03db03ed040c040c043d043e0455045d04a004c604e404e804e805020503
+05250535053a053a0568056e057e058b059e05c805ed05ed060c06120612
+06120613063b0687069f06b306d906fd0715071607220722072e07310753
+076c077607aa07e407e708ac0941096909720a2c00aa003000b700000000
+0000000000000000000000b500d900c3025d062f001a01db007b0071030f
+00300020006300c5020c076c096902b3043d043e07530128035f03dd00f7
+0309004b04c60057035b006c0562030b07ec00a80173048101ab034600ac
+00a5077601bc036003ed03a50525063b018b018b018b029a03aa07790760
+07e706d906f403930568072e0141058b01a8023f00940172015100f601f5
+005e00300074022a00c60089008801760008009408ac010d003100c5021f
+018b05a203b204a00345057e01290128011b05c8038500350015000c0028
+0022000500050014000500004037383734333231302f2e2d2c2b2a292827
+262524232221201f1e1d1c1b1a191817161514131211100f0e0d0c0b0a09
+0807060504030201002c4523466020b02660b004262348482d2c45234623
+6120b02661b004262348482d2c45234660b0206120b04660b00426234848
+2d2c4523462361b0206020b02661b02061b004262348482d2c45234660b0
+406120b06660b004262348482d2c4523462361b0406020b02661b04061b0
+04262348482d2c0110203c003c2d2c20452320b0cd442320b8015a515823
+20b08d44235920b0ed51582320b04d44235920b0042651582320b00d4423
+5921212d2c20204518684420b001602045b04676688a4560442d2c01b10b
+0a432343650a2d2c00b10a0b4323430b2d2c00b0462370b101463e01b046
+2370b10246453ab10200080d2d2c45b04a234445b04923442d2c2045b003
+25456164b050515845441b2121592d2cb00143632362b0002342b00f2b2d
+2c2045b0004360442d2c01b00643b00743650a2d2c2069b04061b0008b20
+b12cc08a8cb8100062602b0c642364615c58b00361592d2c45b0112bb047
+2344b0477ae4182d2cb801a65458b00943b801005458b9004aff80b14980
+444459592d2cb01243588745b0112bb0172344b0177ae41b038a45186920
+b01723448a8a8720b0a05158b0112bb0172344b0177ae41b21b0177ae459
+59182d2c2d2c4b52582145441b23458c20b00325455258441b212159592d
+2c01182f2d2c20b0032545b049234445b04a23444565234520b00325606a
+20b009234223688a6a606120b01a8ab000527921b21a4a40b9ffe0004a45
+208a54582321b03f1b235961441cb114008a5279b34940204945208a5458
+2321b03f1b235961442d2cb110114323430b2d2cb10e0f4323430b2d2cb1
+0c0d4323430b2d2cb10c0d432343650b2d2cb10e0f432343650b2d2cb110
+11432343650b2d2c4b525845441b2121592d2c0120b003252349b04060b0
+206320b000525823b002253823b002256538008a63381b21212121215901
+2d2c4569b00943608a103a2d2c01b005251023208af500b0016023edec2d
+2c01b005251023208af500b0016123edec2d2c01b0062510f500edec2d2c
+20b001600110203c003c2d2c20b001610110203c003c2d2cb02b2bb02a2a
+2d2c00b00743b006430b2d2c3eb02a2a2d2c352d2c76b04b23701020b04b
+4520b0005058b00161593a2f182d2c21210c6423648bb84000622d2c21b0
+8051580c6423648bb82000621bb200402f2b59b002602d2c21b0c051580c
+6423648bb81555621bb200802f2b59b002602d2c0c6423648bb840006260
+23212d2cb4000100000015b00826b00826b00826b008260f10161345683a
+b001162d2cb4000100000015b00826b00826b00826b008260f1016134568
+653ab001162d2c4523204520b10405258a505826618a8b1b26608a8c5944
+2d2c462346608a8a462320468a608a61b8ff8062232010238ab14b4b8a70
+456020b0005058b00161b8ffc08b1bb0408c5968013a2d2cb0332bb02a2a
+2d2cb0134358031b02592d2cb0134358021b03592d000001000000028000
+281167695f0f3cf5081b080000000000a5ad93fe00000000b1cb07d40000
+fe500adf07310000000c0001000000000000000100000731fe5000000b8c
+0000ffcf0adf0001000000000000000000000000000000e2040000800000
+00000600000008000000083e004a092800940a6900940ac0004a07260094
+09bc00ad03aa00c508ac00ad072200ad090f00ad090f00ad095f00ad095f
+00ad0b8700ad0b8c00ad08c500ad0abf00ad059700ad059700ad072200ad
+046f00ad04d100ad089400ad0795004a08a0004a078400ad072100ad0722
+00ad072200ad072100ad0747004a0747004a04b300ad065800ad056500ad
+056500ad078900ad078900ad046400ad046400ad072200ad06bf005606bf
+005606bf005608e300ad054800ad06cb00ad08b600ad071b00ad070b00ad
+053400ad068100ad0515009406490094072200ad072200ad05f900ad05f9
+00ad05c800ad058c00ad065b00ad071500ad072200ad072a00ad072100ad
+094000ad086f00ad07b600ad08b900ad078700ad077700ad079100ad0833
+00ad076e00ad08c500ad088500ad063d00ad086600b30a2b0088043e004a
+043e004a072200ad072200ad0800004a0800004a0800004a0800004a0800
+0038080000380800003808000038087b00ad087b00ad072100ad072200ad
+072200ad072200ad072200ad072200ad072200ad072200ad072200ad0722
+00ad072200ad072200ad072200ad072200ad072200ad072200ad072200ad
+072200ad072200ad072200ad072200ad072200ad072200ad028100ad03a9
+00ad05f900ad072100ad072100ad072100ad072100ad072100ad079f00ad
+079f00ad028100ad03a900ad05f900ad072100ad072100ad072100ad0721
+00ad072100ad049f00ad07e400ad03a900ad05f900ad07210110072100ad
+072100d10721010f072100ad072100ad072100ad072100ad072100ad0721
+00ad07210162072100ad072100ad072100ad07210087072100ad072100ad
+072100ad072100ad072100ad072100ad072100ad072100ad072100ad0721
+00ad072100ad072100ad072100ad072100ad072100ad072100ad086200ad
+086200ad086200ad086200ad080000310800000008000031080000310800
+003108000031080000310800003108000031080000310a0600ad0a0600ad
+065b00ad065b00ad072100ad072100ad072100ad072100d7072100ad0721
+00ad07d600ad07d600ad072100ad072100ad063500ad063500ad063500ad
+063500ad088a00ad088a00ad072100ad072100ad06fb00ad06fb00ad06fb
+00ad06fb00ad072100ad072100ad067c00c5067c00c5087b00ad067c00c5
+064100ad064100ad064100ad064100ad03db006303150063084700640000
+002600260026002600e201bd028803670417053605e6072b07ee084c08ba
+094b09e60ade0b9b0bfc0c910d310dbd0e820f0c1000116a11fc1311146a
+14dc156315c81662177c178719021a081b671b711cd01cdb1ce81cf51e14
+1eb21f3c1fd9209521f5228c233b239023f3241f24f1254f258b260c267a
+26d9274527ea284828cd292729af2a8a2ceb2d592dd42e592ef12f83302d
+30943123316b3202326f32e333873457349f34e9370638663925393039e9
+39f43aae3ab93b743b7f3bf93c533d193d903dee3e703f103fa4402e40c0
+412a41c8425e42ef434b4390440e449344f3456145dd463146b7472b47a3
+47c347e34807484e489648d7493949d14a1e4a6a4a824a9a4ab14adc4b07
+4b334b694b9a4bb84bd64bf44c124c384c604c934ccb4d0c4d654e014ea3
+4f624fd45044508b5103515e51bd52c953d954ec55fc570857fb58065811
+581c58275832593159a55a1b5a255a2f5a3c5a495a565a635b4b5c2c5cbf
+5ccc5cd95ce35d755d825d8f5d995e595e645ea55eb05ebd5eca5f0c5f17
+5f245f315f745f7f5f8c5f995fd45fdf601b6026606a60756082608f60cd
+60d8611561206180618b619861a56232623f62b762c2632f633a63616388
+669b00000001000000e2010c002f008d000e00020010002f0039000001ec
+045f00010001400c004646000000121108404820b80236b2483220b80283
+b2483220b801acb2483220b801abb2483220b801a9b2483220b801a8b248
+3220b801a7b2483220b801a3b2483220b801a1b2483220b8019fb2483220
+b80149b2483220b80148b2483220b80147b2483220b80142b2483220b801
+40b2483220b8013eb2483220b8013cb2483220b80139b2483220b80106b2
+483220b80104b2483220b80103b2483220b80101404f483220dc483220db
+483220da483220d6483220c3483220b6483220b5483220af483220ad4832
+20ac483220a8483220a74832209f4832209e4832209d4832208c48322083
+483220634832205f483220b801afb2483220b801adb2483220b801aab248
+3220b801a6b2483220b801a5b2483220b801a4b2483220b8019eb2483220
+b80144b2483220b80141b2483220b8013db2483220b80138b2483220b801
+07b2483220b80105b2483220b80102b2483220b801004040483220d94832
+20d5483220c8483220c7483220c6483220c5483220b7483220b4483220b3
+483220ae483220a04832209248322079483220644832140914093790b801
+7640490790a107909307908d07906f07906c07906607906507905c07905a
+079059079058072408220820081e081c081a08180816081408120810080e
+080c080a080808060804080208000800b013034b024b5342014bb0c06300
+4b6220b0f65323b8010a515ab005234201b0124b004b544218b0382bb002
+88b801005458b801ffb101018e851bb0124358b9000101ff858d1bb90001
+01ff858d595900162b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b182b2b
+2b2b2b2b2b2b2b2b2b2b2b4b5079bc001f01370007001f0133b3071fc407
+2b2b2b4b5379bc00900137000700900133b30790c4072b2b2b1801b25000
+324b618b601d002b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b
+2b2b2b2b2b2b012b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b
+2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b0145695342014b5058b10800
+4259435c58b108004259b3020b0a124358601b2159421610703eb0124358
+b93b21187e1bba040001a8000b2b59b00c2342b00d2342b0124358b92d41
+2d411bba04000400000b2b59b00e2342b00f2342b0124358b9187e3b211b
+ba01a80400000b2b59b0102342b01123420100>
+[15993 16297 16377 3871 ] AllocGlyphStorage
+]def 
+108 44 
+PrepFor2015
+AddFontInfoBegin
+/OrigFontType /TrueType def 
+/OrigFontName <57696E6764696E6773> def
+/OrigFontStyle () def
+/FSType 0 def
+AddFontInfoEnd
+[16#2c 16#d7454db3 ] AddXUID
+Type42DictEnd
+3 0 102 <000400ad0000067505c8000b001700220025008f40191b1c1e221d231f24
+1825231f21221d1a201918251a20252323b8027a40151b1c141b1b1c251f
+1c1d801582038009231f821a20b8024c400d18800f82090025bd1890248f
+20bb0132001d00220279b7128f06a200231b1ab80278b20c8f002ffdf632
+3210fdfdf63ce4edfde5003ffdf6f43cfd3c10fdfdf63c113987052e2b04
+7d10c40f0f0f0f012e002e31301310002120001110002120001310002120
+001110002120000111213501331133152311012111ad01b10133013301b1
+fe4ffecdfecdfe4f630177010a010a0178fe88fef6fef6fe89029afe5c01
+a4747d7dfe62013202e4013301b1fe4ffecdfecdfe4f01b10133fef6fe89
+0177010a010a0178fe88fd2e01085d023ffdc965fef8016d019f>/TTE1E72AE8t00 AddT42Char 
+1 0 0 <000200800000038005c8000300070023400f07d40104d401a3000004ff00
+05ff03b901e500002ffeed10ed003feeed10ed3130331121112521112180
+0300fd800200fe0005c8fa388004c800>/TTE1E72AE8t00 AddT42Char 
+/TTE1E72AE8t00 findfont /CharStrings get begin
+/foursans 102 def
+/.notdef 0 def
+end
+/TTE1E72AE8t00 findfont /Encoding get
+dup 1 /foursans put
+pop
+F /F3 0 /0 F /TTE1E72AE8t00 mF 
+/F3SC8 F3 [200 0 0 -200 0 0 ] mFS
+F3SC8 Ji 
+859 1466 M <01>S 
+F0SC8 Ji 
+1087 1466 M (TF)[122  0]xS 
+1320 1466 M (-)S 
+1387 1466 M (IDF)[67 144  0]xS 
+3 296 103 <000300ad0000067505c8000b0017002f006b400b1923181b5d2e2e0f23aa
+28ba012e0021010840142727240f2424155d030f5d038809001818230c26
+b8010a4012289c23230c1e912b2b120c690012690697002ffded10fd1139
+2fed11392ffde41112392f003feded10ed103c1112392ff4ede411392fed
+391139313013100021200011100021200013100021200011100021200001
+3516333236353426232207112115211532161514062322ad01b101330133
+01b1fe4ffecdfecdfe4f630177010a010a0178fe88fef6fef6fe89019b5c
+5463639090212501d8fe95b3cab7a14a02e4013301b1fe4ffecdfecdfe4f
+01b10133fef6fe890177010a010a0178fe88fd1e6e2566656a690501c66d
+f5a593889a00>/TTE1E72AE8t00 AddT42Char 
+/TTE1E72AE8t00 findfont /CharStrings get begin
+/fivesans 103 def
+end
+/TTE1E72AE8t00 findfont /Encoding get
+dup 2 /fivesans put
+pop
+F3SC8 Ji 
+859 3466 M <02>S 
+F0SC8 Ji 
+1087 3466 M (TF log IDF )[122 111 50 56 100 100 50 66 144 111  0]xS 
+36018 VM?
+0 -0.207 1.027 0.926
+ 256 array 0 1 255 {1 index exch /.notdef put} for  /TTE1ECEEA8t00
+Type42DictBegin
+[<00010000000a000a000a000a63767420403938bd000000ac000002706670
+676dc4f43bb00000031c0000045f676c7966c4f24af800000e6c0000301c
+68656164bab2bc560000077c00000036686865610fa70603000007b40000
+0024686d747819f48cbc000007d80000034c6c6f636173347bff00000b24
+000001a86d617870090f011f00000ccc000000207072657012d4f70c0000
+0cec0000017e676469720000000000000000000000000000000000000000
+00000000103805e20000000000ee00040000000000000000000000000000
+000000000000000000000000000000000000000000000000000000000000
+0000000000000000ffffffffffffffffffffffffffffffffffffffffffff
+ffff00000000000000000000000000000000000000000000000000000000
+000000000000ffffffffffff000000000063000000000000000000000000
+0000000000000000000000000063009400940094009405c805c800620094
+009405c8006200620063009401510063006300800094018a024f02e405c8
+009400940094009400ba00f7012801280128015901ee021f05c800c500c6
+01280128044b04560456052f05c805c8062b003100620062006300630094
+009400940094009400c500c600c600de00f600f700f700f7012801280128
+0128015901720172018a018a01bc01ed01ed01ee0250025002500251029a
+029a02e402e4034d03b3044b044b045604a004ab04ab0502050205c805c8
+06040604063206ad06ad06ad06ad00630094009400c50128012801280128
+01280172018a018b01b401ed01ee01ee0250025102a202e402e403000315
+0316032e0347039503b203da044b044b05020503053e053e053e055b055b
+056b057e05c805c805c805c805c805c805c806310650068106d70753078b
+007a009e0076000000000000000000000000000000940094009402810073
+00c5056b0378029a01280347032e017201720269018b0753021f034d0395
+0094015002510159006203b200cc00f7031c00f700bb0159000106ad06ad
+06ad05c806ad05c805020502050200de01bc0128018a0250018a031602e4
+06d7012801ee060401ed060401ed02514037383734333231302f2e2d2c2b
+2a292827262524232221201f1e1d1c1b1a191817161514131211100f0e0d
+0c0b0a090807060504030201002c4523466020b02660b004262348482d2c
+452346236120b02661b004262348482d2c45234660b0206120b04660b004
+262348482d2c4523462361b0206020b02661b02061b004262348482d2c45
+234660b0406120b06660b004262348482d2c4523462361b0406020b02661
+b04061b004262348482d2c0110203c003c2d2c20452320b0cd442320b801
+5a51582320b08d44235920b0ed51582320b04d44235920b0042651582320
+b00d44235921212d2c20204518684420b001602045b04676688a4560442d
+2c01b10b0a432343650a2d2c00b10a0b4323430b2d2c00b0462370b10146
+3e01b0462370b10246453ab10200080d2d2c45b04a234445b04923442d2c
+2045b00325456164b050515845441b2121592d2cb00143632362b0002342
+b00f2b2d2c2045b0004360442d2c01b00643b00743650a2d2c2069b04061
+b0008b20b12cc08a8cb8100062602b0c642364615c58b00361592d2c45b0
+112bb0472344b0477ae4182d2cb801a65458b00943b801005458b9004aff
+80b14980444459592d2cb01243588745b0112bb0172344b0177ae41b038a
+45186920b01723448a8a8720b0a05158b0112bb0172344b0177ae41b21b0
+177ae45959182d2c2d2c4b52582145441b23458c20b00325455258441b21
+2159592d2c01182f2d2c20b0032545b049234445b04a23444565234520b0
+0325606a20b009234223688a6a606120b01a8ab000527921b21a4a40b9ff
+e0004a45208a54582321b03f1b235961441cb114008a5279b34940204945
+208a54582321b03f1b235961442d2cb110114323430b2d2cb10e0f432343
+0b2d2cb10c0d4323430b2d2cb10c0d432343650b2d2cb10e0f432343650b
+2d2cb11011432343650b2d2c4b525845441b2121592d2c0120b003252349
+b04060b0206320b000525823b002253823b002256538008a63381b212121
+212159012d2c4569b00943608a103a2d2c01b005251023208af500b00160
+23edec2d2c01b005251023208af500b0016123edec2d2c01b0062510f500
+edec2d2c20b001600110203c003c2d2c20b001610110203c003c2d2cb02b
+2bb02a2a2d2c00b00743b006430b2d2c3eb02a2a2d2c352d2c76b04b2370
+1020b04b4520b0005058b00161593a2f182d2c21210c6423648bb8400062
+2d2c21b08051580c6423648bb82000621bb200402f2b59b002602d2c21b0
+c051580c6423648bb81555621bb200802f2b59b002602d2c0c6423648bb8
+4000626023212d2cb4000100000015b00826b00826b00826b008260f1016
+1345683ab001162d2cb4000100000015b00826b00826b00826b008260f10
+16134568653ab001162d2c4523204520b10405258a505826618a8b1b2660
+8a8c59442d2c462346608a8a462320468a608a61b8ff8062232010238ab1
+4b4b8a70456020b0005058b00161b8ffc08b1bb0408c5968013a2d2cb033
+2bb02a2a2d2cb0134358031b02592d2cb0134358021b03592d0000010000
+000100005401fa615f0f3cf5001b080000000000a5b6e5df00000000ad95
+8bba0000fe500838076c0000000c000100000000000000010000076cfe50
+000008e50000fdfa08380001000000000000000000000000000000d30400
+00800000000004d2000008000000072100ad072100ad046f00c5046f00c5
+05a400ad05a400ad05a400ad05a400ad072100ad072100ad046f00c5046f
+00c5068d00ad068d00ad046f00c5046f00c5046f00ad046f00c5046f00ad
+046f00ad046f00c5046f00c5046f00ad046f00ad046f00ad072100ad0721
+00ad05af00c505af009405af00c505af009407da00ad07da00ad072100ad
+072100ad072100ad072100ad072100ad072100ad072100ad072100ad0721
+00ad072100ad072100ad072100ad072100ad072100ad072100ad072100ad
+072100ad08ac00ad072100ad06d700ad045a0063045b0000067c00c5067c
+00c5078a00ad078a00ad078a00ad078a00ad078400ad078400ad078400ad
+078400ad078a00ad078a00ad078b00ad078b00ad072100ad072100ad04d0
+00c504d000c505a400ad05a400ad05a400ad05a400ac072100ad04d000c5
+07d5009407d5009407d5009407d5009407090094070900ad070900940709
+00ad070900ad07090094070900ad07090094043d00ad043d00ad072100ad
+072100ad072101100721011007210110072101bb065b00ad065b00ad0721
+00ad072100ad072100ad072100ad031500c5031500c5072100ad072100ad
+03db00c503db00c5072100ad072100ad04a000c504a000c5072100ad0721
+00ad062b00c5062b00c5072100ad072100ad037800c5037800c5072100ad
+072100ad056500c5056500c5072100ad072100ad075300c5075300c50721
+00ad072100ad072100ad072100ad072100ad072100ad072100ad03150063
+0250006301ed0063018a0063072100ad072100ad072100ad072100ad0721
+00ad043d00ad043d00ad056500c5056500c5065c00ad065c00ad04a000c5
+04a000c5038400ad038400ad072100ad072100ad03fb00ad03fb00ad0721
+00ad072100ad072100ad072100ad072100ad072100ad072100ac072100ac
+072100ac072100ac050b00ad050b00ad050b00ad050b00ad07a900ad07a9
+00ad072100ad072100ad060400ad060400ad060400ad060400ad083000ad
+083000ad072100ad072100ad069800ad069800ad069800ad069800ad08e5
+00ad08e500ad072100ad072100ad075d00ad075d00ad075d00ad075d00ad
+021f00ad021f000004d200f704d200f702fe00ad02fe000004d2001804d2
+00180000002400240024002400470052005f006c009800a300ce00d90116
+0121012e013b0178018201ea01f402260233028a029502a202af02f90326
+0353035d036703740381038e039b03d603e10430043b047c048904ea04f7
+0534053f054c0559059f05a905b605c30611061c067c06d4070b0749076e
+079c081608b7091f092a0991099c09f50a000a640a6f0aec0af70b750b80
+0bab0bb60bc30bd00c080c130c470c520cb00cbd0cd40cec0d120d390d51
+0d670d8d0db20dc60dda0dee0e020e180e2e0e440e590e710e890ea10eb8
+0ed50ee00eed0efa0f1d0f280f350f420f670f720f7f0f8c0fb10fbc0fc9
+0fd60ffd1008101510221050105b10681075109a10a510b210bf10e510f0
+10fd110a112f113a115f116a1192119d11c411dc11f4120c1223122e1254
+125f127b128612a912b412c112ce12f913041311131e1343134e135b1368
+138a139513a213af13d313de13eb13f8142c1461146b14751482148f149c
+14a914e214ed14fa1507153e1549157e158915cb15d615e315f016291634
+166e167916b716c216cf16dc17181723175e17691782178d179917a617e9
+17f41801180e0001000000d3001b00050019000400020010001400390000
+07e800d400010001400c004646000000121108404820b8011cb2483220b8
+01034061483220bf48322089483220874832208648322067483220654832
+20614832205c483220554832208848322066483220624832206048323790
+6a072408220820081e081c081a08180816081408120810080e080c080a08
+0808060804080208000800b013034b024b5342014bb0c063004b6220b0f6
+5323b8010a515ab005234201b0124b004b544218b9000107c0858db0382b
+b00288b801005458b801ffb101018e851bb0124358b9000101ff858d1bb9
+000101ff858d595900162b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b18
+2b182b01b25000324b618b601d002b2b2b2b012b2b2b2b2b2b2b2b2b2b2b
+0145695342014b5058b108004259435c58b108004259b3020b0a12435860
+1b2159421610703eb0124358b93b21187e1bba040001a8000b2b59b00c23
+42b00d2342b0124358b92d412d411bba04000400000b2b59b00e2342b00f
+2342b0124358b9187e3b211bba01a80400000b2b59b0102342b011234201
+000000>
+[12317 ] AllocGlyphStorage
+]def 
+108 44 
+PrepFor2015
+AddFontInfoBegin
+/OrigFontType /TrueType def 
+/OrigFontName <57696E6764696E67732033> def
+/OrigFontStyle () def
+/FSType 14 def
+AddFontInfoEnd
+[16#2c 16#1dfa7b48 ] AddXUID
+Type42DictEnd
+1 6308 81 <000100ad014106750487000d00764034080707ff0a09140a0a090c0d0dff
+0a0b140a0a0b010000ff030214030302050606ff0304140303040304080a
+0c0502056406fe00b8011d4011020001020405060708090b0c0d0c0a5b03
+2fed1739002ffdfde4111739313087052e2b7d10c4872e182b7d10c4872e
+182b7d10c4872e182b7d10c4090123090133012101330901230101c80159
+d1fe5d01a3d1fea70392fea7d101a3fe5dd10159029afea701a301a3fea7
+0159fe5dfe5d0159>/TTE1ECEEA8t00 AddT42Char 
+1 0 0 <000200800000038005c80003000700204011075d01045d01ed0000046700
+056703d4002ffeed10ed003feeed10ed31303311211125211121800300fd
+800200fe0005c8fa388004c8>/TTE1ECEEA8t00 AddT42Char 
+/TTE1ECEEA8t00 findfont /CharStrings get begin
+/b2leftright 81 def
+/.notdef 0 def
+end
+/TTE1ECEEA8t00 findfont /Encoding get
+dup 1 /b2leftright put
+pop
+F /F4 0 /0 F /TTE1ECEEA8t00 mF 
+/F4SC8 F4 [200 0 0 -200 0 0 ] mFS
+F4SC8 Ji 
+2047 3466 M <01>S 
+F0SC8 Ji 
+2275 3466 M <93>S 
+2364 3466 M (TF)[122  0]xS 
+2597 3466 M (-)S 
+2664 3466 M (IDF)[68 144  0]xS 
+2987 3466 M <94>S 
+0 Lj 2 Lc 16 Lw : 2730 1699 1816 137 rc N 2798 1767 M 4513 1767 I : 0.441 0.441 +S K 
+; ; N 2804 2514 M 3360 2514 I : 0.441 0.441 +S K 
+; /F0SA9 F0 [169.633 0 0 -169.633 0 0 ] mFS
+F0SA9 Ji 
+3360 2556 M (      )[43 43 43 43 43  0]xS 
+3303 2688 M ( )S 
+2815 2692 M (DFreq)[123 95 57 75  0]xS 
+: 3255 2602 47 185 rc 3255 2754 M (t)S 
+; 3039 2451 M (1)S 
+2719 2556 M (  )[43  0]xS 
+2573 2556 M (  )[43  0]xS 
+2066 2560 M (Freq)[95 57 75  0]xS 
+2491 2623 M (d)S 
+2385 2623 M (t,)[47  0]xS 
+3987 2182 M (occurs)[85 75 75 85 57  0]xS 
+3860 2182 M ( t )[43 47  0]xS 
+3513 2182 M ( term)[43 47 75 57  0]xS 
+3056 2182 M (unique)[85 85 47 85 85  0]xS 
+2884 2182 M (in )[47 85  0]xS 
+3590 1928 M (documents)[85 85 75 85 130 75 85 47  0]xS 
+3552 1928 M ( )S 
+3393 1928 M (of)[85  0]xS 
+3356 1928 M ( )S 
+3279 1928 M (#)S 
+3239 1928 M ( )S 
+2887 1928 M (Total)[104 85 47 75  0]xS 
+3613 1703 M (1)S 
+2713 1809 M (  )[43  0]xS 
+2568 1809 M (  )[43  0]xS 
+2061 1813 M (Freq)[95 57 75  0]xS 
+2485 1876 M (d)S 
+2379 1876 M (t,)[47  0]xS 
+2021 1809 M ( )S 
+1851 1809 M (  )[43  0]xS 
+1151 1813 M (Weight)[161 75 47 85 85  0]xS 
+1769 1876 M (d)S 
+1663 1876 M (t,)[47  0]xS 
+/F2SA9 F2 [169.633 0 0 -169.633 0 0 ] mFS
+F2SA9 Ji 
+2650 2556 M <B7>S 
+1934 2556 M (=)S 
+111317 VM?
+0 -0.219 1.113 1.004
+ 256 array 0 1 255 {1 index exch /.notdef put} for  /TTE1E71728t00
+Type42DictBegin
+[<00010000000a000a000a000a637674202ac4fb85000000ac000005046670
+676df530c471000005b00000050f676c79663810e3e8000013300000ae12
+68656164c5ad5c6500000ac000000036686865610f2d038100000af80000
+0024686d74787750493e00000b1c000002fc6c6f6361393b0de500000e18
+000001826d617870020305a700000f9c00000020707265707e0fc1650000
+0fbc0000037167646972000000000000000000000000055d0031054c001f
+054c001c0394001b0000ffe10000ffe10000ffe4fe59ffed056b0023fe6a
+ffdc270f000000b4000000b4000000000000000000610025005e0029004a
+00c200f000be012a005000c0ffd0006300580277002d004a008f00b700c0
+00de004400640002001a017c0020ff9c008c0026008300a00039041affb5
+004c00e8080f00160024003a016f000600150067009e01dc0049004b002d
+003b00470089007200470051006700f7013801dc0001000a005d00610094
+009b00be00ce00df00190026002e00d6010701f7ffbb004300530063007b
+00b900de0542058b0013009100a700a900c100e5012e01a401ea03eeffb5
+ffccffeb0026002900310036005b00620062009200a100a700a700cb0223
+03a3ff1aff7bffa8ffc8001c004400ab00b400c100c500ce00f601200156
+016302a60379fefaff6effab0000000c00150024003a003a0041004c004e
+007400a500ce00d600fb0109010901820220023f0263fe11ff170007001f
+0020002b00530055006d007e0088008d0094009a009f00af00e8013f0168
+01cd01ee020d028002bf0550074e074e09bffdd5ff47fff6000c000c0021
+00290057006b0078007e009200930096009a00a100a500c400c400f000fd
+0136013b013e01490152018f018601a501f8022b02db02fb030e030f032c
+03590360037c03e203f90805fd4ffe97fed0ff50ff78000100010006000a
+0025004300440054005c007000730077007c00800088008e008e00900091
+00ab00ab00b000b900bf00bf00c300dd00e300e300e600e800ec01020105
+0109010a012a012a01300130013b0140014a0155015f01670173019701b6
+01b801be01c501ea01f4023402360239024f0252026702700274029002b0
+02b102bf02e402f302fb033a03450373037f03ab03c203c803d203da0400
+044a046104690475049404b004d504f004f404fe050005230523052e0561
+05a0fda2fe4bfe5bff26ff3bff62ff8dff90ff90ffe80007001e00250026
+002700440050006200630066006700700070007100710079007e00850091
+0096009e00a100a100a500b600b800bc00c000c200c500c600d000da00dd
+00dd00e200f700f901000102010501150121012d01310136013d01470147
+015a01680176017c0180018e019a01a501b101b501b501c001dc01ea01fe
+023902560259025e0276027c028d0297029b02b902c002d602db02ff0306
+030f03180347034b0357035b035e0374039603980399039e039f03b803c0
+03c60402043a045004720483049004a204af04c704d304dc0530053b058a
+058a05b005b505bd05e60612061b0634065306b80706087908e708fe00b3
+00c700b100b5000000000000000000000000000000000188011001b100ad
+01e70304038002cc0258020b02d6018204cf01270274023c0100058e006e
+00f202c0021d01d2023701570363015a002500820166015b009d031c03a2
+034a00cc056e0153035001640053049700fc05c30061058a02b20302058a
+03fd01f902ab0068008e026bfda9ff59010e005301a402a600ab007d003c
+0029041a00d6023904b90125022902bf07ae01b8003e07060339033a080f
+07ae01a403e300000053080f01ea006103e2004c00e102a6035202a6080f
+00e601dc074f006e00fd03af0000007d003e01a4fe1100a905590260011c
+02a4014cfd83fdd8039bff9f011902e20000fd11fd41024301b60155ffaa
+02be00ef0097fef904e000be02db005501dc0063006b007800f200530077
+003a015600fc020d0029005300610070403f3f3e3d3c3b3a393837353433
+3231302f2e2d2c2b2a292827262524232221201f1e1d1c1b1a1918171615
+14131211100f0e0d0c0b0a090807060504030201002c4523466020b02660
+b004262348482d2c452346236120b02661b004262348482d2c45234660b0
+206120b04660b004262348482d2c4523462361b0206020b02661b02061b0
+04262348482d2c45234660b0406120b06660b004262348482d2c45234623
+61b0406020b02661b04061b004262348482d2c0110203c003c2d2c204523
+20b0cd442320b8015a51582320b08d44235920b0ed51582320b04d442359
+20b0042651582320b00d44235921212d2c20204518684420b001602045b0
+4676688a4560442d2c01b10b0a432343650a2d2c00b10a0b4323430b2d2c
+00b0172370b101173e01b0172370b10217453ab10200080d2d2c45b01a23
+4445b01923442d2c2045b00325456164b050515845441b2121592d2cb001
+43632362b0002342b00f2b2d2c2045b0004360442d2c01b00643b0074365
+0a2d2c2069b04061b0008b20b12cc08a8cb8100062602b0c642364615c58
+b00361592d2c45b0112bb0172344b0177ae4182d2c45b0112bb01723442d
+2cb01243588745b0112bb0172344b0177ae41b038a45186920b01723448a
+8a8720b0a05158b0112bb0172344b0177ae41b21b0177ae45959182d2c2d
+2cb0022546608a46b040618c482d2c4b53205c58b002855958b00185592d
+2c20b0032545b019234445b01a23444565234520b00325606a20b0092342
+23688a6a606120b01a8ab000527921b21a1a40b9ffe0001a45208a545823
+21b03f1b235961441cb114008a5279b31940201945208a54582321b03f1b
+235961442d2cb110114323430b2d2cb10e0f4323430b2d2cb10c0d432343
+0b2d2cb10c0d432343650b2d2cb10e0f432343650b2d2cb1101143234365
+0b2d2c4b525845441b2121592d2c0120b003252349b04060b0206320b000
+525823b002253823b002256538008a63381b212121212159012d2c4bb064
+51584569b00943608a103a1b212121592d2c01b005251023208af500b001
+6023edec2d2c01b005251023208af500b0016123edec2d2c01b0062510f5
+00edec2d2c20b001600110203c003c2d2c20b001610110203c003c2d2cb0
+2b2bb02a2a2d2c00b00743b006430b2d2c3eb02a2a2d2c352d2c76b80241
+23701020b802414520b0005058b00161593a2f182d2c21210c6423648bb8
+4000622d2c21b08051580c6423648bb82000621bb200402f2b59b002602d
+2c21b0c051580c6423648bb81555621bb200802f2b59b002602d2c0c6423
+648bb84000626023212d2cb4000100000015b00826b00826b00826b00826
+0f10161345683ab001162d2cb4000100000015b00826b00826b00826b008
+260f1016134568653ab001162d2c4b53234b515a5820458a60441b212159
+2d2c4b545820458a60441b2121592d2c4b53234b515a58381b2121592d2c
+4b5458381b2121592d2cb0134358031b02592d2cb0134358021b03592d2c
+4b54b012435c5a58381b2121592d2cb012435c580cb00425b00425060c64
+23646164b807085158b00425b00425012046b01060482046b0106048590a
+21211b2121592d2cb012435c580cb00425b00425060c6423646164b80708
+5158b00425b00425012046b8fff060482046b8fff06048590a21211b2121
+592d2c4b53234b515a58b03a2b1b2121592d2c4b53234b515a58b03b2b1b
+2121592d2c4b53234b515ab012435c5a58381b2121592d2c0c8a034b54b0
+0426024b545a8a8a0ab012435c5a58381b2121592d000001000000028000
+1e63cadc5f0f3cf5081d080000000000a348bc3b00000000b24cd4e1ffff
+fe3e08e7080b0000000b000100000000000000010000080bfe3e00000856
+feabfc2e08740001000000000000000000000000000000be04cd00670000
+000000fa00000200000002aa00e405b40061040000250464005106aa0047
+063900480383003a02aa005402aa002d04000091046400250200006e0464
+0025020000910239ffff0400004a040000f00400002c0400005304000020
+04000062040000590400004c0400007c04000051023900ac0239008b0464
+003c046400250464003c038d00580464002505c700140556002205c70012
+04e5001a04e30027061b004804d3002305c7002602aa0033050c004e05c7
+0025057d0014071d002505c7ffe805c7004c0625002305ee004a04730026
+04bc003804e3003b05850016038300470625003805290042065c002504e3
+001602aa00a706e7016a02aa004a054400250400ffef040003da050c0054
+046400790464004603f4004503830049042b0047034affff04d3002d02a2
+004304d300450464001504640031049c007c042b00280464005804640037
+042b00590464006904d3004e0383002b049c004705b40041057d005003f2
+005b057d002f03f4005b03d700d3019a00a403d700d60464003404f60013
+01fa00790464003c0156feab05b4003604000000060600b9060601300606
+00f7060600f60856002907e5004b04d3005d07e5004b04d3005d03330066
+04640025034a00690464003c0464007905b4006603f4004103ae006a0464
+0025046400250464002404640034080000e604d302390800ff8d05440020
+069600e4057d002d065c005e07e501820625004e0625004e069600610625
+004d0625004d05b4003805b4003705b4003b05b4003b05b4003a05b4010a
+05b4010b0625005305b4004a0652006306520063071f00320696002e0464
+00540200009105b4003004d3003004d300300856002907e5004c04d3005d
+07e5004c04d3005d03f4002f02a200410652006306520063064a002a05b4
+002b03120053031200530312005303120000031200000312000003f401a4
+03f4001c03f401a403f401a40652007502a2003e02310000057d02a6057d
+02a6057d00430312ff930312025d0312ff93031200230312028103120023
+03f4001c01a4001c00000032003200320032007600e701d3021b032f0430
+048d04cf051005e4061606590673069506c4075307b4082708ae0907098c
+0a050a4b0af10b6f0bae0c090c5e0c8c0cdf0d7c0ded0eb50f72107b10cc
+1164122b127c131c1370143a151315a8165c16f4175117c0188019041988
+19f11ab41b541c121cce1d891df91e381e891ec21ef21f0d1f2c1fdd209c
+2174220122a9233b23bb247324da256b262226b3274427cd284228d22945
+29d82a432aa52b2d2c092cb62d8b2e322edc2f582f7c2ff9304930d23108
+317b31a8322a32f833b233de344c34c4355035a63605366336b337143756
+37b8382238923923399739be3a113a933ad33b543ba53bc33bdd3c173d31
+3dfb3f233feb40cb4165423b429c42fe435643c7446444be453a45a44649
+467f46ce47bf489149a14a254a784aa14ac94b234b774c254c984d114d88
+4dfd4e734ec64fad507750f1517951af51ca51fc5221523c5263529352f3
+5326534653e1542f549354e155005554558a55a555dd560556215649567c
+56d9570900000001000000c0006700050000000000020010002f00400000
+00ed050f00000000411500120227022702260226006f01160001005f0116
+0001004f01160001003f01160001002f01160001022fb22f1f1fb8022eb2
+a01f1fb8022cb21d291fb80224400be11a1f3127121f3c27291fb8021740
+3b6c291fe0aa191fe1aa191fab27321f883c321f833c321f2f3c321f7627
+321f3c27291f27aa291f6f276f6d6f866f87043700161600000012110840
+b801e3b655140914093790b801bf40390790bd0790b30790670790640790
+5707904607903607902e07902b079025079024071408120810080e080c08
+0a080808060804080208000814b8ffe0402b000001001406100000010006
+04000001000410000001001002000001000200000001000002010802004a
+00b013034b024b5342b0382b4bb807ff52b0372b4bb007505b58b101018e
+59b0382bb00288b801005458b801ffb101018e851bb0124358b9000101ff
+858d1bb9000101ff858d5959014bb0c063004b6220b0f65323b8010a515a
+b005234201b0124b004b5442180016763f183f123e113946443e11394644
+3e113946443e113946443e11394660443e11394660442b2b2b2b2b2b2b2b
+2b2b2b182b2b2b2b2b2b2b2b2b2b2b2b2b4b5079bc001f01750007001f01
+74b3071f93072b2b2b4b5379bc00900175000700900174b3079093072b2b
+2b181db0964b5358b0aa1d59b0324b5358b0ff1d5901b341b5407b456523
+456023456560234560b08b766818b080622020b140b54565234520b00326
+6062636820b003266165b0b5236544b040234420b1417b4565234520b003
+266062636820b003266165b07b236544b0412344b1007b455458b17b4065
+44b24140414523614459b9004e0162b12a8e456523456023456560234560
+b089766818b080622020b9002a01624565234520b003266062636820b003
+266165b80162236544b02a234420b14e8e4565234520b003266062636820
+b003266165b08e236544b04e2344b1008e455458b18e406544b24e404e45
+2361445945695342014b5058b108004259435c58b108004259b3020b0a12
+4358601b2159421610703eb0124358b93b21187e1bba040001a8000b2b59
+b00c2342b00d2342b0124358b92d412d411bba04000400000b2b59b00e23
+42b00f2342b0124358b9187e3b211bba01a80400000b2b59b0102342b011
+2342002b752b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b737373737300184569
+4418456944435c58b9ffc00280b2121f322b5900000000>
+[15961 14417 14187 ] AllocGlyphStorage
+]def 
+108 44 
+PrepFor2015
+AddFontInfoBegin
+/OrigFontType /TrueType def 
+/OrigFontName <53796D626F6C> def
+/OrigFontStyle () def
+/FSType 0 def
+AddFontInfoEnd
+[16#2c 16#85ae213a ] AddXUID
+Type42DictEnd
+3 13420 184 <0001033aff5a039b07690003001d400a02420002011d0300ba05b8026bb1
+d1182b10f63cfd3c002fed313005231133039b6161a6080f>/TTE1E71728t00 AddT42Char 
+1 0 0 <0002010000000500050000030007003b401e06076302010005046303000a
+0605630303021a09070463010019082938182b4e10f43c4dfd3c4e10f63c
+4d10fd3c003f3cfd3c3f3cfd3c3130211121112521112101000400fc2003
+c0fc400500fb002004c0>/TTE1E71728t00 AddT42Char 
+/TTE1E71728t00 findfont /CharStrings get begin
+/parenrightex 184 def
+/.notdef 0 def
+end
+/TTE1E71728t00 findfont /Encoding get
+dup 1 /parenrightex put
+pop
+F /F5 0 /0 F /TTE1E71728t00 mF 
+/F5SA9 F5 [169.633 0 0 -169.633 0 0 ] mFS
+F5SA9 Ji 
+4441 2114 M <01>S 
+4441 2049 M <01>S 
+3 13474 185 <0001006fff5a039b0769000f002a400c004209480800010f0e093508b802
+22b70e1d01ba1121d1182b10f6fdf4ed103c103c002fe4ed313001111003
+020207060727241336123511039b4b40e99d719317011aa684860769fdf1
+feccfed8ff00fe7e84613d14c20105d10248f8022300>/TTE1E71728t00 AddT42Char 
+/TTE1E71728t00 findfont /CharStrings get begin
+/parenrightbt 185 def
+end
+/TTE1E71728t00 findfont /Encoding get
+dup 2 /parenrightbt put
+pop
+4441 2223 M <02>S 
+3 13312 183 <0001006fff5a039b0769000c0032400f37030107480842000102000c0735
+08b80222b4021d0cba0eb8026ab13f182b10f6fdf4ed103c103c002ffde4
+3130015d05231110022726273716001211039b62a8a891e917f10177ada6
+0222013c0256e2c4a01565fe32fd6ffec300>/TTE1E71728t00 AddT42Char 
+/TTE1E71728t00 findfont /CharStrings get begin
+/parenrighttp 183 def
+end
+/TTE1E71728t00 findfont /Encoding get
+dup 3 /parenrighttp put
+pop
+4441 1940 M <03>S 
+3 11446 168 <00010053ff5a00b407690003001d400b02420000031d0102ba0421b9015e
+00182b10f63cfd3c002fed313017231133b46161a6080f00>/TTE1E71728t00 AddT42Char 
+/TTE1E71728t00 findfont /CharStrings get begin
+/parenleftex 168 def
+end
+/TTE1E71728t00 findfont /Encoding get
+dup 4 /parenleftex put
+pop
+2804 2114 M <04>S 
+2804 2049 M <04>S 
+3 11500 169 <00010053ff5a037f0769000c002a400c00420748080102000c073508b802
+22b7021d0cba0d218d182b10f6fdf4ed103c103c002fe4ed313013331110
+1217161707260002115361a9a891e917f1fe89ad0769fdddfec4fdaae2c3
+a1146501cd0292013c00>/TTE1E71728t00 AddT42Char 
+/TTE1E71728t00 findfont /CharStrings get begin
+/parenleftbt 169 def
+end
+/TTE1E71728t00 findfont /Encoding get
+dup 5 /parenleftbt put
+pop
+2804 2223 M <05>S 
+3 11338 167 <00010053ff5a037f0769000f002a400c09480842000f0e0001093508b802
+22b70e1d01ba102133182b10f6fdf4ed103c103c002ffde4313017111013
+361237363717040306021511534b40e99c729317fee6a68487a6020e0134
+0129ff018284613e15c2fefbd1fdb8f8fdde>/TTE1E71728t00 AddT42Char 
+/TTE1E71728t00 findfont /CharStrings get begin
+/parenlefttp 167 def
+end
+/TTE1E71728t00 findfont /Encoding get
+dup 6 /parenlefttp put
+pop
+2804 1940 M <06>S 
+F2SA9 Ji 
+2644 1809 M <B7>S 
+1934 1809 M (=)S 
+N 3677 3696 M 4069 3696 I : 0.441 0.441 +S K 
+; /F5SAA F5 [170 0 0 -170 0 0 ] mFS
+F5SAA Ji 
+4087 3831 M <01>S 
+4087 3703 M <01>S 
+4087 3940 M <02>S 
+4087 3595 M <03>S 
+3589 3831 M <04>S 
+3589 3703 M <04>S 
+3589 3940 M <05>S 
+3589 3595 M <06>S 
+/F2SAA F2 [170 0 0 -170 0 0 ] mFS
+F2SAA Ji 
+3120 3738 M <B7>S 
+2409 3738 M (=)S 
+/F0SAA F0 [170 0 0 -170 0 0 ] mFS
+F0SAA Ji 
+3688 3873 M (Freq)[95 57 75  0]xS 
+4007 3936 M (t)S 
+3814 3632 M (N)S 
+3268 3742 M (log)[47 85  0]xS 
+3491 3805 M (2)S 
+3189 3738 M (  )[43  0]xS 
+3043 3738 M (  )[43  0]xS 
+2536 3742 M (Freq)[95 57 75  0]xS 
+2961 3805 M (d)S 
+2855 3805 M (t,)[47  0]xS 
+2496 3738 M ( )S 
+2327 3738 M (  )[43  0]xS 
+1626 3742 M (Weight)[161 75 47 85 85  0]xS 
+2244 3805 M (d)S 
+2138 3805 M (t,)[47  0]xS 
+
+%%IncludeResource: font Times-Bold
+F /F6 0 /256 T /Times-Bold mF 
+/F6SA7 F6 [167 0 0 -167 0 0 ] mFS
+F6SA7 Ji 
+1460 2973 M (Term Frequency)[111 74 74 139 42 102 74 74 93 93 73 93 74  0]xS 
+F0SA7 Ji 
+942 3173 M (\(frequency of term in documents\))[55 56 56 73 83 84 74 83 74 83 42 83 56 42 45 74 56 128 42 46 84 41 83 84 74 84 128 74 84 46 63  0]xS 
+F6SA7 Ji 
+3342 3081 M (Inverse Document Frequency)[65 93 84 74 73 65 74 42 120 84 74 92 139 74 92 56 42 102 74 74 92 93 74 92 74  0]xS 
+1 Lj 1 Lc 6 Lw N 2008 2875 M 2269 2764 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2280 2795 M 2328 2739 I 2254 2734 I C 
+ O N 2085 2631 M 2085 2661 2103 2685 2126 2685 -c 2292 2685 I 2315 2685 2334 2709 2334 2739 -c 2334 2709 2353 2685 2376 2685 -c 2542 2685 I 2565 2685 2583 2661 2583 2631 -c : [ 1 0 0 1 196 191 ] concat K 
+; N 2847 2783 M 2847 2813 2866 2837 2889 2837 -c 3055 2837 I 3078 2837 3097 2861 3097 2891 -c 3097 2861 3115 2837 3138 2837 -c 3304 2837 I 3327 2837 3346 2813 3346 2783 -c : [ 1 0 0 1 196 191 ] concat K 
+; N 3281 3024 M 3167 2945 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3188 2921 M 3116 2911 I 3151 2975 I C 
+ O F0SA7 Ji 
+4247 3398 M (# of doc. in the corpus )[84 41 84 55 42 83 84 73 42 42 45 84 42 45 84 73 42 74 83 55 84 83 65  0]xS 
+4334 4183 M (# of doc. with term t)[84 41 84 55 42 83 84 73 42 42 121 46 45 84 41 45 74 56 128 42  0]xS 
+N 4187 3322 M 3952 3439 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3941 3410 M 3896 3469 I 3970 3469 I C 
+ O N 4273 4127 M 3955 4015 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3969 3985 M 3896 3993 I 3947 4047 I C 
+ O 2644 4187 M (TF )[102 93  0]xS 
+2 13316 121 <000100ad015903c2046f000b0014bd0003025d00090006017500002fed00
+2fed3130133436333216151406232226ade7a2a4e8e7a3a4e702e4a3e8e8
+a3a3e8e8>/TTE1ECB468t00 AddT42Char 
+/TTE1ECB468t00 findfont /CharStrings get begin
+/circle5 121 def
+end
+/TTE1ECB468t00 findfont /Encoding get
+dup 4 /circle5 put
+pop
+/F1SA7 F1 [167 0 0 -167 0 0 ] mFS
+F1SA7 Ji 
+3089 4187 M <04>S 
+F0SA7 Ji 
+3348 4187 M (IDF)[56 121  0]xS 
+LH
+(%%[Page: 3]%%) = 
+%%PageTrailer
+
+%%Page: 4 4
+%%PageBoundingBox: 13 13 599 780
+%%EndPageComments
+%%BeginPageSetup
+/DeviceRGB dup setcolorspace /colspABC exch def
+mysetup concat colspRefresh
+%%EndPageSetup
+
+/DeviceGray dup setcolorspace /colspABC exch def
+: N 196 191 6000 4500 rp C 
+1 0 scol  L ; 0 0 scol F0S75 Ji 
+706 4434 M (CS466)[78 65 58 59  0]xS 
+1024 4434 M (-)S 
+1063 4434 M (9)S 
+5626 4434 M (4)S 
+F0S16F Ji 
+1245 1101 M (Term Selection/Weighting)[224 163 122 285 91 204 163 102 163 163 102 101 184 184 102 345 162 102 184 184 102 101 183  0]xS 
+: N 1245 1141 3900 18 rp C 
+ L ; 1 Lj 0 Lc 19 Lw N 1196 1678 M 1196 2012 I : [ 1 0 0 1 196 191 ] concat K 
+; 2 Lc N 1196 4090 M 5221 4090 I : [ 1 0 0 1 196 191 ] concat K 
+; N 1196 2012 M 1196 4090 I : [ 1 0 0 1 196 191 ] concat K 
+; F0SA7 Ji 
+984 1447 M (What makes a good term?)[158 84 73 46 42 128 74 84 74 65 42 73 41 84 83 83 84 42 46 73 56 127  0]xS 
+2824 4478 M (Doc. #)[121 84 74 41 42  0]xS 
+3415 2553 M (High freq. function words)[121 46 83 84 41 55 56 74 83 42 41 56 83 84 73 46 46 83 84 42 120 83 56 83  0]xS 
+3415 2753 M (\(in all documents, e.g. )[56 45 84 42 74 46 45 42 83 84 73 84 128 74 84 46 64 42 42 74 41 84 41  0]xS 
+
+%%IncludeResource: font Times-Italic
+F /F7 0 /256 T /Times-Italic mF 
+/F7SA7 F7 [167 0 0 -167 0 0 ] mFS
+F7SA7 Ji 
+4935 2753 M (the, in of, for)[46 83 74 42 42 45 84 41 84 46 41 42 46 83  0]xS 
+F0SA7 Ji 
+5798 2753 M (\))S 
+3434 3235 M (Low freq. function words)[102 84 121 41 55 56 74 83 42 41 55 84 84 73 46 46 83 84 42 120 83 56 83  0]xS 
+3793 3435 M (\(e.g. )[56 74 41 84 41  0]xS 
+F7SA7 Ji 
+4131 3435 M (certainly)[74 74 65 45 84 45 84 46  0]xS 
+F0SA7 Ji 
+4721 3435 M (\))S 
+1 Lc 6 Lw N 2979 3174 M 2979 3343 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2947 3341 M 2980 3407 I 3012 3341 I C 
+ O N 3307 3181 M 2979 3181 I : [ 1 0 0 1 196 191 ] concat K 
+; /F6S10B F6 [267 0 0 -267 0 0 ] mFS
+F6S10B Ji 
+516 1933 M (Poor)[163 133 134  0]xS 
+419 2253 M (Terms)[178 119 119 222  0]xS 
+: N 419 2282 742 25 rp C 
+ L ; F0SA7 Ji 
+706 2635 M (Freq.)[93 56 73 84  0]xS 
+811 2835 M (of)[84  0]xS 
+727 3035 M (term)[46 74 56  0]xS 
+815 3235 M (in)[46  0]xS 
+720 3435 M (Doc.)[121 84 74  0]xS 
+0 Lc 8 Lw N 1221 2012 M 1496 2012 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2554 1678 M 2554 2400 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2821 1678 M 2821 2012 I : [ 1 0 0 1 196 191 ] concat K 
+; N 1754 1818 M 1754 2012 I : [ 1 0 0 1 196 191 ] concat K 
+; N 1754 2012 M 2021 2012 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2021 2012 M 2021 2207 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2021 2207 M 2288 2207 I : [ 1 0 0 1 196 191 ] concat K 
+; N 1496 1818 M 1754 1818 I : [ 1 0 0 1 196 191 ] concat K 
+; N 1496 1818 M 1496 2012 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2288 2207 M 2288 2400 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2288 2400 M 2554 2400 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2554 1678 M 2821 1678 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2821 2012 M 3088 2012 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3088 1818 M 3354 1818 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3088 1818 M 3088 2012 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3354 1818 M 3354 2207 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3354 2207 M 3621 2207 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3621 2012 M 3888 2012 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3621 2012 M 3621 2207 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3888 1818 M 4154 1818 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3888 1818 M 3888 2012 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4154 1818 M 4154 2207 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4154 2207 M 4421 2207 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4421 2012 M 4688 2012 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4421 2012 M 4421 2207 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4688 2012 M 4688 2207 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4688 2207 M 4965 2207 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4965 2012 M 5221 2012 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4965 2012 M 4965 2207 I : [ 1 0 0 1 196 191 ] concat K 
+; N 1196 3757 M 1471 3757 I : [ 1 0 0 1 196 191 ] concat K 
+; N 1471 3757 M 1471 3950 I : [ 1 0 0 1 196 191 ] concat K 
+; N 1471 3950 M 1729 3950 I : [ 1 0 0 1 196 191 ] concat K 
+; N 1729 3562 M 1996 3562 I : [ 1 0 0 1 196 191 ] concat K 
+; N 1729 3562 M 1729 3950 I : [ 1 0 0 1 196 191 ] concat K 
+; N 1996 3562 M 1996 3757 I : [ 1 0 0 1 196 191 ] concat K 
+; N 1996 3757 M 2263 3757 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2263 3757 M 2263 3950 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2263 3950 M 2529 3950 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2529 3757 M 2796 3757 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2529 3757 M 2529 3950 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2796 3757 M 2796 3950 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2796 3950 M 3063 3950 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3063 3562 M 3329 3562 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3063 3562 M 3063 3950 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3329 3562 M 3329 3757 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3329 3757 M 3863 3757 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3863 3757 M 3863 3950 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4129 3757 M 4129 3950 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3863 3950 M 4129 3950 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4129 3757 M 4396 3757 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4396 3757 M 4396 3950 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4396 3950 M 4663 3950 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4663 3562 M 4663 3950 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4940 3562 M 4940 3757 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4940 3757 M 5196 3757 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4673 3562 M 4940 3562 I : [ 1 0 0 1 196 191 ] concat K 
+; 1 Lc 6 Lw N 2979 2531 M 2979 2258 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3012 2261 M 2980 2195 I 2947 2261 I C 
+ O N 2979 2531 M 3307 2531 I : [ 1 0 0 1 196 191 ] concat K 
+; 0 Lc 19 Lw N 1471 4038 M 1471 4144 I : [ 1 0 0 1 196 191 ] concat K 
+; N 1729 4038 M 1729 4144 I : [ 1 0 0 1 196 191 ] concat K 
+; N 1996 4038 M 1996 4144 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2263 4038 M 2263 4144 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2529 4032 M 2529 4138 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2796 4038 M 2796 4144 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3063 4038 M 3063 4144 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3336 4034 M 3336 4140 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3593 4038 M 3593 4144 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3863 4038 M 3863 4144 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4136 4040 M 4136 4146 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4396 4040 M 4396 4146 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4663 4040 M 4663 4146 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4943 4040 M 4943 4146 I : [ 1 0 0 1 196 191 ] concat K 
+; N 5196 4040 M 5196 4146 I : [ 1 0 0 1 196 191 ] concat K 
+; LH
+(%%[Page: 4]%%) = 
+%%PageTrailer
+
+%%Page: 5 5
+%%PageBoundingBox: 13 13 599 780
+%%EndPageComments
+%%BeginPageSetup
+/DeviceRGB dup setcolorspace /colspABC exch def
+mysetup concat colspRefresh
+%%EndPageSetup
+
+/DeviceGray dup setcolorspace /colspABC exch def
+: N 196 191 6000 4500 rp C 
+1 0 scol  L ; 0 0 scol F0S75 Ji 
+706 4434 M (CS466)[78 65 58 59  0]xS 
+1024 4434 M (-)S 
+1063 4434 M (9)S 
+5626 4434 M (5)S 
+F0S16F Ji 
+737 1101 M (Localized, but Not too Infrequent)[224 184 162 163 102 101 163 162 184 92 91 183 184 102 92 264 184 102 91 102 184 183 92 122 183 121 122 163 183 184 162 183
+ 0]xS 
+: N 737 1141 4916 18 rp C 
+ L ; 1 Lj 0 Lc 8 Lw N 1196 3905 M 2263 3905 I : [ 1 0 0 1 196 191 ] concat K 
+; 19 Lw N 1196 1678 M 1196 3516 I : [ 1 0 0 1 196 191 ] concat K 
+; N 1196 4044 M 5196 4044 I : [ 1 0 0 1 196 191 ] concat K 
+; N 1196 3711 M 1196 4044 I : [ 1 0 0 1 196 191 ] concat K 
+; 8 Lw N 2263 3711 M 2529 3711 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2263 3711 M 2263 3905 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2529 3905 M 4396 3905 I : [ 1 0 0 1 196 191 ] concat K 
+; [ 8 24 ] 0 sd N 2529 2951 M 2529 3711 I : [ 1 0 0 1 196 191 ] concat K 
+; solid N 2529 3711 M 2529 3905 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4396 3711 M 4663 3711 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4396 3711 M 4396 3905 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4663 3711 M 4663 3905 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4663 3905 M 5196 3905 I : [ 1 0 0 1 196 191 ] concat K 
+; [ 24 8 ] 0 sd N 2263 3516 M 2796 3516 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2263 3516 M 2263 3711 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2796 3516 M 2796 3711 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3063 3516 M 3063 3711 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2796 3711 M 3063 3711 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3063 3516 M 3329 3516 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3329 3516 M 3329 3711 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3329 3711 M 4129 3711 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4129 3516 M 4940 3516 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4129 3516 M 4129 3711 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4940 3516 M 4940 3711 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4940 3711 M 5196 3711 I : [ 1 0 0 1 196 191 ] concat K 
+; 2 Lc 19 Lw solid N 1196 3516 M 1196 3711 I : [ 1 0 0 1 196 191 ] concat K 
+; 0 Lc 8 Lw [ 8 24 ] 0 sd N 2263 2951 M 2529 2951 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2263 2951 M 2263 3516 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4396 3146 M 4663 3146 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4396 3146 M 4396 3711 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4663 3146 M 4663 3711 I : [ 1 0 0 1 196 191 ] concat K 
+; F0SA7 Ji 
+2824 4478 M (Doc. #)[121 84 74 41 42  0]xS 
+/F6SE9 F6 [233 0 0 -233 0 0 ] mFS
+F6SE9 Ji 
+2747 2636 M (Poor signal/noise ratio)[142 117 117 103 58 91 65 117 130 117 65 65 130 116 65 91 103 58 102 117 78 65  0]xS 
+1 Lc 6 Lw solid N 4552 3446 M 4552 3614 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4520 3612 M 4552 3677 I 4585 3612 I C 
+ O N 4552 3446 M 4224 3446 I : [ 1 0 0 1 196 191 ] concat K 
+; F0SA7 Ji 
+706 2635 M (Freq.)[93 56 73 84  0]xS 
+811 2835 M (of)[84  0]xS 
+727 3035 M (term)[46 74 56  0]xS 
+815 3235 M (in)[46  0]xS 
+720 3435 M (Doc.)[121 84 74  0]xS 
+F0S75 Ji 
+1012 3820 M (1)S 
+1012 3960 M (0)S 
+F0SA7 Ji 
+3432 3292 M (example )[74 84 74 128 84 46 74  0]xS 
+3432 3492 M (term = 183)[46 74 56 128 42 94 42 83 83  0]xS 
+0 Lc 8 Lw [ 24 8 ] 0 sd N 1196 3717 M 2263 3717 I : [ 1 0 0 1 196 191 ] concat K 
+; 2 Lc 19 Lw solid N 1196 4040 M 5221 4040 I : [ 1 0 0 1 196 191 ] concat K 
+; 0 Lc N 1471 3988 M 1471 4094 I : [ 1 0 0 1 196 191 ] concat K 
+; N 1729 3988 M 1729 4094 I : [ 1 0 0 1 196 191 ] concat K 
+; N 1996 3988 M 1996 4094 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2263 3988 M 2263 4094 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2529 3982 M 2529 4088 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2796 3988 M 2796 4094 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3063 3988 M 3063 4094 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3336 3984 M 3336 4090 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3593 3988 M 3593 4094 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3863 3988 M 3863 4094 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4136 3990 M 4136 4096 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4396 3990 M 4396 4096 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4663 3990 M 4663 4096 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4943 3990 M 4943 4096 I : [ 1 0 0 1 196 191 ] concat K 
+; N 5196 3990 M 5196 4096 I : [ 1 0 0 1 196 191 ] concat K 
+; LH
+(%%[Page: 5]%%) = 
+%%PageTrailer
+
+%%Page: 6 6
+%%PageBoundingBox: 13 13 599 780
+%%EndPageComments
+%%BeginPageSetup
+/DeviceRGB dup setcolorspace /colspABC exch def
+mysetup concat colspRefresh
+%%EndPageSetup
+
+/DeviceGray dup setcolorspace /colspABC exch def
+: N 196 191 6000 4500 rp C 
+1 0 scol  L ; 0 0 scol F0S75 Ji 
+706 4434 M (CS466)[78 65 58 59  0]xS 
+1024 4434 M (-)S 
+1063 4434 M (9)S 
+5626 4434 M (6)S 
+F0S16F Ji 
+996 1101 M (Document Internal Weighting)[265 183 163 183 285 163 184 102 92 121 184 102 163 121 184 163 101 92 346 163 101 183 184 102 102 183  0]xS 
+: N 996 1141 4399 18 rp C 
+ L ; F0SA7 Ji 
+706 1605 M (\223Genome\224 )[74 121 74 83 84 128 74 74  0]xS 
+1460 1605 M <96>S 
+1585 1605 M (20 times in document more indicative )[83 84 42 46 46 128 74 65 42 45 84 41 84 83 74 83 128 74 84 46 42 128 84 56 74 42 45 84 84 45 74 74
+46 46 84 74  0]xS 
+4177 1605 M (than 10 times ?)[46 84 73 84 41 84 83 42 46 46 128 74 65 40  0]xS 
+4177 1805 M (than 2 times ?)[46 84 73 84 41 84 42 46 46 128 74 65 40  0]xS 
+F0SC8 Ji 
+1352 2266 M (Question assumption )[144 100 89 78 56 56 100 100 49 89 78 78 100 154 100 56 56 100 100  0]xS 
+1352 2509 M (that )[56 100 88 56  0]xS 
+1702 2509 M (Weight)[187 89 56 100 99  0]xS 
+F0S85 Ji 
+2289 2559 M (t)S 
+2326 2559 M (,d)[33  0]xS 
+F2SC8 Ji 
+2476 2509 M <B5>S 
+F0SC8 Ji 
+2669 2509 M (Freq)[111 67 89  0]xS 
+F0S85 Ji 
+3036 2559 M (t)S 
+3073 2559 M (,d)[33  0]xS 
+1 Lj 1 Lc 6 Lw N 1292 2316 M 1021 2316 I : [ 1 0 0 1 196 191 ] concat K 
+; N 1021 2316 M 1021 1738 I : [ 1 0 0 1 196 191 ] concat K 
+; N 1054 1741 M 1022 1675 I 989 1741 I C 
+ O N 1840 3010 M 1840 3722 I : [ 1 0 0 1 196 191 ] concat K 
+; N 1840 3722 M 3627 3722 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2021 3528 M 3283 3010 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2015 3535 M 2045 3425 2075 3316 2146 3247 -c 2217 3178 2325 3149 2440 3122 -c 2554 3095 2681 3094 2833 3085 -c 2986 3075 3255 3069 3352 3066 -c 3449 3063 3431 3064 3415 3066 -c : [ 1 0 0 1 196 191 ] concat K 
+; [ 48 18 ] 0 sd N 2021 3528 M 2043 3466 2065 3405 2133 3360 -c 2202 3315 2331 3284 2433 3260 -c 2536 3236 2585 3228 2746 3216 -c 2907 3203 3154 3194 3402 3185 -c : [ 1 0 0 1 196 191 ] concat K 
+; F0SA7 Ji 
+3602 3109 M (??)[73  0]xS 
+802 3297 M (indicativeness)[46 83 84 46 74 74 46 45 84 74 83 74 65  0]xS 
+2757 3984 M (# of times)[84 41 84 55 42 46 46 128 74  0]xS 
+2677 4184 M (\(unit length\))[56 83 84 46 45 42 46 73 84 83 46 83  0]xS 
+solid N 2617 4016 M 3564 4016 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2021 3686 M 2021 3758 I : [ 1 0 0 1 196 191 ] concat K 
+; F0S75 Ji 
+1992 3900 M (1)S 
+LH
+(%%[Page: 6]%%) = 
+%%PageTrailer
+
+%%Page: 7 7
+%%PageBoundingBox: 13 13 599 780
+%%EndPageComments
+%%BeginPageSetup
+/DeviceRGB dup setcolorspace /colspABC exch def
+mysetup concat colspRefresh
+%%EndPageSetup
+
+/DeviceGray dup setcolorspace /colspABC exch def
+: N 196 191 6000 4500 rp C 
+1 0 scol  L ; 0 0 scol 706 4434 M (CS466)[78 65 58 59  0]xS 
+1024 4434 M (-)S 
+1063 4434 M (9)S 
+5626 4434 M (7)S 
+F0S16F Ji 
+2234 1101 M (Better Terms)[245 163 102 102 163 121 91 224 163 122 285  0]xS 
+: N 2234 1141 1923 18 rp C 
+ L ; 1 Lj 0 Lc 19 Lw N 4940 4090 M 5196 4090 I : [ 1 0 0 1 196 191 ] concat K 
+; 2 Lc N 1196 4090 M 4940 4090 I : [ 1 0 0 1 196 191 ] concat K 
+; 0 Lc 8 Lw N 4673 3907 M 5206 3907 I : [ 1 0 0 1 196 191 ] concat K 
+; 2 Lc 19 Lw N 1196 1678 M 1196 4090 I : [ 1 0 0 1 196 191 ] concat K 
+; 0 Lc 8 Lw N 1196 3907 M 2263 3907 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2529 3907 M 3329 3907 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2263 2936 M 2263 3907 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2529 2936 M 2529 3907 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2263 2936 M 2529 2936 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4396 3131 M 4663 3131 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4396 3131 M 4396 3907 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4663 3131 M 4663 3907 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3608 3907 M 4396 3907 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3329 2163 M 3608 2163 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3329 2163 M 3329 3907 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3608 2163 M 3608 3907 I : [ 1 0 0 1 196 191 ] concat K 
+; F0SA7 Ji 
+2840 4348 M (Doc. #)[121 84 74 41 42  0]xS 
+4111 1869 M (Terms like)[102 74 56 128 65 42 46 46 84  0]xS 
+4105 2069 M <93>S 
+F7SA7 Ji 
+4179 2069 M (genome\224,)[84 74 83 84 121 73 93  0]xS 
+3902 2269 M <93>S 
+3995 2269 M (cytochrome)[74 74 46 84 73 84 64 84 121  0]xS 
+4772 2269 M (-)S 
+4828 2269 M (c\224,)[73 93  0]xS 
+4048 2469 M <93>S 
+4141 2469 M (Plasmasis)[102 46 84 64 121 83 65 46  0]xS 
+F0SA7 Ji 
+4817 2469 M <94>S 
+706 2635 M (Freq.)[93 56 73 84  0]xS 
+811 2835 M (of)[84  0]xS 
+727 3035 M (term)[46 74 56  0]xS 
+815 3235 M (in)[46  0]xS 
+720 3435 M (Doc.)[121 84 74  0]xS 
+F0S75 Ji 
+1012 3820 M (1)S 
+1012 3960 M (0)S 
+1 Lc 6 Lw N 3445 1914 M 3445 2046 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3413 2044 M 3446 2109 I 3478 2044 I C 
+ O N 3445 1916 M 4001 1916 I : [ 1 0 0 1 196 191 ] concat K 
+; F0SA7 Ji 
+1141 1408 M (Localized to subset of documents)[102 84 74 74 46 46 74 73 84 42 45 84 41 65 83 84 65 74 45 42 83 56 41 83 84 74 84 128 74 84 46  0]xS 
+4 74 197 <000100ad0000072a05c800080057b2070606b80287400900081400000802
+0303b802874009000114000001000801bc0169000301a400060169400a08
+000102030607080605b9018800002fed1739003ffdfded1139313087052e
+2b7d10c4872e182b7d10c4130121012115210121ad02e40117fd7f0503fa
+fd0281fee902e402e4fd7fc6fd7f>/TTE1E72AE8t00 AddT42Char 
+4 208 198 <ffff00ad0000072a05c8004700c507d70000c0004000>/TTE1E72AE8t00 AddT42Char 
+/TTE1E72AE8t00 findfont /CharStrings get begin
+/barb2right 198 def
+/barb2left 197 def
+end
+/TTE1E72AE8t00 findfont /Encoding get
+dup 3 /barb2right put
+pop
+/F3SA7 F3 [167 0 0 -167 0 0 ] mFS
+F3SA7 Ji 
+1308 1608 M <03>S 
+F0SA7 Ji 
+1514 1608 M (Presence of term )[92 56 73 65 74 84 74 73 41 84 55 42 46 73 56 128  0]xS 
+2672 1608 M <93>S 
+2746 1608 M (indicative)[46 83 84 46 74 73 46 46 84  0]xS 
+3402 1608 M <94>S 
+3517 1608 M (of documents)[83 56 41 83 84 74 84 128 74 84 46  0]xS 
+2 Lc 19 Lw N 1196 4090 M 5221 4090 I : [ 1 0 0 1 196 191 ] concat K 
+; 0 Lc N 1471 4038 M 1471 4144 I : [ 1 0 0 1 196 191 ] concat K 
+; N 1729 4038 M 1729 4144 I : [ 1 0 0 1 196 191 ] concat K 
+; N 1996 4038 M 1996 4144 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2263 4038 M 2263 4144 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2529 4032 M 2529 4138 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2796 4038 M 2796 4144 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3063 4038 M 3063 4144 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3336 4034 M 3336 4140 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3593 4038 M 3593 4144 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3863 4038 M 3863 4144 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4136 4040 M 4136 4146 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4396 4040 M 4396 4146 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4663 4040 M 4663 4146 I : [ 1 0 0 1 196 191 ] concat K 
+; N 4943 4040 M 4943 4146 I : [ 1 0 0 1 196 191 ] concat K 
+; N 5196 4040 M 5196 4146 I : [ 1 0 0 1 196 191 ] concat K 
+; LH
+(%%[Page: 7]%%) = 
+%%PageTrailer
+
+%%Page: 8 8
+%%PageBoundingBox: 13 13 599 780
+%%EndPageComments
+%%BeginPageSetup
+/DeviceRGB dup setcolorspace /colspABC exch def
+mysetup concat colspRefresh
+%%EndPageSetup
+
+/DeviceGray dup setcolorspace /colspABC exch def
+: N 196 191 6000 4500 rp C 
+1 0 scol  L ; 0 0 scol F0S75 Ji 
+706 4434 M (CS466)[78 65 58 59  0]xS 
+1024 4434 M (-)S 
+1063 4434 M (9)S 
+5626 4434 M (8)S 
+F0S16F Ji 
+2563 1101 M (Stoplists)[204 102 184 184 102 102 142 102  0]xS 
+: N 2563 1141 1265 18 rp C 
+ L ; F0S10B Ji 
+706 1778 M <95>S 
+931 1778 M (Human intuition of which terms are bad)[193 133 208 118 134 67 73 134 74 134 74 73 74 133 134 66 134 89 66 193 134 73 119 133 66 74 119 89 208 103 67 119
+88 118 67 134 118  0]xS 
+/F3SE9 F3 [233 0 0 -233 0 0 ] mFS
+F3SE9 Ji 
+1006 2123 M <03>S 
+/F0SE9 F0 [233 0 0 -233 0 0 ] mFS
+F0SE9 Ji 
+1292 2123 M (Excludes from vector)[142 117 103 65 117 117 103 91 58 78 78 117 181 58 117 103 103 65 117  0]xS 
+LH
+(%%[Page: 8]%%) = 
+%%PageTrailer
+
+%%Page: 9 9
+%%PageBoundingBox: 13 13 599 780
+%%EndPageComments
+%%BeginPageSetup
+/DeviceRGB dup setcolorspace /colspABC exch def
+mysetup concat colspRefresh
+%%EndPageSetup
+
+/DeviceGray dup setcolorspace /colspABC exch def
+: N 196 191 6000 4500 rp C 
+1 0 scol  L ; 0 0 scol F0S75 Ji 
+706 4434 M (CS466)[78 65 58 59  0]xS 
+1024 4434 M (-)S 
+1063 4434 M (9)S 
+5626 4434 M (9)S 
+F0S16F Ji 
+938 1101 M (Similarity Functions/Measures)[204 102 285 102 102 163 122 102 102 184 92 204 183 184 163 102 101 184 183 143 102 326 163 162 143 184 121 163  0]xS 
+: N 938 1141 4514 18 rp C 
+ L ; 1 Lj 1 Lc 6 Lw N 2015 1855 M 4810 1855 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2014 1655 M 4810 1655 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3511 1855 M 3511 1655 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2267 1855 M 2267 1655 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2521 1855 M 2521 1655 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2774 1855 M 2774 1655 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3028 1855 M 3028 1655 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3281 1855 M 3281 1655 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2014 1855 M 2014 1655 I : [ 1 0 0 1 196 191 ] concat K 
+; F0SA7 Ji 
+2094 1819 M (3    5    4     1   0    1    0   0)[84 41 42 42 41 84 41 42 42 41 84 41 42 42 41 42 83 42 41 42 84 41 42 42 41 84 41 42 42 41 84 41
+42 41  0]xS 
+F0SC8 Ji 
+1309 1817 M (Doc V)[144 100 89 50  0]xS 
+F0S85 Ji 
+1836 1867 M (1)S 
+F0SC8 Ji 
+1321 2164 M (Doc V)[144 100 89 50  0]xS 
+F0S85 Ji 
+1848 2214 M (2)S 
+N 4810 1855 M 4810 1655 I : [ 1 0 0 1 196 191 ] concat K 
+; 25 Lw [ 0 50 ] 0 sd N 4071 1759 M 4732 1759 I : [ 1 0 0 1 196 191 ] concat K 
+; /F0S64 F0 [100 0 0 -100 0 0 ] mFS
+F0S64 Ji 
+1918 1600 M (Comput)[67 50 78 50 50  0]xS 
+2241 1600 M (*  C++ )[50 25 25 67 56 56  0]xS 
+2570 1600 M (Sparc        )[56 50 44 33 44 25 25 25 25 26 25 25  0]xS 
+2998 1600 M (genome )[50 44 50 50 79 44  0]xS 
+3340 1600 M (bilog)[50 28 28 51  0]xS 
+3546 1600 M (*     protein)[50 25 25 25 25 25 50 33 50 29 45 28  0]xS 
+6 Lw solid N 3746 1859 M 3746 1659 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3944 1855 M 3944 1655 I : [ 1 0 0 1 196 191 ] concat K 
+; /F0S53 F0 [83 0 0 -83 0 0 ] mFS
+F0S53 Ji 
+2751 1544 M (Compiler)[55 42 63 42 23 23 38  0]xS 
+3571 1504 M (DNA)[60 61  0]xS 
+N 2015 2185 M 4810 2185 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2014 1985 M 4810 1985 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3511 2185 M 3511 1985 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2267 2185 M 2267 1985 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2521 2185 M 2521 1985 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2774 2185 M 2774 1985 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3028 2185 M 3028 1985 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3281 2185 M 3281 1985 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2014 2185 M 2014 1985 I : [ 1 0 0 1 196 191 ] concat K 
+; F0SA7 Ji 
+2094 2149 M (1    0    0     0   5    3    1   4)[84 41 42 42 41 84 41 42 42 41 84 41 42 42 41 42 83 42 41 42 84 41 42 42 41 84 41 42 42 41 84 41
+42 41  0]xS 
+N 4810 2185 M 4810 1985 I : [ 1 0 0 1 196 191 ] concat K 
+; 25 Lw [ 0 50 ] 0 sd N 4071 2089 M 4732 2089 I : [ 1 0 0 1 196 191 ] concat K 
+; 6 Lw solid N 3746 2189 M 3746 1989 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3944 2185 M 3944 1985 I : [ 1 0 0 1 196 191 ] concat K 
+; F0SC8 Ji 
+1321 2547 M (Doc V)[144 100 89 50  0]xS 
+F0S85 Ji 
+1848 2597 M (3)S 
+N 2015 2568 M 4810 2568 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2014 2368 M 4810 2368 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3511 2568 M 3511 2368 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2267 2568 M 2267 2368 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2521 2568 M 2521 2368 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2774 2568 M 2774 2368 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3028 2568 M 3028 2368 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3281 2568 M 3281 2368 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2014 2568 M 2014 2368 I : [ 1 0 0 1 196 191 ] concat K 
+; F0SA7 Ji 
+2094 2532 M (2    8    0     1   0    1    0   0)[84 41 42 42 41 84 41 42 42 41 84 41 42 42 41 42 83 42 41 42 84 41 42 42 41 84 41 42 42 41 84 41
+42 41  0]xS 
+N 4810 2568 M 4810 2368 I : [ 1 0 0 1 196 191 ] concat K 
+; 25 Lw [ 0 50 ] 0 sd N 4071 2472 M 4732 2472 I : [ 1 0 0 1 196 191 ] concat K 
+; 6 Lw solid N 3746 2572 M 3746 2372 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3944 2568 M 3944 2368 I : [ 1 0 0 1 196 191 ] concat K 
+; 0 Lj 2 Lc 16 Lw N 2913 3849 M 2935 3837 I : 0.441 0.441 +S K 
+; 32 Lw : 2814 3719 275 328 rc N 2935 3840 M 2967 4009 I : 0.441 0.441 +S K 
+; ; 16 Lw : 2901 3487 181 560 rc N 2970 4009 M 3012 3556 I : 0.441 0.441 +S K 
+; ; : 2943 3487 1329 139 rc N 3012 3556 M 4216 3556 I : 0.441 0.441 +S K 
+; ; : 2827 3466 1445 139 rc N 2896 3535 M 4230 3535 I : 0.441 0.441 +S K 
+; ; 3 11066 166 <00010000ff34056105ed001500babc0007018e000b000b0192403a083707
+01060400150714150e0302030402260e0d140e0e0d0c0d0d27030414030d
+0e03040e0d0c0302050604020e010d03040b0c264006050103b8013e4011
+200f0eaa0001147e1717171a154f074806b80158b304191617b8015cb321
+2028182b2b4ef44dfdf4f44e456544e64ded002f3cfd3c1a19ed183f3c1a
+fd3c391139111239011112173987082e2b057d10c487042e182b087d10c4
+00113939011112391112391810edec0010f5313005213501013521132326
+2623210101213237363637170521fadf029dfd6304fe1b28107b6efd1c02
+32fd8b03324653394b1928cc24033f033125feaf8a76fd51fcf71b136167
+0700>/TTE1E71728t00 AddT42Char 
+/TTE1E71728t00 findfont /CharStrings get begin
+/summation 166 def
+end
+/TTE1E71728t00 findfont /Encoding get
+dup 7 /summation put
+pop
+/F5SFF F5 [255.91 0 0 -255.91 0 0 ] mFS
+F5SFF Ji 
+3021 3877 M <07>S 
+3666 3877 M <07>S 
+3013 3393 M <07>S 
+/F2S63 F2 [99.52 0 0 -99.52 0 0 ] mFS
+F2S63 Ji 
+3085 4000 M (=)S 
+3730 4000 M (=)S 
+3076 3517 M (=)S 
+/F2SAA F2 [170.605 0 0 -170.605 0 0 ] mFS
+F2SAA Ji 
+3563 3837 M <B7>S 
+3614 3353 M <B7>S 
+2760 3578 M (=)S 
+/F7S63 F7 [99.52 0 0 -99.52 0 0 ] mFS
+F7S63 Ji 
+3076 3664 M (T)S 
+3049 4000 M (t)S 
+3720 3664 M (T)S 
+3694 4000 M (t)S 
+4173 3903 M (t)S 
+4112 3903 M (j)S 
+3505 3903 M (t)S 
+3446 3903 M (i)S 
+3067 3180 M (T)S 
+3040 3517 M (t)S 
+4021 3419 M (t)S 
+3961 3419 M (j)S 
+3555 3419 M (t)S 
+3496 3419 M (i)S 
+/F7SFF F7 [255.91 0 0 -255.91 0 0 ] mFS
+F7SFF Ji 
+3859 3891 M (tw)[71  0]xS 
+3215 3891 M (tw)[71  0]xS 
+3708 3407 M (tw)[71  0]xS 
+3265 3407 M (tw)[71  0]xS 
+/F0S63 F0 [99.52 0 0 -99.52 0 0 ] mFS
+F0S63 Ji 
+3132 4000 M (1)S 
+3776 4000 M (1)S 
+4094 3736 M (2)S 
+4149 3903 M (,)S 
+3449 3736 M (2)S 
+3481 3903 M (,)S 
+3123 3517 M (1)S 
+3998 3419 M (,)S 
+3531 3419 M (,)S 
+/F0SAA F0 [170.605 0 0 -170.605 0 0 ] mFS
+F0SAA Ji 
+4059 3353 M (\))S 
+3213 3353 M (\()S 
+2664 3578 M (\))S 
+2477 3599 M (V)S 
+2624 3628 M (j)S 
+2416 3578 M (,)S 
+2227 3599 M (V)S 
+2352 3628 M (i)S 
+1608 3578 M (cos_sim\()[76 86 67 86 67 48 132  0]xS 
+F0SA7 Ji 
+3271 2917 M (Sum over all terms in document)[93 84 128 42 84 83 74 55 42 74 46 46 41 46 73 56 128 65 42 46 83 42 83 84 73 84 128 75 84  0]xS 
+4480 3126 M (Weight of term t)[158 74 45 84 84 45 42 83 55 42 46 73 56 129 42  0]xS 
+4574 3326 M (in document j)[46 84 41 83 84 74 84 128 74 84 46 41  0]xS 
+4480 3858 M (Normalizing factor)[121 83 56 128 74 46 46 74 46 84 83 41 56 73 74 46 83  0]xS 
+1 Lj 1 Lc 6 Lw N 4272 3568 M 4334 3568 4383 3584 4383 3603 -c 4383 3954 I 4383 3973 4334 3989 4272 3989 -c : [ 1 0 0 1 196 191 ] concat K 
+; N 4045 3224 M 4045 3208 4034 3195 4020 3195 -c 3921 3195 I 3907 3195 3896 3182 3896 3166 -c 3896 3182 3885 3195 3871 3195 -c 3772 3195 I 3758 3195 3747 3208 3747 3224 -c : [ 1 0 0 1 196 191 ] concat K 
+; N 3896 3103 M 3896 3060 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3864 3101 M 3896 3167 I 3929 3101 I C 
+ O N 3896 3060 M 4420 3060 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3089 2853 M 3089 2997 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3057 2995 M 3090 3061 I 3122 2995 I C 
+ O N 3089 2853 M 3229 2853 I : [ 1 0 0 1 196 191 ] concat K 
+; LH
+(%%[Page: 9]%%) = 
+%%PageTrailer
+
+%%Page: 10 10
+%%PageBoundingBox: 13 13 599 780
+%%EndPageComments
+%%BeginPageSetup
+/DeviceRGB dup setcolorspace /colspABC exch def
+mysetup concat colspRefresh
+%%EndPageSetup
+
+/DeviceGray dup setcolorspace /colspABC exch def
+: N 196 191 6000 4500 rp C 
+1 0 scol  L ; 0 0 scol F0S75 Ji 
+706 4434 M (CS466)[78 65 58 59  0]xS 
+1024 4434 M (-)S 
+1063 4434 M (9)S 
+5568 4434 M (10)[59  0]xS 
+F0S16F Ji 
+1846 1101 M (Region Weighting)[245 163 184 101 183 184 92 345 163 101 184 184 102 101 183  0]xS 
+: N 1846 1141 2698 18 rp C 
+ L ; F0SA7 Ji 
+1200 1500 M <95>S 
+1425 1500 M (Title)[102 46 46 46  0]xS 
+1200 1700 M <95>S 
+1425 1700 M (Keywords)[121 74 83 121 83 56 83  0]xS 
+1200 1900 M <95>S 
+1425 1900 M (Abstract)[121 84 65 45 56 74 74  0]xS 
+1200 2100 M <95>S 
+1425 2100 M (Section Heads)[93 74 74 46 46 83 84 41 121 74 74 83  0]xS 
+1200 2300 M <95>S 
+1425 2300 M (Body Text)[111 84 84 83 42 102 73 84  0]xS 
+/F0S96 F0 [150 0 0 -150 0 0 ] mFS
+F0S96 Ji 
+1500 2484 M <96>S 
+1688 2484 M (1)S 
+F0S64 Ji 
+1763 2442 M (st)[39  0]xS 
+F0S96 Ji 
+1868 2484 M (page)[75 67 74  0]xS 
+1500 2664 M <96>S 
+1688 2664 M (30)[75  0]xS 
+F0S64 Ji 
+1838 2622 M (th)[28  0]xS 
+F0S96 Ji 
+1954 2664 M (page)[75 67 75  0]xS 
+F0SA7 Ji 
+1200 2860 M <95>S 
+1425 2860 M (Footnotes)[93 83 84 46 83 84 46 73  0]xS 
+2896 2072 M (Should words in each of these)[93 83 84 84 45 84 41 121 83 55 84 64 42 45 84 42 74 74 73 84 41 83 56 42 45 84 74 65  0]xS 
+2896 2272 M (regions be weighted equally?)[56 73 84 46 83 84 64 42 84 73 42 121 74 45 84 83 46 74 83 42 74 83 84 74 46 46 81  0]xS 
+1 Lj 1 Lc 6 Lw N 2465 1341 M 2527 1341 2577 1398 2577 1468 -c 2577 1974 I 2577 2044 2628 2100 2690 2100 -c 2628 2100 2577 2157 2577 2227 -c 2577 2733 I 2577 2803 2527 2860 2465 2860 -c : [ 1 0 0 1 196 191 ] concat K 
+; F0SC8 Ji 
+1842 3270 M (W)S 
+F0S85 Ji 
+2030 3320 M (t,d )[37 33 67  0]xS 
+F0SC8 Ji 
+2250 3270 M (= )[113  0]xS 
+2413 3270 M (RW)[134  0]xS 
+: N 2413 3292 321 10 rp C 
+ L ; F0S85 Ji 
+2734 3320 M (R )[90  0]xS 
+F0SC8 Ji 
+2908 3270 M <9520>[69  0]xS 
+3027 3270 M (TF)[122  0]xS 
+: N 3027 3292 234 10 rp C 
+ L ; F0S85 Ji 
+3261 3320 M (t)S 
+: N 3261 3334 37 6 rp C 
+ L ; 3298 3320 M (,d)[33  0]xS 
+: N 3298 3334 100 6 rp C 
+ L ; F0SC8 Ji 
+3465 3270 M <9520>[69  0]xS 
+3584 3270 M (\(IDF\))[67 67 145 111  0]xS 
+: N 3584 3292 457 10 rp C 
+ L ; F0SA7 Ji 
+2446 3515 M (3.0  Keywords)[84 41 84 42 41 121 74 83 121 83 55 84  0]xS 
+2446 3715 M (2.0  Title)[84 41 84 42 42 102 45 46 46  0]xS 
+2446 3915 M (0.8  Body Text)[84 41 84 42 42 110 84 84 83 42 102 73 84  0]xS 
+2864 4107 M (multiplicative weightings factor)[128 84 46 46 46 84 46 46 74 74 46 45 84 74 41 121 74 46 83 84 46 45 84 83 65 41 56 74 74 45 84  0]xS 
+2864 4307 M (depending on region word appears in)[84 74 84 73 83 84 45 84 83 42 83 84 41 55 74 84 45 84 83 42 121 83 55 84 42 73 83 84 74 73 56 65
+42 45  0]xS 
+N 2665 3897 M 2665 3921 2656 3941 2646 3941 -c 2571 3941 I 2561 3941 2552 3961 2552 3985 -c 2552 3961 2544 3941 2533 3941 -c 2458 3941 I 2448 3941 2440 3921 2440 3897 -c : [ 1 0 0 1 196 191 ] concat K 
+; N 2552 4048 M 2552 4147 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2585 4051 M 2552 3985 I 2520 4051 I C 
+ O N 2552 4147 M 2836 4147 I : [ 1 0 0 1 196 191 ] concat K 
+; 1 4920 65 <000200ad006b06d8055d0008000f006d401b0a0909ff0201140202010f09
+09ff02031402020309020e0b0a010bb801024018080f0ecb036405a60864
+0109020103050e0400870a0c870ab80117b20784022ffdeded10ed173912
+39002ff4fdf4ed3910ed1239111239393130870e2e2b047d10c4870e2e18
+2b047d10c425230901331121112109013521112135038963fd8702796303
+4ffcb1fe12018b034ffcb16b02790279feaffdb00128fe75c6018ac6>/TTE1ECEEA8t00 AddT42Char 
+1 5098 66 <ffff00ad006b06d8055d0047004107850000c0004000>/TTE1ECEEA8t00 AddT42Char 
+/TTE1ECEEA8t00 findfont /CharStrings get begin
+/orightshadrt 66 def
+/oleftshadlft 65 def
+end
+/TTE1ECEEA8t00 findfont /Encoding get
+dup 2 /orightshadrt put
+pop
+/F4SA7 F4 [167 0 0 -167 0 0 ] mFS
+F4SA7 Ji 
+1565 3278 M <02>S 
+LH
+(%%[Page: 10]%%) = 
+%%PageTrailer
+
+%%Page: 11 11
+%%PageBoundingBox: 13 13 599 780
+%%EndPageComments
+%%BeginPageSetup
+/DeviceRGB dup setcolorspace /colspABC exch def
+mysetup concat colspRefresh
+%%EndPageSetup
+
+/DeviceGray dup setcolorspace /colspABC exch def
+: N 196 191 6000 4500 rp C 
+1 0 scol  L ; 0 0 scol F0S75 Ji 
+706 4434 M (CS466)[78 65 58 59  0]xS 
+1024 4434 M (-)S 
+1063 4434 M (9)S 
+5568 4434 M (11)[59  0]xS 
+F0S16F Ji 
+1612 1101 M (Relevance Weighting)[245 163 102 162 184 162 184 162 163 92 345 163 102 183 184 102 102 183  0]xS 
+: N 1612 1141 3167 18 rp C 
+ L ; F0SC8 Ji 
+1446 1853 M (TF)[122  0]xS 
+: N 1446 1875 233 10 rp C 
+ L ; 2079 1853 M (F)S 
+F0S85 Ji 
+2190 1903 M (t,d )[38 33 67  0]xS 
+F0SC8 Ji 
+2361 1853 M <9520>[70  0]xS 
+2481 1853 M (TermRel)[122 89 67 154 133 89  0]xS 
+: N 2481 1875 710 10 rp C 
+ L ; F0S85 Ji 
+3191 1903 M (t)S 
+: N 3191 1917 37 6 rp C 
+ L ; 0 Lj 2 Lc 8 Lw : 2592 2322 165 301 rc N 2708 2363 M 2640 2574 I : 0.547 0.547 +S K 
+; ; N 2749 2658 M 2682 2869 I : 0.547 0.547 +S K 
+; 16 Lw : 2461 2522 914 163 rc N 2496 2603 M 3332 2603 I : 0.547 0.547 +S K 
+; ; /F0SD3 F0 [211.059 0 0 -211.059 0 0 ] mFS
+F0SD3 Ji 
+3211 2819 M (\))S 
+3081 2846 M (s)S 
+2761 2819 M (\(I)[70  0]xS 
+2545 2846 M (s)S 
+3252 2525 M (\))S 
+3128 2553 M (r)S 
+2720 2525 M (\(R)[70  0]xS 
+2510 2553 M (r)S 
+/F0S7B F0 [123.117 0 0 -123.117 0 0 ] mFS
+F0S7B Ji 
+3167 2859 M (t)S 
+2631 2859 M (t)S 
+3208 2563 M (t)S 
+2590 2563 M (t)S 
+/F2SD3 F2 [211.059 0 0 -211.059 0 0 ] mFS
+F2SD3 Ji 
+2936 2819 M (-)S 
+: 2977 2322 116 249 rc 2977 2525 M (-)S 
+; 1 Lj 1 Lc 6 Lw N 2783 2009 M 2821 2009 I 2821 2243 I 2896 2243 I 2896 2009 I 2933 2009 I 2858 1931 I C 
+: [ 1 0 0 1 196 191 ] concat K 
+; F0SA7 Ji 
+2240 3682 M (Theoretically optimal if you know Relevance)[102 84 74 83 56 74 46 45 74 74 46 46 83 41 83 84 46 46 128 74 46 42 46 55 42 83 83 84 41 83 84 83
+121 42 111 74 46 74 84 73 84 74  0]xS 
+N 2026 3567 M 2026 3605 I 1792 3605 I 1792 3680 I 2026 3680 I 2026 3717 I 2104 3642 I C 
+: [ 1 0 0 1 196 191 ] concat K 
+; 3436 3371 M (# of irrelevant documents in corpus)[84 41 84 55 42 45 55 56 74 46 74 83 74 84 45 41 84 84 73 84 128 74 84 46 64 42 46 83 42 73 84 55
+83 84  0]xS 
+3436 3110 M (# of irrelevant documents with term t)[84 41 84 55 42 45 55 56 74 46 74 83 74 84 45 41 84 84 73 84 128 74 84 46 64 42 121 46 45 84 42 46
+73 56 128 42  0]xS 
+3537 2251 M (# of relevant documents with term t)[84 41 84 55 41 56 74 46 73 84 74 84 45 42 83 84 74 84 128 74 84 45 65 42 121 46 45 84 41 46 74 56
+128 42  0]xS 
+3537 1991 M (# of relevant documents in corpus)[84 41 84 55 41 56 74 46 73 84 74 84 45 42 83 84 74 84 128 74 84 45 65 42 45 84 42 73 83 56 83 83
+ 0]xS 
+N 3476 1931 M 2984 2286 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2968 2258 M 2934 2323 I 3006 2311 I C 
+ O N 3476 2166 M 3241 2337 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3225 2309 M 3190 2373 I 3263 2362 I C 
+ O N 3375 3066 M 3239 2958 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3262 2935 M 3190 2921 I 3222 2987 I C 
+ O N 3375 3322 M 2904 2883 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2929 2862 M 2858 2841 I 2885 2910 I C 
+ O 1218 2226 M (raw term freq.)[56 74 121 41 46 74 56 128 42 55 56 73 84  0]xS 
+N 1896 2061 M 2051 1963 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2066 1994 M 2104 1931 I 2031 1938 I C 
+ O LH
+(%%[Page: 11]%%) = 
+%%PageTrailer
+
+%%Page: 12 12
+%%PageBoundingBox: 13 13 599 780
+%%EndPageComments
+%%BeginPageSetup
+/DeviceRGB dup setcolorspace /colspABC exch def
+mysetup concat colspRefresh
+%%EndPageSetup
+
+/DeviceGray dup setcolorspace /colspABC exch def
+: N 196 191 6000 4500 rp C 
+1 0 scol  L ; 0 0 scol F0S75 Ji 
+706 4434 M (CS466)[78 65 58 59  0]xS 
+1024 4434 M (-)S 
+1063 4434 M (9)S 
+5568 4434 M (12)[59  0]xS 
+F0S16F Ji 
+1811 1101 M (Type of Document)[224 184 183 163 91 184 122 91 265 183 162 184 285 163 184  0]xS 
+: N 1811 1141 2769 18 rp C 
+ L ; F0SC8 Ji 
+1272 1935 M (weight)[144 89 56 100 100  0]xS 
+: N 1272 1957 545 10 rp C 
+ L ; 1867 1935 M (TF)[122  0]xS 
+0 Lj 2 Lc 16 Lw : 3317 2248 921 163 rc N 3398 2329 M 4189 2329 I : 0.547 0.547 +S K 
+; ; /F0SD3 F0 [211 0 0 -211 0 0 ] mFS
+F0SD3 Ji 
+3413 2549 M (maxfreq)[163 94 106 69 70 94  0]xS 
+3556 2230 M (freq)[69 70 94  0]xS 
+3148 2381 M (K\))[152  0]xS 
+2805 2381 M (\(1)[70  0]xS 
+2458 2381 M (K)S 
+1628 2386 M (Cfreq)[141 69 70 94  0]xS 
+/F0S7B F0 [123.082 0 0 -123.082 0 0 ] mFS
+F0S7B Ji 
+4112 2605 M (d)S 
+3899 2286 M (t,d)[34 31  0]xS 
+2113 2442 M (t,d)[34 31  0]xS 
+/F2SD3 F2 [211 0 0 -211 0 0 ] mFS
+F2SD3 Ji 
+2996 2381 M (-)S 
+2653 2381 M (+)S 
+2293 2381 M (=)S 
+F0SC8 Ji 
+1034 1561 M (if Term t in d,)[56 66 50 122 89 67 154 50 56 50 56 100 49 100  0]xS 
+F0SA7 Ji 
+4674 2412 M ([ Croft, \22283])[56 42 111 55 83 56 46 41 41 56 83 84  0]xS 
+F0SC8 Ji 
+1109 3248 M (\(for titles\)        K = 1     )[67 66 100 67 50 55 56 55 55 89 78 67 50 50 50 49 50 50 50 50 144 50 113 50 100 50 50 50 50  0]xS 
+F4SC8 Ji 
+3020 3248 M <02>S 
+F0SC8 Ji 
+3458 3248 M (boolean)[100 100 100 55 89 88  0]xS 
+4140 3248 M (weighting)[144 89 56 100 100 55 56 100  0]xS 
+1109 3547 M (\(for full text\)   K = 0     )[67 66 100 67 50 66 100 56 56 49 56 89 99 55 67 50 50 50 144 50 113 50 100 50 50 50 50  0]xS 
+F4SC8 Ji 
+3009 3547 M <02>S 
+F0SC8 Ji 
+3447 3547 M (similar to )[78 56 154 55 56 89 66 50 56 100  0]xS 
+4257 3547 M (Freq)[111 67 89  0]xS 
+F0S85 Ji 
+4624 3597 M (t)S 
+4661 3597 M (,d)[33  0]xS 
+F0SA7 Ji 
+4782 1042 M (\(Title vs. )[56 102 46 46 46 73 42 83 65 42  0]xS 
+4866 1242 M (Abstract)[120 84 65 45 56 74 74  0]xS 
+4907 1442 M (vs. Paper)[84 65 41 42 93 73 84 73  0]xS 
+4907 1642 M (vs. Query\))[84 65 41 42 120 84 74 56 82  0]xS 
+LH
+(%%[Page: 12]%%) = 
+%%PageTrailer
+
+%%Page: 13 13
+%%PageBoundingBox: 13 13 599 780
+%%EndPageComments
+%%BeginPageSetup
+/DeviceRGB dup setcolorspace /colspABC exch def
+mysetup concat colspRefresh
+%%EndPageSetup
+
+/DeviceGray dup setcolorspace /colspABC exch def
+: N 196 191 6000 4500 rp C 
+1 0 scol  L ; 0 0 scol F0S75 Ji 
+706 4434 M (CS466)[78 65 58 59  0]xS 
+1024 4434 M (-)S 
+1063 4434 M (9)S 
+5568 4434 M (13)[59  0]xS 
+F0S16F Ji 
+597 1101 M (Document Interval Term Weighting)[265 183 163 183 285 163 184 102 92 121 184 102 163 121 184 163 101 92 224 163 122 285 91 346 163 102 183 183 102 102 184  0]xS 
+: N 597 1141 5285 18 rp C 
+ L ; 0 Lj 2 Lc 16 Lw : 2602 2248 1433 163 rc N 2683 2329 M 3995 2329 I : 0.547 0.547 +S K 
+; ; F0SD3 Ji 
+3902 2544 M (\))S 
+3064 2544 M (\(length\(d\))[70 59 94 106 106 59 106 70 106  0]xS 
+2706 2549 M (log)[59 106  0]xS 
+3915 2218 M (\))S 
+3826 2218 M (1)S 
+3068 2215 M (\(Freq)[70 117 70 94  0]xS 
+3021 2215 M ( )S 
+2694 2220 M (log)[59 106  0]xS 
+1839 2386 M (Nfreq)[152 69 70 94  0]xS 
+F0S7B Ji 
+2979 2605 M (2)S 
+2966 2276 M (2)S 
+3526 2286 M (t,d)[34 31  0]xS 
+2333 2442 M (t,d)[34 31  0]xS 
+: 3694 2012 116 252 rc F2SD3 Ji 
+3694 2218 M (+)S 
+; F2SD3 Ji 
+2514 2381 M (=)S 
+F0SC8 Ji 
+1528 3280 M (use instead of )[100 78 89 50 56 100 77 56 88 89 100 49 100 66  0]xS 
+2676 3280 M (Freq)[111 67 89  0]xS 
+F0S85 Ji 
+3043 3330 M (t)S 
+3080 3330 M (,d)[33  0]xS 
+F0SC8 Ji 
+3280 3280 M (in TF)[56 100 50 122  0]xS 
+3719 3280 M (-)S 
+3786 3280 M (IDF       [Harman \22286])[67 144 111 50 50 50 50 50 50 51 66 144 89 68 154 89 100 50 67 100 100  0]xS 
+1 Lj 1 Lc 6 Lw N 2072 3058 M 2072 2548 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2105 2551 M 2072 2485 I 2040 2551 I C 
+ O LH
+(%%[Page: 13]%%) = 
+%%PageTrailer
+
+%%Page: 14 14
+%%PageBoundingBox: 13 13 599 780
+%%EndPageComments
+%%BeginPageSetup
+/DeviceRGB dup setcolorspace /colspABC exch def
+mysetup concat colspRefresh
+%%EndPageSetup
+
+/DeviceGray dup setcolorspace /colspABC exch def
+: N 196 191 6000 4500 rp C 
+1 0 scol  L ; 0 0 scol F0S75 Ji 
+706 4434 M (CS466)[78 65 58 59  0]xS 
+1024 4434 M (-)S 
+1063 4434 M (9)S 
+5568 4434 M (14)[59  0]xS 
+F0S16F Ji 
+1346 1101 M (Compound Identification)[245 184 285 183 184 183 183 184 92 121 184 162 184 102 102 122 101 163 163 102 101 184  0]xS 
+: N 1346 1141 3698 18 rp C 
+ L ; F0SA7 Ji 
+1000 1681 M (Salton)[93 74 46 46 83  0]xS 
+1467 1681 M (+ McGill\(1983\) )[94 42 148 74 121 45 46 46 55 84 83 83 83 56  0]xS 
+2568 1681 M <96>S 
+2694 1681 M (cohersion )[73 84 84 73 56 65 45 83 84  0]xS 
+3383 1681 M (measure)[128 74 74 65 83 56  0]xS 
+0 Lj 2 Lc 16 Lw N 2329 2095 M 4320 2095 I : 0.449 0.453 +S K 
+; /F0SAE F0 [174 0 0 -174 0 0 ] mFS
+F0SAE Ji 
+4853 2138 M (factor)[58 77 77 48 87  0]xS 
+4815 2138 M ( )S 
+4451 2138 M (small)[68 132 77 48  0]xS 
+4254 2273 M (\))S 
+4162 2294 M (t)S 
+4097 2273 M (\()S 
+4059 2273 M ( )S 
+3391 2273 M (total_freq)[48 87 48 77 48 87 58 58 77  0]xS 
+3201 2273 M (\))S 
+3115 2294 M (t)S 
+3050 2273 M (\()S 
+3012 2273 M ( )S 
+2344 2273 M (total_freq)[48 87 48 77 48 87 58 58 77  0]xS 
+4159 2022 M (\))S 
+4067 2044 M (t)S 
+4002 2022 M (,)S 
+3903 2044 M (t)S 
+3837 2022 M (\()S 
+3799 2022 M ( )S 
+3199 2022 M (nce_freq)[87 77 77 87 58 58 77  0]xS 
+2433 2022 M (co_occurre)[77 87 87 87 77 77 87 58 58  0]xS 
+2093 2138 M (\))S 
+2001 2160 M (t)S 
+1936 2138 M (,)S 
+1836 2160 M (t)S 
+1098 2138 M (cohersion\()[77 87 87 77 58 68 48 87 87  0]xS 
+/F0S65 F0 [101.5 0 0 -101.5 0 0 ] mFS
+F0S65 Ji 
+4227 2305 M (j)S 
+3167 2305 M (i)S 
+4132 2055 M (j)S 
+3955 2055 M (i)S 
+2066 2171 M (j)S 
+1889 2171 M (i)S 
+/F2SAE F2 [174 0 0 -174 0 0 ] mFS
+F2SAE Ji 
+4350 2138 M <B7>S 
+3282 2273 M <B7>S 
+2191 2138 M (=)S 
+F0SA7 Ji 
+3077 2560 M (Measure is similar to :)[148 74 74 65 83 56 74 41 46 65 41 65 46 128 46 46 74 55 42 46 83 42  0]xS 
+F6SA7 Ji 
+3125 2760 M (Mutual Information)[158 92 56 92 84 46 41 65 92 56 84 73 139 83 56 45 84  0]xS 
+: N 3125 2778 1439 16 rp C 
+ L ; F0SA7 Ji 
+837 2917 M (Examples:)[102 84 74 128 84 46 74 65  0]xS 
+: 1637 2929 1111 131 rc N 1702 2994 M 2712 2994 I : 0.41 0.41 +S K 
+; ; /F0S9E F0 [158.707 0 0 -158.707 0 0 ] mFS
+F0S9E Ji 
+2100 3156 M ( venitian")[40 80 71 80 44 44 44 71 80  0]xS 
+1778 3156 M (blind)[80 44 44 80  0]xS 
+1703 3156 M (")S 
+2231 2935 M (Hong")[115 80 80 80  0]xS 
+2193 2935 M ( )S 
+1843 2935 M (Hong)[115 80 80  0]xS 
+1769 2935 M (")S 
+1663 3033 M ( )S 
+: 1637 3426 1111 131 rc N 1702 3491 M 2714 3491 I : 0.41 0.41 +S K 
+; ; /F0S9E F0 [158.543 0 0 -158.543 0 0 ] mFS
+F0S9E Ji 
+2231 3654 M (school")[62 71 80 80 80 44  0]xS 
+1784 3654 M (library )[44 44 80 53 71 53 82  0]xS 
+1712 3654 M (")S 
+2326 3432 M (blind")[80 44 44 80 80  0]xS 
+1780 3432 M (venitian )[80 71 80 44 44 44 71 80  0]xS 
+1703 3432 M (")S 
+1663 3531 M ( )S 
+: 1650 3958 1085 131 rc N 1715 4023 M 2705 4023 I : 0.41 0.41 +S K 
+; ; /F0S9E F0 [158.906 0 0 -158.906 0 0 ] mFS
+F0S9E Ji 
+2185 4186 M (spaniel")[62 80 71 80 44 71 44  0]xS 
+1803 4186 M (water )[115 71 44 71 53  0]xS 
+1726 4186 M (")S 
+2228 3964 M (library")[44 44 80 53 71 53 82  0]xS 
+2193 3964 M ( )S 
+1786 3964 M (school)[62 71 80 80 80  0]xS 
+1716 3964 M (")S 
+1676 4063 M ( )S 
+F0SA7 Ji 
+511 3258 M (Compounding)[111 84 128 84 84 83 84 83 46 83  0]xS 
+550 3458 M (may increase)[128 74 83 42 46 84 74 56 74 74 65  0]xS 
+611 3658 M (or decrease)[84 55 42 83 74 74 56 74 73 65  0]xS 
+617 3858 M (vocabulary)[84 84 74 73 83 84 46 73 56  0]xS 
+857 4058 M (size)[65 46 74  0]xS 
+3659 3409 M (Collocation extraction :)[111 84 46 46 84 74 74 45 46 83 84 42 73 84 45 56 74 74 46 45 83 84 42  0]xS 
+4192 3609 M (Choueka)[111 84 83 84 74 84  0]xS 
+4785 3609 M (\(1988\))[55 84 83 83 83  0]xS 
+4286 3809 M (Smadia)[93 128 74 84 46  0]xS 
+4785 3809 M (\(1992\))[55 84 83 83 84  0]xS 
+1 Lj 1 Lc 6 Lw N 3017 3360 M 3535 3360 I : [ 1 0 0 1 196 191 ] concat K 
+; N 3533 3393 M 3598 3361 I 3533 3328 I C 
+ O 3077 4189 M (dog)[84 83  0]xS 
+N 2735 4128 M 2954 4128 I : [ 1 0 0 1 196 191 ] concat K 
+; N 2952 4161 M 3018 4129 I 2952 4096 I C 
+ O LH
+(%%[Page: 14]%%) = 
+%%PageTrailer
+
+%%Trailer
+%%BoundingBox: 13 13 599 780
+%%DocumentNeededResources: 
+%%+ font Times-Roman
+%%+ font Symbol
+%%+ font Times-Bold
+%%+ font Times-Italic
+%%DocumentSuppliedResources: 
+%%+ procset Pscript_WinNT_ErrorHandler 5.0 0
+%%+ procset Pscript_FatalError 5.0 0
+%%+ procset Pscript_Win_Basic 5.0 0
+%%+ procset Pscript_Win_Utils_L2 5.0 0
+%%+ procset Pscript_Win_GdiObject 5.0 0
+%%+ procset Pscript_Win_GdiObject_L2 5.0 0
+%%+ procset Pscript_Text 5.0 0
+%%+ procset Pscript_Encoding256 5.0 0
+%%+ procset Pscript_T42Hdr 5.0 0
+Pscript_WinNT_Incr dup /terminate get exec
+%%Pages: 14
+(%%[LastPage]%%) = 
+%%EOF
+%-12345X@PJL EOJ
+%-12345X

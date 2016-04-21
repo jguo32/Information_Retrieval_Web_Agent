@@ -1,0 +1,158 @@
+.\" Wray Buntine 9/90 and 9/91
+.TH COMMAND 1 local
+.SH NAME
+tprune \- prune a decision tree
+.SH SYNOPSIS
+.B tprune [options] \fIattribute_file tree_file\fR
+.SH DESCRIPTION
+.PP
+.B tprune 
+simplifies a decision tree by removing (or pruning) subtrees, and then
+converts the counts in the nodes to probabilities.  
+This means
+.B tprune
+inputs a counts tree 
+(usually from "\fIstem\fR.treec")
+and then outputs a class probability tree
+(usually to "\fIstem\fR.tree").
+The pruned tree is written to the file whose name is
+derived from "\fItree_file\fR".
+If \fItree_file\fR contains the substring "treec" then change
+it to "tree".
+Otherwise append ".p" to \fItree_file\fR.
+.PP
+Flexible
+combinations of the different pruning algorithms are available.  Can
+use depth-bounded pruning, with cost-complexity or pessimistic or
+minimum errors/cost pruning.  Option trees, however, can only be pruned in
+a depth-bounded (\-d) or decision manner (\-D).  
+This is then followed by count to probability
+conversion with or without Bayesian tree smoothing.  
+Methods for counts to probability conversion are explained
+with the \-A option to \fBtgen\fR.
+
+.SH OPTIONS
+.TP
+.B \-A
+Same options as for tree prior as in \fBtgen\fR.
+.TP
+.B \-b
+Convert counts to probabilities using Laplacian estimates, and install
+leaf probabilities for Bayesian tree smoothing later by 
+\fBtclass\fR.
+See "\fBtprint\fR -q" on how to display leaf probabilities.
+.TP
+.B \-B
+Like the \-b
+option but picks the best pruned subtree and gives all its
+leaves a leaf probability of 1.
+This corresponds to doing minimum encoding
+(MDL, MML) pruning or picking the maximum aposterior tree
+because it prevents later tree smoothing by
+\fBtclass\fR.
+.TP
+.B \-c \fIfactor\fR
+Do cost-complexity pruning with trade-off set by \fIfactor\fR. 
+See also the \-V option.
+.TP
+.B \-d \fIdepth\fR
+Before other pruning methods, strip everything below \fIdepth\fR depth.
+The root node is depth 0 so the option "\-d0" will
+leave just a single leaf with no tests.
+.TP
+.B \-D
+Prune node if all subtrees make the same decision.
+Done after everything else.
+This option is implicit in pessimistic pruning (\-e)
+and cost complexity pruning
+(\-c and \fBtgen\fR  \-C).
+If used with the smoothing option \-b,
+this will reduce the tree in size, shouldn't effect prediction
+error much, but will possibly reduce the
+accuracy of class probability estimates,
+and render the standard deviation estimates meaningless.
+This will also make
+all leaves have a leaf probability of 1, to prevent subsequent
+Bayesian smoothing by \fBtclass\fR.
+See "\fBtprint\fR -q" on how to display leaf probabilities.
+.TP
+.B \-e 
+Pessimistic pruning.
+Takes account of the utilities if they exist,
+to prune back to a tree with reduced cost.
+.TP
+.B \-f 
+C4.5 pruning.
+Slightly different due to approximations
+of underlying statistical routines.
+Takes account of the utilities if they exist,
+to prune back to a tree with reduced cost.
+.TP
+.B \-l 
+This option is only intended for use with noise-free
+with the \-b option.
+This makes pruned subtrees ignored during the smoothing process,
+i.e. subtrees that don't have 0 errors on the training
+set are not considered during smoothing.
+Equivalent to setting the leaf probabilities to zero
+for all internal nodes (which have some errors on the training set).
+.TP
+.B \-M 
+Prune to minimum errors subtree,
+or minimum cost if utilities are specified.
+Cost or errors are calculated from the counts in the tree
+left during growing.
+.TP
+.B \-n
+Convert counts to probabilities using Laplacian estimates, and make
+all leaves have a leaf probability of 1, to prevent subsequent
+Bayesian smoothing by \fBtclass\fR.
+.TP
+.B \-o \fIoptions\fR
+When tree smoothing, prune node to leaf if it has more than
+\fIoptions\fR
+options.  A good default value to use is 5.
+Only works with option trees.
+.TP
+.B \-p \fIfactor\fR
+Set prune factor.  The pessimistic pruning algorithm prunes a subtree
+if its error is within \fIfactor\fR
+standard errors of a pessimistic estimate of
+the error.  The default factor (when doing pessimistic pruning without
+specifying a factor) is 1.0.  Be sure to also use option \-e when
+using this option.
+.TP
+.B \-P
+Same options as for tree prior as in \fBtgen\fR.
+.TP
+.B \-q \fIfactor\fR
+Set prune factor.  When tree smoothing (option \-b),
+remove any option branches whose proportion is less than this value.
+Default is 0.01.
+Setting factor to value greater than 1 has the effect that
+all option branches other than the best are pruned
+(this is similar to the \-B
+flag applied to option trees,
+but the tree is still able to be smoothed afterwards).
+.TP
+.B \-r
+Extract a single tree from the option tree probabilistically.
+Rather like the \-B option, but instead of choosing the
+maximum posterior tree,
+it chooses a tree in proportion to its individual posterior.
+Matches the \-O option in \fBtprint\fR.
+.TP
+.B \-v
+Be verbose.
+Print out details of options used in pruning.
+.TP
+.B \-V \fItestfile\fR
+Use \fItestfile\fR to determine trade-off for cost complexity pruning.
+Default standard errors is 1.0.
+Preceed this option with the \-c option if you wish to set
+the standard errors to something else.
+
+.SH "SEE ALSO"
+.br
+.IR tgen (1),
+.IR tclass (1).

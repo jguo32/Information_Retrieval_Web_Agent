@@ -1,0 +1,51 @@
+IND Version 2.0 - creation and manipulation of decision trees from data
+----------------------------------------------------------------------
+
+A common approach to supervised classification and prediction in
+artificial intelligence and statistical pattern recognition
+is the use of decision trees.  A tree is "grown" from
+data using a recursive partitioning algorithm to create a tree
+which (hopefully) has good prediction of classes on new data.
+Standard algorithms are CART (by Breiman, Friedman, Olshen and Stone)
+and Id3 and its successor C4 (by Quinlan).  As well as reimplementing
+parts of these algorithms and offering experimental control
+suites, IND also introduces Bayesian and MML methods and more 
+sophisticated search in growing trees.  These produce more accurate
+class probability estimates that are important in applications like
+diagnosis.
+
+IND is applicable to most data sets consisting of
+independent instances, each described by a fixed length vector of
+attribute values.  An attribute value may be a number, one of a
+set of attribute specific symbols, or omitted.  One of the
+attributes is delegated the "target" and IND grows trees 
+to predict the target.  Prediction can then be done on new data or
+the decision tree printed out for inspection.
+
+IND provides a range of features and styles with convenience
+for the casual user as well as fine-tuning for the advanced user or
+those interested in research.  IND can be operated in a CART-like mode
+(but without regression trees, surrogate splits or multivariate
+splits), and in a mode like C4.5.  Advanced
+features allow more extensive search, interactive control and display
+of tree growing, and Bayesian and MML
+algorithms for tree pruning and smoothing.  These often produce
+more accurate class probability estimates at the leaves.
+IND also comes with a comprehensive experimental control suite.
+
+IND consist of four basic kinds of routines; data manipulation
+routines, tree generation routines, tree testing routines, and
+tree display routines.  The data manipulation routines are used
+to partition a single large data set into smaller training and
+test sets.  The generation routines are used to build
+classifiers.  The test routines are used to evaluate classifiers
+and to classify data using a classifier.  And the display
+routines are used to display classifiers in various formats.
+
+IND is written in K&R C, with controlling scripts in the "csh"
+shell of UNIX, and extensive UNIX man entries.  It is designed to be 
+used on any UNIX system, although it has only been thoroughly tested 
+on SUN platforms.  IND comes with a manual giving a guide to tree methods,
+and pointers to the literature, and several companion documents.
+
+----------------------------------------------------------------------

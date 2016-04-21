@@ -1,0 +1,25 @@
+
+
+
+TO RUN CHECKBOT:
+
+ - copy the program  'checkbot' to an empty directory
+
+ - run the program with a url of your choice
+   
+     ./checkbot -verbose -url http://www.cs.jhu.edu/ 
+
+
+   (you may leave out the -verbose mode, but it helps 
+     you make sure things are OK initially)
+
+
+ - use netscape to view    file:checkbot.html
+
+         (the results of your checkbot search.
+            It will take a few minutes for this
+               file to form.)
+
+
+
+

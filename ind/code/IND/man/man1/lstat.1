@@ -1,0 +1,132 @@
+.\" Wray Buntine 9/91
+.TH COMMAND 1 local
+.SH NAME
+lstat \- compute simple statistics on lines of data
+.SH SYNOPSIS
+.B lstat 
+[\fBoptions\fR] \fIfiles\fR
+.SH DESCRIPTION
+.PP
+.B lstat
+computes simple statistics on columns in files,
+such as column means, standard deviations,
+t-tests or F-tests and paired t-tests on
+a pair of columns.
+If the first filename is "-" then stdin is used.
+The first column is counted from 1.
+Columns are selected by a list of columns and column ranges.
+A range 3-7 means the columns 3 to 7 inclusive.
+.B lstat
+is intended to be used on the ".trial" files output
+by \fBttest\fR.
+The -T option makes certain changes that make output 
+compatible with TeX tabular mode.
+
+Either statistics are computed for a single file,
+or with the \-F option,
+statistics are computed differentiating the first file
+from the remainder.
+When comparing columns, it is done on a line by line basis,
+so the paired t-test is used.
+
+To check output from \fBttest\fR for "hypo"
+files of training set size 1000, do
+.br
+	lstat -v 1-3,5 hypo.trial.1000*
+.br
+This prints statistics for columns 1,2,3 and 5.
+To do a paired t-test comparing the performance of 
+"mdl" and "cart" trials
+(see 
+.IR ttest(1) )
+do 
+.br
+	lstat -F -s 1,2  hypo.trial.1000mdl hypo.trial.1000cart
+.SH OPTIONS
+.TP
+.B \-2
+Use a 2-tail t-test.   Default is 1-tailed.
+.TP
+.B \-a \fIcol-list\fR
+Print the mean of each column in \fIcol-list\fR.
+.TP
+.B \-A \fIcol,col-list\fR
+Print the mean of the difference between
+the \fIcol\fR-th column and each column
+in \fIcol-list\fR.
+.TP
+.B \-b
+Skip the leading filename and totals, so only statistics are given.
+.TP
+.B \-C \fIcol,col-list\fR
+Print the mean, standard deviation, t-score and F-score
+of the difference between
+the \fIcol\fR-th column and each column in \fIcol-list\fR.
+.TP
+.B \-d
+Be verbose during operation.
+.TP
+.B \-e
+Suppress usual error reporting.
+.TP
+.B \-f \fIprec\fR
+Floats are to be printed with \fIprec\fR decimal
+places after the point, default is 4.
+.TP
+.B \-F
+Statistics are now computed as the difference between
+corresponding columns in the first file and subsequent files,
+with columns are paired as before for the paired t-test.
+In this mode, \-s and \-S options are identical, etc.
+.TP
+.B \-n \fItext\fR
+In the output, precede the last field specified
+with a \-s, \-v, \-V option, etc.,
+with the text \fItext\fR.
+.TP
+.B \-p  \fIcol-list\fR
+The comma-separated list of integers, \fIcol-list\fR,
+specifies which columns are to be printed as percents.
+.TP
+.B \-q  \fIitems\fR
+Only display this many items on a line of output.
+.TP
+.B \-s \fIcol-list\fR
+Print the mean and t-score (difference from 0)
+of each column in \fIcol-list\fR.
+.TP
+.B \-S \fIcol,col-list\fR
+Print the mean and the t-score of the difference between
+the \fIcol\fR-th column and each column in \fIcol-list\fR.
+.TP
+.B \-t \fItext\fR
+Seperate fields in the output with this text.
+For use with -T option.
+.TP
+.B \-T \fItext\fR
+Make output compatible with TeX tabular mode.
+Damn useful for subsequently generating tables.
+\fItext\fR is printed before anything else.
+If a second \-T option is used,
+then its \fItext\fR is printed
+right at the end.
+.TP
+.B \-u \fIcol-list\fR
+Print the mean and the sample standard deviation of the mean
+for each column in \fIcol-list\fR.
+.TP
+.B \-U \fIcol,col-list\fR
+Print the mean and the sample standard deviation of the mean for the
+difference between
+the \fIcol\fR-th column and each column in \fIcol-list\fR.
+.TP
+.B \-v \fIcol-list\fR
+Print the mean and standard deviation of each column in \fIcol-list\fR.
+.TP
+.B \-V \fIcol,col-list\fR
+Print the mean and standard deviation of the difference between
+the \fIcol\fR-th column and each column in \fIcol-list\fR.
+
+.SH "SEE ALSO"
+.br
+.IR ttest (1).

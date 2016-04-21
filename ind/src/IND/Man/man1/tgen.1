@@ -1,0 +1,483 @@
+.\" scrounged from Chris Carter 3/89, Wray Buntine 11/90 and 9/91
+.TH COMMAND 1 local
+.SH NAME
+tgen \- generate a decision tree
+.SH SYNOPSIS
+.B tgen 
+[\fBoptions\fR] \fIattribute_file example_file tree_file\fR
+.SH DESCRIPTION
+.PP
+.B tgen 
+takes a data set (see
+.IR attr (1)
+for a description of the data file formats and 
+.I /IND/Data/thyroid
+for a sample data set) and builds a decision tree.  Options allow CART
+style cost-complexity pruning by test set or by cross validation, and
+a wide variety of splitting rules such as Bayesian, information gain
+and gini methods.  Subsetting is implemented, as well as handling
+pre- and post-pruning rules.
+Various hacks exist for handling missing values.
+Lookahead can be programmed with the \-B option, and
+early stopping (pre-pruning) with the \-J1 option
+or the \-n option.
+Interactive mode (the \-o option)
+also displays plots using 
+.B gnuplot
+under X.11 of the cut-point profiles,
+if you wish to control the growing operation more closely.	
+.PP
+Lookahead during search for trees is best controlled
+using \fBmktree\fR(1)
+with the preset styles "\-s bayes \-s look" or
+"\-s mml \-s look".
+.PP
+Bayesian option trees with averaging is 
+best controlled using \fBmktree\fR(1)
+with the preset styles "\-s bayes \-s opt" or "\-s mml \-s opt".
+This will in general allow 
+better estimates of class probabilities than other methods,
+particularly when samples are small,
+but will require an order of magnitude more computation
+and the trees produced cannot be displayed or "read" easily.
+However, they can be used for classification
+with \fBtclass\fR(1) or \fBtquest\fR(1).
+Option trees allow alternative tests to be specified at nodes
+so that the tree structure now represents a whole space
+of possible optional trees.
+Since optional tests can exist recursively,
+this has a potential exponential explosion in the number of
+nodes in the tree,
+and the generation mechanisms control this explosion.
+.PP
+To control the generation of  option trees from
+\fBtgen\fR requires use of the
+\-B, \-J, \-K and \-L  options.  
+The \-A and \-P options should be combined as well.
+This is a simple beam search that retains all good trees
+found in an and-or structure.
+The \-B option allows
+n-ply lookahead during splitting (all other splitting rules use
+1-ply lookahead).  Use 2 or 3-ply to get better performance on small
+problems.
+Option trees are initiated with the \-J option.
+Options are repeatedly added to the tree
+until the
+system either runs out of space or time,
+or no more "reasonable" options are found.
+The \-K option is for post-pruning of option trees only.
+The -L option is critical to keep the system from running out of resources
+prematurely.
+A typical option combination might be:
+.br
+        tgen -t -B2,4  -J4 -K4 -L0.9 -d5  -s4  ...
+.br
+.PP
+Decision graphs are grown by using the \-DD option.
+This is best done
+with preset styles of \fBmktree\fR(1).
+The \-t and \-P options must be used to grow decision graphs.
+Using the \-P option the user may give a value for P_Join,
+or may specify to search for a value of P_Join.
+Two other options are provided for use with decision graphs,
+the \-I option and the \-w option.
+The \-A, \-B, \-d, \-s and \-U options are compatible
+with decision graphs.
+A typical option combination for decision graphs would be:
+.br
+        tgen -DD -t -Pwall -A1
+.br
+If you wished to grow a graph with a particular value of P_Join (say 0.15)
+then you might use the option combination:
+.br
+        tgen -DD -t -Pwall,0.15 -A1
+.br
+Decision graphs may be grown using lookahead, e.g.,
+.br
+        tgen -DD -t -Pwall -A1 -B2,4
+
+
+.SH OPTIONS
+.TP
+.B \-A \fIalpha\fR
+.TP
+.B \-A classes[,\fIalpha\fR]
+.TP
+.B \-A nonsym,\fIalpha\fR
+With the first option
+class probabilities at nodes are calculated using the 
+symmetric Laplace formula:
+.sp
+.br
+    (#this-class + \fIalpha\fR/#classes)/(#total + \fIalpha\fR).
+.sp
+.br
+where
+.br
+      #this-class = count for this class at this node
+.br
+      #total = total count at this node
+.br 
+      #classes = number of classes
+.br
+Note the class probabilities sum to 1.
+The default is \fIalpha\fR=1.
+
+With the "classes" option,
+\fIalpha\fR is first multiplied by the number of classes,
+#classes, before using the formula above.
+
+With the "nonsym" option,
+class probabilities at nodes are calculated using the 
+non-symmetric Laplace formula:
+.sp
+.br
+    (#this-class + #class-base-rate*\fIalpha\fR)/(#total + \fIalpha\fR).
+.sp
+.br
+where
+.br
+    #class-base-rate = class proportion in population
+.br
+The base rates are estimated from the class counts in the entire
+training sample, using a symmetric Laplace formula with
+\fIalpha\fR set to the number of classes.
+
+This option also effects the operation of the
+.I \-t
+option because \fIalpha\fR is used as a prior parameter.  See also the
+\-P options.
+By default, \fIalpha\fR is 1.0 and the "classes" and "nonsym"
+options are switched off.
+If you use both the "classes" and "nonsym" options then
+they will overlay their effects.
+.TP
+.B \-B \fIdepth,breadth[,fact[,c_breadth,c_fact]]\fR
+When tree growing there is an initial
+beam-search n-ply lookahead phase to evaluate the quality
+of each test.
+At each step when doing this,
+choose the best \fIbreadth\fR choices for each test that are within
+\fIfact\fR of the best, and add these as options on the search beam.
+Lookahead to depth \fIdepth\fR.
+Only supported with the \-t option.
+Default values are 1,1,0.00001,breadth,0.00001.
+
+When initializing beam search, each node is expanding into a set of
+optional tests by using the standard 1-ply lookahead splitting rule.
+To make the root of this beam search broader, make
+\fIc_depth\fR greater than \fIdepth\fR,
+and \fIc_fact\fR is the corresponding factor at the root.
+.TP
+.B \-c \fIprop[,cseed]\fR
+Build tree from a proportion \fIprop\fR of the examples selected at
+random; prune tree using cost-complexity pruning with test set on
+remainder.  See discussion on costs with the \-C option.
+A typical value to use is \fIprop\fR=0.7.
+See the \-p option below for setting the standard errors.
+\fIcseed\fR initializes the random number generator using the seed,
+so you can reproduce the train/test partition.
+.TP
+.B \-C \fIfolds[,cseed]\fR
+Build tree using \fIfolds\fR-fold cross-validation
+cost-complexity pruning using costs from
+the utility matrix, or assuming minimum errors costs.
+CART recommended value is 10-fold.
+See the \-G option in \fBtclass\fR
+for displaying the error estimate,
+and the \-p option below for setting the standard errors.
+With the verbose (\-v) option used,
+additional information will be printed
+giving details of cost-complexity parameters, tree
+sizes and tree "costs", which are CART's
+variation of utilities.   Costs are the negative of utilities
+normalized to be in the range 0-1.
+The minimum errors cost matrix has zeros on the diagonal and
+ones everywhere else.
+\fIcseed\fR initializes the random number generator using the seed,
+so you can reproduce the train/test partitions.
+.TP
+.B \-d \fIdepth\fR
+Stops growing tree beyond depth \fIdepth\fR.
+By default is set to 200.
+The root node is depth 0 and its children are depth 1.
+.TP
+.B \-DD
+Build a decision graph rather than a decision tree.
+Requires the use of the \-P and \-t options.
+Also see the \-I option and \-w option.
+.TP
+.B \-e
+By default
+.B tgen
+assumes the example file is encoded and to be sampled automatically
+(see \fBenc\fR(1) and \fBencsmpl\fR(1)).
+This option makes
+.B tgen
+read in the example file as a text file complete.
+.TP
+.B \-F
+Totally randomize the evaluation of tests at the
+initial growing (1-ply lookahead) phase.
+Without lookahead, this means the tree will be grown randomly,
+just in case you wanted a random tree.
+.TP
+.B \-G \fIsubsize\fR
+When growing a node by choosing a test to make a split,
+if there are more than 1.2*\fIsubsize\fR data at the node,
+then (psuedo-)randomly choose a subsample of size \fIsubsize\fR
+to evaluate the  potential tests.
+Default is 1000.
+Really only useful if there are a lot of real valued attributes
+and the training set is 5,000 or more.
+.TP
+.B \-i \fIpurflg\fR 
+Use the splitting rule indicated by \fIpurflg\fR
+when growing a node.
+\fIpurflg\fR can be one of "i" (information gain),
+"g" (GINI index of diversity),
+"t" (twoing),
+or "r" (Quinlan's gain ratio).
+.TP
+.B \-I
+This option is only available when building decision graphs (\-DD).
+This option allows the user to create a smaller decision graph that
+is more suited to interpretation by a person.
+Graphs generated with this option will not always perform as well
+as graphs tailored for smoothing by tprune
+(see \-b option in tprune).
+.TP
+.B \-J \fIbreadth\fR[,\fIfact\fR[,\fIadd_fact\fR[,\fIleaf_fact\fR]]]
+Sets the post-lookahead growing options.
+Does option tree growing with
+magic numbers to alter the search strategy,
+and requires use of the \-B option
+(at the very least, \-B1,2).
+After initial lookahead
+has found a candidate set of tests nodes,
+grow as distinct optional sub-trees
+the best \fIbreadth\fR test nodes within 
+\fIfact\fR
+(default = 0.005) factor of the best.
+The last two magic numbers modulate early stopping or pre-pruning.
+Only grow the node if the non-leaf probability is within a 
+factor \fIleaf_fact\fR of leaf probability
+(default = 0.00001, make this closer to 1.0 to stop earlier)
+and if the non-leaf probability is not greater than a 
+factor \fIadd_fact\fR of the best test to grow
+(default=0.75, make this smaller to stop earlier).
+This option is only supported with the \-t option.
+Should be used with options \-d and \-s 
+to help limit search and option \-K to save memory.
+.TP
+.B \-K \fIbreadth[,fact]\fR
+Does post-pruning on option trees with magic numbers to alter the search.
+Keep only the best
+\fIbreadth\fR (default = 1)
+option branches and only choose those within a 
+\fIfact\fR
+(default = 0.005) factor of the best. 
+Only supported with the \-t option.
+.TP
+.B \-L \fIfact\fR
+Thuis is an esoteric search control parameter you shouldn't need
+to know about.
+Used in conjunction with the \-J option.
+With the \-J option in use,
+\fBtgen\fR starts producing optional tests at each node,
+in order of their estimated quality.
+Better optional tests are added first.
+Each optional test produces a full subtree,
+which itself my generate more good optional tests recursively.
+\fBtgen\fR keeps adding optional tests until it runs out of space,
+or no more "reasonable" ones exist according to the
+\-J arguments.
+In the initial generation of the first tree,
+however, only the "best" tests are explored,
+but some tests may be indistinguishable
+so the first tree grown may contain a few optional tests.
+Two tests are indistinguishable according to \fBtgen\fR
+if their log posteriors are within a factor \fIfact\fR.
+By default, \fIfact\fR=0.9.
+.TP
+.B \-n \fIfactor\fR
+Do prepruning during initial growing.  
+The larger the factor, the stronger the prepruning.
+This prevents an ungrown tree node from being extended
+at the 1-ply lookahead phase 
+if the gain doesn't exceed the factor \fIfactor\fR.
+This takes effect before the \-B lookahead facility kicks in.
+By default the factor is a very large negative number.
+With the \-t option in use, the factor should be something like
+0.01, and this prevents extension if the posterior probability
+of the children is not within 0.01 of the leaf.
+Without the  \-t option, this should be set to something like
+0 (to prevent extension when there is no gain)
+or -.01 (to allow extension even if the best gain is slightly negative).
+.TP
+.B \-N
+When using the \-t or \-J options the Bayes
+splitting rules, etc., are in effect.
+For these, a "log posterior" measure is computed and
+used as a rating for the tree
+(see \-g option in \fBtclass\fR).
+For some priors this
+is out by a constant because the tree prior,
+as specified with the \-P option, has not been normalized.
+The \-N option does the extra calculation necessary to
+compute this normalizing constant,
+which can then be displayed with the \-Q option in
+\fBtclass\fR.
+The computation can be exponential in nature if there
+are mixed continuous or discrete attributes of several different arities.
+The calculation is approximate if subsetting is used.
+Help avoid computational problems with the \-d option,
+for instance, try smaller depths first.
+.TP
+.B \-o
+Manual override option.  Allows the user to manually choose which
+attribute to split on, and print all sorts of debugging information
+while building, thus overriding the automatic selection made.  A menu
+of interactive options is available (via the "h" command) to guide
+the manual tree building process.
+Setting the "x" toggle can spawn
+.B gnuplot
+processes giving cut point profiles.
+.TP
+.B \-p \fIfactor\fR
+When cost-complexity pruning, number of standard deviations
+to use.
+Default is 1.0.
+CART methodology 
+suggests 0.0 for larger trees and (sometimes) greater accuracy.
+.TP
+.B \-P \fIoptarg\fR
+This option sets the format for the tree prior.
+The command line arguments will be overridden
+by any prior commands embedded in the attribute file.
+This affects whether large, small, stringy or bushy
+trees are preferred.
+The options are:
+.RS
+.TP
+weight,\fIn_weight\fR[,\fIl_weight\fR]
+Leaves are penalized by a probability \fIl_weight\fR
+and nodes (tests) by \fIn_weight\fR.
+This makes small trees much more likely,
+but also tends to penalize high arity attributes.
+.TP
+choices
+Divide the node probability above by the number of test
+choices at the node.
+Use in conjunction with the "weight" option above
+or the "mml" option below.
+.TP
+nochoices
+Switch off the above option.
+.TP
+null
+Makes the prior null.
+i.e.  is equivalent to "\-Pweight,0,0 -A0.000001".
+.TP
+mml
+This is the Wallace tree prior described in the manual.
+For the full Wallace prior also use the
+"\-Pchoices" option.
+The full prior
+roughly says to stop subtrees from branching too much
+so approximately one outcome of a test should
+lead to a non-leaf.   
+This is an incredibly strong preference for smaller trees
+so the "\-s mml" style option in \fBmktree\fR
+just uses the "\-Pmml" prior option alone.
+.RE
+.TP
+.B \-s \fImin-set\fR[,\fImin-set-split\fR]
+Turn node to leaf (stop growing) if there are less
+examples than \fImin-set\fR
+or only one class has more than \fImin-set\fR/2 examples.
+Don't allow splitting if all but one nodes in the split
+have less than \fImin-set-split\fR examples.
+Default to 1 and 0.5 respectively (effectively ignored) but should be set to
+higher values to speed up search in noisy data.
+When using a non-Bayesian splitting rule,
+cut points are prevented from occuring at the extreme ends of the ranges.
+.TP
+.B \-S \fItype\fR
+Allow binary tests on multi-valued discrete attributes
+which split the attribute values into two parts.
+Note subsetting can else by set for individual
+attributes using attribute qualifiers,
+see \fBattr\fR(1).
+This is "subsetting" implemented in a simple greedy manner.
+\fItype\fR is one of the following:
+.RS
+.TP
+full
+Regular subsetting of multi-valued attributes.
+i.e. do splits testing if the attribute is in a certain
+subset or not.
+Disallows the usual multi-way splits.
+.TP
+one
+Do binary encoding of the multi-valued attributes.
+i.e. do splits testing if the attribute is a certain
+value or not.   Disallows the usual multi-way splits.
+.RE
+.TP
+.B \-t
+Bayes splitting rule.  On by default.
+.TP
+.B \-U \fIn\fR
+How to handle unknowns when splitting training set.  The available
+methods are:
+.RS
+.TP
+1 
+The default.
+Send the unknown down each branch with proportion as found in the
+training set at that node.  Not yet convinced the implementation is
+OK.
+.TP
+3 
+Send unknown down the most common branch.
+.TP
+4
+Send unknown down a single branch chosen with probability proportional to
+that found in the training set at that node.
+.RE
+.TP
+.B \-v
+Increment the verbose level.
+It starts at one, and each time you use this option it increases by one.
+Level one reports details of all options currently in operation,
+and feedback on basic statistics computed during 
+cost complexity pruning with cross validation.
+Only one level is really supported at the moment.
+.TP
+.B \-w
+This option is only available when building decision graphs (\-DD).
+Build a decision graph and then perform a "Markov Chain" like wander
+through graph and tree space searching for superior graphs and/or trees.
+.br
+\fIWarning\fR this option takes considerable time and space.
+
+.SH "BUGS"
+.br
+When growing option trees
+("\fBtgen\fR -J" or "\fBmktree\fR -s opt"),
+if 
+.B tgen
+quits with a message like "memory limit exceeded" or
+"time limit exceeded" then it still produces a tree,
+but has stopped search prematurely.
+This is not really an error termination.
+
+.SH "SEE ALSO"
+.br
+.IR attr (1),
+.IR tprune (1),
+.IR tclass (1),
+.IR tquest (1),
+.IR mktree (1),
+.IR tprint (1).

@@ -1,0 +1,23 @@
+|    this is an example of a raw attribute file, check its use with
+|    	  enc -accfn hypo.rawattr hypo.dta
+
+class :	?.
+age:		cont ?.
+sex:		?.
+on_thyroxine query_on_thyroxine on_antithyroid_medication sick pregnant
+thyroid_surgery I131_treatment query_hypothyroid query_hyperthyroid:  ?.
+lithium goitre tumor hypopituitary psych:		f,t.
+TSH_measured:	?.
+TSH:		cont ?.
+T3_measured:	asfor TSH_measured.	|  same type as TSH_measured
+T3:		cont ?.
+TT4_measured:	asfor TSH_measured.
+TT4:		cont.			|  we dont care about ranges for TT4
+T4_measured:	asfor TSH_measured.
+T4:		cont ?.
+FTI_measured:	asfor TSH_measured.
+FTI:		cont ?.
+TBG_measured:	asfor TSH_measured.
+TBG:		cont ?.
+referral_source:  SVI,STMW,?.
+

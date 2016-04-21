@@ -1,0 +1,2163 @@
+C*************************************************************************
+C                                                                        *
+C     SPARSE SVD(A) VIA EIGENSYSTEM OF A'A SYMMETRIC MATRIX              *
+C                                                                        *
+C                                                                        *
+C*************************************************************************
+C                                                                        *
+C                         (C) COPYRIGHT 1991                             * 
+C                          MICHAEL W. BERRY                              * 
+C                         ALL RIGHTS RESERVED                            * 
+C                                                                        * 
+C           PERMISSION TO COPY ALL OR PART OF ANY OF THIS                *
+C           SOFTWARE IS ONLY GRANTED UPON APPROVAL FROM THE              *
+C           AUTHOR: MICHAEL W. BERRY, DEPT. OF COMPUTER                  *
+C           SCIENCE, UNIVERSITY OF TENNESSEE,  107 AYRES HALL,           *    
+C           KNOXVILLE, TN,  37996-1301 (BERRY@CS.UTK.EDU)                *
+C                                                                        *
+C                                                                        * 
+C                                                                        * 
+C************************************************************************* 
+C
+      PROGRAM LAS2
+C
+C.... THIS SAMPLE PROGRAM USES LANDR TO COMPUTE SINGULAR TRIPLETS OF A VIA
+C.... THE EQUIVALENT SYMMETRIC EIGENVALUE PROBLEM
+C....
+C....   B X = LAMBDA X, WHERE X' = (U',V'), LAMBDA = SIGMA**2,
+C.... 
+C....     
+C....  B = A'A , AND A IS M (NROW) BY N (NCOL)  (NROW>>NCOL),
+C....    
+C....
+C.... SO THAT {U,SQRT(LAMBDA),V} IS A SINGULAR TRIPLET OF A.
+C.... (A' = TRANSPOSE OF A)
+C....
+C.... USER SUPPLIED ROUTINES: OPA,OPB
+C....
+C.... OPA(     X,Y) TAKES AN N-VECTOR X AND SHOULD RETURN A*X IN Y.
+C.... OPB(NCOL,X,Y) TAKES AN N-VECTOR X AND SHOULD RETURN B*X IN Y.
+C
+C.... THE COMMON BLOCK "GETPUT" IS USED SOLELY BY THE USER-SUPPLIED
+C.... SUBROUTINE STORE AND HOLDS THE LANCZOS VECTORS.
+C
+C.... USER SHOULD EDIT THE FUNCTION TIMER WITH AN APPROPRIATE CALL TO
+C.... AN INSTRINSIC TIMING ROUTINE THAT RETURNS ELAPSED USER TIME
+C....
+      REAL*8 A
+      REAL*4 T0,TIME
+      COMMON/GETPUT/ A(500000)
+C
+C.... SEE WRITE-UP FOR DETAILS ON MEMORY ALLOCATION FOR W AND RITZ.
+C.... N <= LMTN, MAXPRS <= LMTPRS, LANMAX <= LMTLAN.
+C,T0,TIME
+      INTEGER LMTN,LMTPRS,LMTLAN,LMTNW
+      PARAMETER (LMTN  =  100,LMTPRS = 50,LMTLAN = LMTPRS)
+      PARAMETER (LMTNW = 600000)
+C
+C.....NOTE: PARAMETER (LMTNW = 6*LMTN+4*LMTLAN+1+LMTLAN*LMTLAN)
+C
+      INTEGER I,EV,NW,N,LANMAX,MAXPRS,J,NEIG,IERR,MSGLVL,NSIG
+      REAL*8 ENDL,ENDR,KAPPA,W(LMTNW),RITZ(LMTN),BND(LMTN)
+      REAL*8 D(LMTN),TMP,TMP1,XNORM,DDOT
+      LOGICAL VECTORS
+C
+      COMMON /COUNT/ MCOUNT
+C
+C.... COMMON BLOCK FOR S-VECTORS (SHOULD BE CONTAINED IN RITVEC ALSO)
+C
+C.... XV1, XV2 ARE TEMP ARRAYS NEEDED COMPUTING FOR SINGULAR VECTORS
+C.... (IF VECTORS.EQ.TRUE)
+C.... LEADING DIMENSIONS OF XV1 MUST BE .GE. (NROW+NCOL)
+C.... LEADING DIMENSIONS OF XV2 MUST BE THE ORDER OF A'A (NCOL)
+C.... NSIG IS THE NUMBER OF ACCEPTED RITZ VALUES BASED ON KAPPA
+C.... (RELATIVE ACCURACY)
+C
+      REAL*8 XV1,XV2
+      COMMON /VECTORS/ XV1(500,500),XV2(500),NSIG
+C
+C.... THIS PROGRAM USES THE  HARWELL-BOEING SPARSE MATRIX
+C     FORMAT FOR THE SPARSE MATRIX A
+C
+C     NMAX=     (BOUND ON (NUMBER OF COLUMNS IN A) + 1
+C     NZMAX=    (BOUND ON NUMBER OF NONZEROS IN A)
+C
+C.... COMMON FOR HARWELL-BOEING FORMAT (SHOULD BE CONTAINED IN OPA, OPB, AND
+C.... RITVEC ALSO)
+C
+      PARAMETER(NMAX=500,NZMAX=2000)
+      REAL*8    VALUE(NZMAX)
+      INTEGER POINTR(NMAX), ROWIND(NZMAX)
+      COMMON /MATRIXA/ NCOL,NROW,VALUE,POINTR,ROWIND
+C
+C.... INTEGER TOTCRD, PTRCRD, INDCRD, VALCRD, RHSCRD
+      INTEGER  NROW, NCOL, NNZERO, NRHS
+C
+      CHARACTER TITLE*72, KEY*8, TYPE*3, PTRFMT*16, INDFMT*16,
+     1 VALFMT*20, RHSFMT*20
+C
+      CHARACTER*40 NAME
+C
+      INTEGER NCELLS,MCOUNT,INPUT,MATRIX,RESULTS
+C
+      COMMON /OUTPUT/ RESULTS
+C
+      NCELLS(N,LANMAX,I) = 6*N+4*LANMAX+1+I*LANMAX*LANMAX
+      INPUT=1
+      MATRIX=7
+      RESULTS=2
+      MCOUNT=0
+C
+C     OPEN FILES FOR INPUT/OUTPUT
+C
+      OPEN (INPUT,FILE='LAI1')
+      OPEN (MATRIX,FILE='LAI7')
+      OPEN (RESULTS,FILE='LAO2')
+C
+C.... READ (MATRIX,10) TITLE, KEY, TOTCRD, PTRCRD,
+C....1         INDCRD, VALCRD, RHSCRD,
+C
+C.....FOR DATSETS MISSING TOTCRD THROUGH RHSCRD FIELDS
+C
+      READ (MATRIX,11) TITLE, KEY,
+     1   TYPE, NROW, NCOL, NNZERO, NRHS, PTRFMT, INDFMT, VALFMT, RHSFMT
+C
+ 10   FORMAT (A72, A8 / 5I14 / A3, 11X, 4I14 / 2A16, 2A20)
+ 11   FORMAT (A72, A8 // A3, 11X, 4I14 / 2A16, 2A20)
+C
+C LEAVE IF MATRIX TOO BIG ----
+C
+	IF (NCOL .GE. NMAX .OR. NNZERO .GT. NZMAX) THEN
+		WRITE(RESULTS,*) ' SORRY, YOUR MATRIX IS TOO BIG '
+		STOP
+		ENDIF
+C
+C READ DATA...
+C
+      READ (MATRIX,PTRFMT) (POINTR (I), I = 1, NCOL+1)
+      READ (MATRIX,INDFMT) (ROWIND (I), I = 1, NNZERO)
+      READ (MATRIX,VALFMT) (VALUE  (I), I = 1, NNZERO)
+C
+C DEFINE LAST ELEMENT OF POINTR IN CASE IT IS NOT.
+C
+      POINTR(NCOL+1) = NNZERO + 1
+C
+      N=NCOL
+C
+C-------------------------
+C
+C.... NW IS THE SIZE OF THE WORKING ARRAY W
+C
+      NW = LMTNW
+C
+      READ(INPUT,*) NAME,LANMAX,MAXPRS,ENDL,ENDR,VECTORS,KAPPA,MSGLVL
+C
+      WRITE(RESULTS,2000) N,LANMAX,MAXPRS,ENDL,ENDR,VECTORS,KAPPA,
+     *              TITLE,NAME,NROW,NCOL,N
+      IF(VECTORS) THEN
+         EV=3
+      ELSE
+         EV=0
+      ENDIF
+      IF(EV.GT.0) OPEN(EV,FILE='LAO3',FORM='UNFORMATTED')
+C
+C.... DATA VALIDATION
+C
+      IF (ENDL.GE.ENDR) THEN
+         WRITE(RESULTS,*)'ENDL MUST BE STRICTLY LESS THAN ENDR'
+         STOP
+      ELSE IF (MAXPRS.GT.LANMAX) THEN
+         WRITE(RESULTS,*)'MAXPRS CANNOT EXCEED LANMAX ',
+     *      '(MAXPRS =',MAXPRS,' LANMAX =',LANMAX,')'
+         STOP
+      ELSE IF (EV.LE.0.AND.NCELLS(N,LANMAX,0).GT.NW) THEN
+         WRITE(RESULTS,*)'6*N+4*LANMAX+1 CANNOT EXCEED ',
+     *      NW,'(N =',N,' LANMAX =',LANMAX,')'
+	 STOP
+      ELSE IF (EV.GT.0.AND.NCELLS(N,LANMAX,1).GT.NW) THEN
+        WRITE(RESULTS,*)'6*N+4*LANMAX+1+LANMAX*LANMAX CANNOT EXCEED ',
+     *      NW,'(N =',N,' LANMAX =',LANMAX,')'
+         STOP
+      ENDIF
+C
+C.... TO GET A RANDOM STARTING VECTOR, THE FIRST N CELLS
+C.... MUST BE INITIALIZED TO ZERO.
+C
+      CALL DSCAL(N,0.0D0,W,1)
+C
+C.... MAKE A LANCZOS RUN; SEE LANDR FOR MEANINGS OF PARAMETERS.
+C
+      T0=TIMER()
+      CALL LANDR(N,LANMAX,MAXPRS,ENDL,ENDR,EV,KAPPA,
+C     CALL LANDR(...,J,NEIG,RITZ,BND,W,NW,IERR,MSGLVL)
+     *   J,NEIG,RITZ,BND,W,NW,IERR,MSGLVL)
+      TIME=TIMER()-T0
+      IF (IERR.NE.0) WRITE(RESULTS,2999)IERR
+C
+C.... IF YOU PERMUTE EIGENVALUES, DON'T FORGET TO PERMUTE THE
+C.... EIGENVECTORS WITH THEM.
+C
+      WRITE(RESULTS,9998) TIME
+      WRITE(RESULTS,9999)J,NEIG,(I,RITZ(I),BND(I),I = 1,J)
+C
+C
+C
+9998  FORMAT(/1X,'...... LANSO EXECUTION TIME=',1PE10.2)
+9994  FORMAT(/1X,'...... LASVD EXECUTION TIME=',1PE10.2)
+9995  FORMAT(1X,'...... '
+     *   /1X,'...... ',6X,' MXV =',I12,3X,' NSIG =',I3
+     *   /1X,'...... '
+     *   /1X,'...... ',3X,3X,'  COMPUTED S-VALUES   ',2X,
+     *    '(','ERROR BNDS',')'
+     *   /1X,'...... '
+     *   /(1X,'...... ',I3,3X,1PE22.14,2X,'(',1PE11.2,')'))
+9997  FORMAT(1X,'...... '
+     *   /1X,'...... ',6X,' MXV =',I12,3X,' NSIG =',I3
+     *   /1X,'...... '
+     *   /1X,'...... ',3X,3X,'  COMPUTED S-VALUES   ',2X,
+     *    '(','RES. NORMS',')'
+     *   /1X,'...... '
+     *   /(1X,'...... ',I3,3X,1PE22.14,2X,'(',1PE11.2,')'))
+9999  FORMAT(1X,'...... '
+     *   /1X,'...... ',6X,' J =',I3,3X,' NEIG =',I3
+     *   /1X,'...... '
+     *   /1X,'...... ',3X,3X,'  COMPUTED RITZ VALUES',2X,
+     *    '(','ERROR BNDS',')'
+     *   /1X,'...... '
+     *   /(1X,'...... ',I3,3X,1PE22.14,2X,'(',1PE11.2,')'))
+2000  FORMAT(
+     *    1X,'... '
+     *   /1X,'... SOLVE THE [A^TA]   EIGENPROBLEM'
+     *   /1X,'... NO. OF EQUATIONS          =',I5
+     *   /1X,'... MAX. NO. OF LANCZOS STEPS =',I4
+     *   /1X,'... MAX. NO. OF EIGENPAIRS    =',I5
+     *   /1X,'... LEFT  END OF THE INTERVAL =',1PE22.14
+     *   /1X,'... RIGHT END OF THE INTERVAL =',1PE22.14
+     *   /1X,'... WANT S-VECTORS?   [T/F]   =',L4
+     *   /1X,'... KAPPA                     =',1PE22.14
+     *   //1X,A50
+     *   /1X,A50
+     *   /1X,'... NO. OF DOCUMENTS (ROWS)   = ',I8
+     *   /1X,'... NO. OF TERMS     (COLS)   = ',I8
+     *   /1X,'... ORDER OF MATRIX A         = ',I8
+     *   /1X,'... ')
+2999  FORMAT(1X,'... RETURN FLAG =',I9,4(' '),'...')
+C
+C.... COMPUTE RESIDUAL ERROR WHEN SINGULAR VALUES AND VECTORS ARE COMPUTED
+C
+      IF(VECTORS) THEN
+C
+         T0=TIMER()
+         DO 35 JJ = 1,NSIG
+C
+C...........MULTIPLY BY MATRIX B FIRST
+C
+            CALL OPB(N,XV1(1,JJ),XV2)
+            TMP =DDOT(N,XV1(1,JJ),1,XV2,1)
+            CALL DAXPY(N,-TMP,XV1(1,JJ),1,XV2,1)
+            TMP =DSQRT(TMP)
+            XNORM=DSQRT(DDOT(N,XV2,1,XV2,1))
+C
+C...........MULTIPLY BY MATRIX A TO GET (SCALED) LEFT S-VECTOR
+C
+            CALL OPA(XV1(1,JJ),XV1(NCOL+1,JJ))
+            TMP1=1.0D0/TMP
+            CALL DSCAL(NROW,TMP1,XV1(NCOL+1,JJ),1)
+            XNORM=XNORM*TMP1
+            BND(JJ)=XNORM
+            D(JJ)=TMP
+C
+C...........WRITE LEFT S-VECTOR TO UNFORMATTED OUTPUT FILE
+C
+            WRITE(EV) (XV1(NCOL+I,JJ),I=1,NROW)
+   35    CONTINUE
+C
+         TIME=TIME+TIMER()-T0
+         WRITE(RESULTS,9994) TIME
+         WRITE(RESULTS,9997) MCOUNT,NSIG,(I,D(I),BND(I),I = 1,NSIG)
+      ELSE
+         NSIG=0
+         DO 45 I=1,J
+            K=J-I+1
+            IF (BND(K).LE.KAPPA*DABS(RITZ(K))) THEN
+                NSIG=NSIG+1
+            ELSE
+               GO TO 46
+            ENDIF
+45       CONTINUE
+46       WRITE(RESULTS,9994) TIME
+         WRITE(RESULTS,9995) MCOUNT,NSIG,
+     *        (I,DSQRT(RITZ(J-NSIG+I)),BND(J-NSIG+I),I = 1,NSIG)
+      ENDIF
+C
+      STOP
+      END
+C
+      SUBROUTINE OPM(N,A,B)
+      INTEGER N
+      REAL*8 A(1),B(1)
+      INTEGER I
+C
+      DO 100 I = 1,N
+         B(I) = A(I)
+100   CONTINUE
+      RETURN
+      END
+C
+      SUBROUTINE OPB(N, X, Y)
+C
+C.....MULTIPLICATION OF MATRIX B BY A VECTOR X , WHERE
+C
+C     B =   A'A, WHERE A IS NROW BY NCOL (NROW >> NCOL)
+C
+C     HENCE, B  IS OF ORDER N:=NCOL (Y STORES PRODUCT VECTOR)
+C
+      PARAMETER(NMAX=500,NZMAX=2000)
+      REAL*8    VALUE(NZMAX)
+      INTEGER POINTR(NMAX), ROWIND(NZMAX)
+      COMMON /MATRIXA/ NCOL,NROW,VALUE,POINTR,ROWIND
+C
+      COMMON /COUNT/ MCOUNT
+      INTEGER N,MCOUNT
+      REAL*8 X(1), Y(1), ZTEMP(NMAX)
+C
+C---------------------
+C
+      MCOUNT=MCOUNT+2
+C
+      DO 55 I=1,NCOL
+         Y(I)=0.0
+55    CONTINUE
+C
+      DO 85 I=1,NROW
+         ZTEMP(I)=0.0
+85    CONTINUE
+C
+C.....MULTIPLY BY SPARSE C
+C
+      DO 15 I=1,NCOL
+C
+         DO 10 J=POINTR(I),POINTR(I+1)-1
+            ZTEMP(ROWIND(J))=ZTEMP(ROWIND(J))+VALUE(J)*X(I)
+10       CONTINUE
+C
+15    CONTINUE
+C
+C.....MULTIPLY BY SPARSE C'
+C
+      DO 25 I =1,NCOL
+C
+         DO 20 J=POINTR(I),POINTR(I+1)-1
+            Y(I)=Y(I)+VALUE(J)*ZTEMP(ROWIND(J))
+20       CONTINUE
+25    CONTINUE
+C
+      RETURN
+      END
+C
+      SUBROUTINE OPA (X, Y)
+C
+C.....MULTIPLICATION OF MATRIX A BY VECTOR X , WHERE
+C
+C     A IS NROW BY NCOL (NROW >> NCOL)
+C
+C     (Y STORES PRODUCT VECTOR)
+C
+      PARAMETER(NMAX=500,NZMAX=2000)
+      REAL*8    VALUE(NZMAX)
+      INTEGER POINTR(NMAX), ROWIND(NZMAX)
+      COMMON /MATRIXA/ NCOL,NROW,VALUE,POINTR,ROWIND
+C
+      COMMON /COUNT/ MCOUNT
+      INTEGER MCOUNT
+      REAL*8 X(1), Y(1)
+C
+C---------------------
+C
+      MCOUNT=MCOUNT+1
+C
+      DO 55 I=1,NROW
+         Y(I)=0.0
+55    CONTINUE
+C
+      DO 15 I=1,NCOL
+C
+         DO 10 J=POINTR(I),POINTR(I+1)-1
+            Y(ROWIND(J))=Y(ROWIND(J))+VALUE(J)*X(I)
+10    CONTINUE
+C
+15    CONTINUE
+C
+      RETURN
+      END
+C
+C.... USER SUPPLIED ELAPSED CPU TIME ROUTINE
+C
+      REAL*4 FUNCTION TIMER()
+      REAL*4 TMP(2), ETIME
+      TIMER=ETIME(TMP(1))
+      RETURN
+      END
+C
+C @(#)LANDR.F	3.11 (BNP) 4/29/89; FROM LANDR.F 2.16 6/7/88
+C
+      SUBROUTINE LANDR(N,LANMAX,MAXPRS,ENDL,ENDR,EV,KAPPA,
+C     SUBROUTINE LANDR(...,J,NEIG,RITZ,BND,W,NW,IERR,MSGLVL)
+     *   J,NEIG,RITZ,BND,W,NW,IERR,MSGLVL)
+      INTEGER N,LANMAX,MAXPRS,EV,J,NEIG,NW,IERR,MSGLVL
+      REAL*8 ENDL,ENDR,KAPPA,RITZ(LANMAX),BND(LANMAX),W(NW)
+C
+C.... THE PROGRAM MAKE A LANCZOS RUN USING A LINEAR OPERATOR THAT ACTS
+C.... THROUGH A USER SUPPLIED SUBROUTINE CALLED OPB IN ORDER TO COMPUTE
+C.... EITHER ALL EIGENVALUES OUTSIDE AN INTERVAL [ENDL,ENDR] OR THE
+C.... FIRST MAXPRS EIGENVALUES, WHICHEVER OCCURS FIRST.  THE INNER
+C.... PRODUCT IS DEFINED IMPLICITLY BY A USER SUPPLIED SUBROUTINE OPM.
+C
+C            *****************************************
+C            *                                       *
+C            *         LANCZOS ALORITHM WITH         *
+C            *      SELECTIVE ORTHOGONALIZATION      *
+C            *            L  A  N  S  O              *
+C            *      (USING SIMON'S RECURRENCE)       *
+C            *                                       *
+C            *****************************************
+C
+C.... INPUTS
+C.... N      DIMENSION OF THE EIGENPROBLEM
+C.... LANMAX UPPER LIMIT TO THE NUMBER OF LANCZOS STEPS
+C.... MAXPRS UPPER LIMIT TO THE NUMBER OF WANTED EIGENPAIRS
+C.... ENDL   LEFT END OF THE INTERVAL CONTAINING THE UNWANTED EIGENVALUES
+C.... ENDR   RIGHT END OF THE INTERVAL CONTAINING THE UNWANTED EIGENVALUES
+C.... EV     .LE.0 MEANS EIGENVALUES ONLY,
+C....        .GT.0 MEANS BOTH EIGENVALUES AND EIGENVECTORS ARE WANTED
+C....              AND EV BECOMES THE OUTPUT CHANNEL FOR EIGENVECTORS
+C.... KAPPA  RELATIVE ACCURACY OF RITZ VALUES ACCEPTABLE AS EIGENVALUES
+C....        OF THE MATRIX A'A
+C.... NW     LENGTH OF THE WORK ARRAY W
+C.... W      WORK ARRAY OF LENGTH NW
+C
+C.... OUTPUTS
+C.... J      NUMBER OF LANCZOS STEPS ACTUALLY TAKEN
+C.... NEIG   NUMBER OF RITZ VALUES STABILIZED
+C.... RITZ   ARRAY TO HOLD THE RITZ VALUES
+C.... BND    ARRAY TO HOLD THE ERROR BOUNDS
+C.... IERR   ERROR FLAG
+C
+C.... SUBROUTINES:      MACHAR,LANSO,RITVEC
+C
+      REAL*8 RNM,ANORM,TOL,EPS,EPS1,REPS,EPS34
+      COMMON/RDATA/RNM,ANORM,TOL,EPS,EPS1,REPS,EPS34
+C
+      INTEGER MT,I,NQ(4),N1,L2,L3,L4,L5,LSQ6
+C
+C.... MACHAR SPECIFIC (EPS DECLARED IN COMMON/RDATA/)
+C
+      INTEGER IBETA,IT,IRND,NGRD,MACHEP,NEGEP,IEXP,MINEXP,MAXEXP
+      REAL*8 EPSNEG,XMIN,XMAX
+C
+C.... CHECK INPUT DATA
+C
+      MT = 6*N+1+4*LANMAX
+      IF (EV.GT.0) MT = MT+LANMAX*LANMAX
+      IERR = 0
+      IF (N.LE.0) IERR = IERR+1
+      IF (LANMAX.LE.0) IERR = IERR+2
+      IF (ENDR.LE.ENDL) IERR = IERR+4
+      IF (MAXPRS.LE.0) IERR = IERR+8
+      IF (MAXPRS.GT.LANMAX) IERR = IERR+16
+      IF (LANMAX.GT.N) IERR = IERR+32
+      IF (MT.GT.NW) IERR = IERR+64
+      IF (IERR.GT.0) RETURN
+C
+C.... COMPUTE MACHINE PRECISION
+C
+      CALL MACHAR(IBETA,IT,IRND,NGRD,MACHEP,NEGEP,IEXP,MINEXP,MAXEXP,
+     *   EPS,EPSNEG,XMIN,XMAX)
+      EPS1 = EPS*DSQRT(DBLE(N))
+      REPS = DSQRT(EPS)
+      EPS34 = REPS*DSQRT(REPS)
+C
+C.... SET POINTERS AND INITIALIZE
+C
+      NQ(1) = N+1
+      DO 20 I = 2,4
+         NQ(I) = NQ(I-1)+N
+20    CONTINUE
+      N1 = 1+5*N
+      L2 = N+N1
+      L3 = LANMAX+L2
+      L4 = 1+LANMAX+L3
+      L5 = LANMAX+L4
+      CALL LANSO(N,LANMAX,MAXPRS,ENDL,ENDR,J,NEIG,RITZ,BND,
+C     CALL LANSO(...,W,W(N1),W(L2),W(L3),W(L4),W(L5),NQ,IERR,MSGLVL)
+     *   W,W(N1),W(L2),W(L3),W(L4),W(L5),NQ,IERR,MSGLVL)
+C
+C.... COMPUTE EIGENVECTORS
+C
+      IF (EV.GT.0) THEN
+         LSQ6 = LANMAX+L5
+C
+C....    RATIONALIZE KAPPA
+C
+         KAPPA = DMAX1(DABS(KAPPA),EPS34)
+C
+C....    W(NQ(4)) BECOMES WORKING STORAGE FROM THIS POINT ON
+C
+         CALL RITVEC(N,J,EV,KAPPA,RNM,RITZ,BND,W(L2),W(L3),
+C        CALL RITVEC(...,W(LSQ6),W(NQ(4)),W(N1),IERR,MSGLVL)
+     *      W(LSQ6),W(NQ(4)),W(N1),IERR,MSGLVL)
+      ENDIF
+      RETURN
+      END
+C
+C @(#)LANSO.F	3.14 (BNP) 4/29/89; FROM LANSO.F 2.18 7/7/88
+C
+      SUBROUTINE LANSO(N,LANMAX,MAXPRS,ENDL,ENDR,J,NEIG,RITZ,BND,
+C     SUBROUTINE LANSO(...,R,WRK,ALF,BET,ETA,OLDETA,NQ,IERR,MSGLVL)
+     *   R,WRK,ALF,BET,ETA,OLDETA,NQ,IERR,MSGLVL)
+      INTEGER N,LANMAX,MAXPRS,J,NEIG,NQ(4),IERR,MSGLVL
+      INTEGER MCOUNT
+      REAL*8 ENDL,ENDR,R(5*N),WRK(N),
+     *  ALF(LANMAX),BET(LANMAX+1),RITZ(LANMAX),BND(LANMAX),
+     *  ETA(LANMAX),OLDETA(LANMAX)
+C
+      COMMON /MXV/ MCOUNT
+C
+C.... INPUTS
+C.... N      DIMENSION OF THE EIGENPROBLEM
+C.... LANMAX UPPER LIMIT TO THE NUMBER OF LANCZOS STEPS
+C.... MAXPRS UPPER LIMIT TO THE NUMBER OF WANTED EIGENPAIRS
+C.... ENDL   LEFT END OF THE INTERVAL CONTAINING THE WANTED EIGENVALUES
+C.... ENDR   RIGHT END OF THE INTERVAL CONTAINING THE WANTED EIGENVALUES
+C
+C.... WORK SPACE
+C.... R      HOLDS 5 VECTORS OF LENGTH N. SEE THE TEXT FOR DETAILS.
+C.... NQ(4)  CONTAINS THE POINTERS TO THE BEGINING OF EACH VECTOR IN R.
+C.... ALF    ARRAY TO HOLD DIAGONAL OF THE TRIDIAGONAL T
+C.... BET    ARRAY TO HOLD OFF-DIAGONAL OF T
+C.... ETA    ORTHOGONALITY ESTIMATE OF LANCZOS VECTORS AT STEP J
+C.... OLDETA ORTHOGONALITY ESTIMATE OF LANCZOS VECTORS AT STEP J-1
+C
+C.... OUTPUTS
+C.... J      ACTUAL NUMBER OF LANCZOS STEPS TAKEN
+C.... NEIG   NUMBER OF COMPUTED EIGENPAIRS
+C.... RITZ   ARRAY TO HOLD THE CONVERGED RITZ VALUES
+C.... BND    ARRAY TO HOLD THE ERROR BOUNDS
+C.... IERR   ERROR FLAG
+C
+C.... BLAS ROUTINES:    DATX,DAXPY,DCOPY,DDOT,DSCAL,IDAMAX
+C.... SUBROUTINES:      DSORT2,IMTQLB,ORTBND,PURGE,STARTV,STPONE
+C.... USER-SUPPLIED:    OPB,OPM,STORE
+C
+      INTEGER STORQ,RETRQ,STORP,RETRP
+      PARAMETER (STORQ = 1,RETRQ = 2,STORP = 3,RETRP = 4)
+C
+      INTEGER MAXLL
+      REAL*8 FOUR
+      PARAMETER (MAXLL = 2,FOUR = 4.0D0)
+C
+      REAL*8 RNM,ANORM,TOL,EPS,EPS1,REPS,EPS34
+      COMMON/RDATA/RNM,ANORM,TOL,EPS,EPS1,REPS,EPS34
+C
+      LOGICAL ENOUGH
+      INTEGER LL,I,L,FIRST,LAST,MID,ID1,ID2,ID3,IDAMAX
+      REAL*8 T,GAPL,GAP,DDOT,STARTV
+C
+      REAL*8 ONE,ZERO
+      DATA ONE,ZERO/1.0D0,0.0D0/
+C
+      CALL STPONE(N,R,WRK,ALF,NQ,IERR,MSGLVL)
+      IF (RNM.EQ.ZERO.OR.IERR.NE.0) RETURN
+C
+      ETA(1) = EPS1
+      OLDETA(1) = EPS1
+C
+      LL = 0
+      FIRST = 2
+      LAST = MIN(MAXPRS+MAX(8,MAXPRS),LANMAX)
+      ENOUGH = .FALSE.
+      DO 100 ID1 = 1,MAXPRS
+         IF (ENOUGH) GOTO 200
+         IF (RNM.LE.TOL) RNM = ZERO
+C
+C....    LANCZOS LOOP
+C
+         DO 10 J = FIRST,LAST
+            MID = NQ(2)
+            NQ(2) = NQ(1)
+            NQ(1) = MID
+            MID = NQ(3)
+            NQ(3) = NQ(4)
+            NQ(4) = MID
+            CALL STORE(N,STORQ,J-1,R(NQ(2)))
+            IF (J-1.LE.MAXLL) CALL STORE(N,STORP,J-1,R(NQ(4)))
+            BET(J) = RNM
+C
+C...        RESTART IF INVARIANT SUBSPACE IS FOUND
+C
+            IF (BET(J).EQ.ZERO) THEN
+               RNM = STARTV(N,J,R,WRK,NQ,EPS,IERR,MSGLVL)
+               IF (IERR.NE.0) RETURN
+               ENOUGH = RNM.EQ.ZERO
+               IF (ENOUGH) GOTO 15
+            ENDIF
+C
+C....       TAKE A LANCZOS STEP
+C
+            T = ONE/RNM
+            CALL DATX(N,T,R,1,R(NQ(1)),1)
+            CALL DSCAL(N,T,R(NQ(3)),1)
+C
+            CALL OPB(N,R(NQ(3)),R)
+            CALL DAXPY(N,-RNM,R(NQ(2)),1,R,1)
+C
+            ALF(J) = DDOT(N,R,1,R(NQ(3)),1)
+            CALL DAXPY(N,-ALF(J),R(NQ(1)),1,R,1)
+C
+C....       ORTHOGONALIZE AGAINST INITIAL LANCZOS VECTORS
+C
+        IF (J.LE.MAXLL+1.AND.DABS(ALF(J-1)).GT.FOUR*DABS(ALF(J))) THEN
+               LL = J-1
+            ENDIF
+            DO 5 I = 1,MIN(LL,J-2)
+               CALL STORE(N,RETRP,I,WRK)
+               T = DDOT(N,WRK,1,R,1)
+               CALL STORE(N,RETRQ,I,WRK)
+               CALL DAXPY(N,-T,WRK,1,R,1)
+               ETA(I) = EPS1
+               OLDETA(I) = EPS1
+5           CONTINUE
+C
+C....       EXTENDED LOCAL REORTHOGONALIZATION
+C
+            T = DDOT(N,R,1,R(NQ(4)),1)
+            CALL DAXPY(N,-T,R(NQ(2)),1,R,1)
+            IF (BET(J).GT.ZERO) BET(J) = BET(J)+T
+            T = DDOT(N,R,1,R(NQ(3)),1)
+            CALL DAXPY(N,-T,R(NQ(1)),1,R,1)
+            ALF(J) = ALF(J)+T
+            CALL OPM(N,R,R(NQ(4)))
+            RNM = DSQRT(DDOT(N,R,1,R(NQ(4)),1))
+            ANORM = BET(J)+DABS(ALF(J))+RNM
+            TOL = REPS*ANORM
+C
+C....       UPDATE THE ORTHOGONALITY BOUNDS
+C
+            CALL ORTBND(N,J,ALF,BET,ETA,OLDETA,RNM,EPS1)
+C
+C....       RESTORE THE ORTHOGONALITY STATE WHEN NEEDED
+C
+            CALL PURGE(N,LL,J,R,R(NQ(1)),R(NQ(4)),R(NQ(3)),WRK,
+C           CALL PURGE(...,ETA,OLDETA,MSGLVL)
+     *         ETA,OLDETA,MSGLVL)
+            IF (RNM.LE.TOL) RNM = ZERO
+10       CONTINUE
+         J = LAST
+15       IF (ENOUGH) J = J-1
+         FIRST = J+1
+         BET(J+1) = RNM
+C
+C....    NOW ANALYZE T
+C
+         L = 1
+         DO 40 ID2 = 1,J
+            IF (L.GT.J) GOTO 50
+            DO 20 I = L,J
+               IF (BET(I+1).EQ.ZERO) GOTO 30
+20          CONTINUE
+            I = J
+C....       NOW I IS AT THE END OF AN UNREDUCED SUBMATRIX
+C
+30          CALL DCOPY(I-L+1,ALF(L),1,RITZ(L),-1)
+            CALL DCOPY(I-L,BET(L+1),1,WRK(L+1),-1)
+            CALL IMTQLB(I-L+1,RITZ(L),WRK(L),BND(L),IERR)
+            IF (IERR.NE.0) THEN
+               PRINT *,' IMTQLB FAILED TO CONVERGE (IERR =',IERR,')'
+               PRINT *,' L =',L,' I =',I
+               PRINT *,(ID3,RITZ(ID3),WRK(ID3),BND(ID3),ID3 = L,I)
+            ENDIF
+            DO 35 ID3 = L,I
+               BND(ID3) = RNM*DABS(BND(ID3))
+35          CONTINUE
+            L = I+1
+40       CONTINUE
+C
+C....    SORT EIGENVALUES INTO INCREASING ORDER
+C
+50       CALL DSORT2(J,RITZ,BND)
+C
+C....    MASSAGE ERROR BOUNDS FOR VERY CLOSE RITZ VALUES
+C
+         MID = IDAMAX(J,BND,1)
+         DO 70 L = -1,1,2
+            DO 60 I = ((J+1)-L*(J-1))/2,MID-L,L
+            IF (DABS(RITZ(I+L)-RITZ(I)).LT.EPS34*DABS(RITZ(I))) THEN
+                  IF (BND(I).GT.TOL.AND.BND(I+L).GT.TOL) THEN
+                     BND(I+L) = DSQRT(BND(I)**2+BND(I+L)**2)
+                     BND(I) = ZERO
+                  ENDIF
+               ENDIF
+60          CONTINUE
+70       CONTINUE
+C
+C....    REFINE THE ERROR BOUNDS
+C
+         NEIG = 0
+         GAPL = RITZ(J)-RITZ(1)
+         DO 80 I = 1,J
+            GAP = GAPL
+            IF (I.LT.J) GAPL = RITZ(I+1)-RITZ(I)
+            GAP = MIN(GAP,GAPL)
+            IF (GAP.GT.BND(I)) THEN
+               BND(I) = BND(I)*(BND(I)/GAP)
+            ENDIF
+            IF (BND(I).LE.16.0D0*EPS*DABS(RITZ(I))) THEN
+               NEIG = NEIG+1
+C              ENOUGH = ENOUGH.OR.ENDL.LT.RITZ(I).AND.RITZ(I).LT.ENDR
+               IF(.NOT.(ENOUGH) ) THEN
+                 ENOUGH = ENDL.LT.RITZ(I).AND.RITZ(I).LT.ENDR
+               ENDIF
+            ENDIF
+80       CONTINUE
+C
+C....    SHOULD WE STOP?
+C
+         IF (NEIG.LT.MAXPRS) THEN
+            IF (NEIG.EQ.0) THEN
+               LAST = FIRST+8
+            ELSE
+               LAST = FIRST+MAX(2,((J-6)*(MAXPRS-NEIG))/NEIG)
+            ENDIF
+            LAST = MIN(LAST,LANMAX)
+         ELSE
+            ENOUGH = .TRUE.
+         ENDIF
+         ENOUGH = ENOUGH.OR.FIRST.GT.LANMAX
+100   CONTINUE
+200   CALL STORE(N,STORQ,J,R(NQ(1)))
+      RETURN
+      END
+        SUBROUTINE DATX(N,DA,DX,INCX,DY,INCY)
+C
+C       DY := DA*DX
+C
+        REAL*8 DX(*),DY(*),DA
+        INTEGER I,INCX,INCY,IX,IY,M,MP1,N
+        IF (N.LE.0) RETURN
+        IF (DA.EQ.0.0D0) RETURN
+        IF (INCX.EQ.1.AND.INCY.EQ.1) GO TO 20
+C
+C       UNEQUAL INCREMENTS OR EQUAL INCREMENTS .NE. ONE
+C
+        IX = 1
+        IY = 1
+        IF (INCX.LT.0) IX = (-N+1)*INCX+1
+        IF (INCY.LT.0) IY = (-N+1)*INCY+1
+        DO 10 I = 1,N
+          DY(IY) = DA*DX(IX)
+          IX = IX+INCX
+          IY = IY+INCY
+10      CONTINUE
+        RETURN
+C
+C       CODE FOR BOTH INCREMENTS EQUAL TO 1
+C
+20      M = MOD(N,4)
+        IF (M.EQ.0) GO TO 40
+        DO 30 I = 1,M
+          DY(I) = DA*DX(I)
+30      CONTINUE
+        IF (N.LT.4) RETURN
+40      MP1 = M+1
+        DO 50 I = MP1,N,4
+          DY(I) = DA*DX(I)
+          DY(I+1) = DA*DX(I+1)
+          DY(I+2) = DA*DX(I+2)
+          DY(I+3) = DA*DX(I+3)
+50      CONTINUE
+        RETURN
+        END
+C
+C @(#)DSORT2.F	3.2 (BNP) 12/9/88
+C
+      SUBROUTINE DSORT2(N,ARRAY1,ARRAY2)
+      INTEGER N
+      REAL*8 ARRAY1(0:N-1),ARRAY2(0:N-1)
+C
+C.... SORT ARRAY1 AND ARRAY2 INTO INCREASING ORDER FOR ARRAY1
+C
+      INTEGER IGAP,I,J
+      REAL*8 TEMP
+C
+      IGAP = N/2
+ 10   IF (IGAP.GT.0) THEN
+        DO 200 I = IGAP,N-1
+          J = I-IGAP
+ 50       IF (J.GE.0.AND.ARRAY1(J).GT.ARRAY1(J+IGAP)) THEN
+              TEMP = ARRAY1(J)
+              ARRAY1(J) = ARRAY1(J+IGAP)
+              ARRAY1(J+IGAP) = TEMP
+              TEMP = ARRAY2(J)
+              ARRAY2(J) = ARRAY2(J+IGAP)
+              ARRAY2(J+IGAP) = TEMP
+          ELSE
+            GO TO 200
+          ENDIF
+          J = J-IGAP
+          GO TO 50
+ 200    CONTINUE
+      ELSE
+        RETURN
+      ENDIF
+      IGAP = IGAP/2
+      GO TO 10
+      END
+      SUBROUTINE IMTQL2(NM,N,D,E,Z,IERR) 
+C 
+      INTEGER I,J,K,L,M,N,II,NM,MML,IERR 
+      REAL*8 D(N),E(N),Z(NM,N) 
+      REAL*8 B,C,F,G,P,R,S,TST1,TST2,PYTHAG 
+C 
+C     THIS SUBROUTINE IS A TRANSLATION OF THE ALGOL PROCEDURE IMTQL2, 
+C     NUM. MATH. 12, 377-383(1968) BY MARTIN AND WILKINSON, 
+C     AS MODIFIED IN NUM. MATH. 15, 450(1970) BY DUBRULLE. 
+C     HANDBOOK FOR AUTO. COMP., VOL.II-LINEAR ALGEBRA, 241-248(1971). 
+C 
+C     THIS SUBROUTINE FINDS THE EIGENVALUES AND EIGENVECTORS 
+C     OF A SYMMETRIC TRIDIAGONAL MATRIX BY THE IMPLICIT QL METHOD. 
+C     THE EIGENVECTORS OF A FULL SYMMETRIC MATRIX CAN ALSO 
+C     BE FOUND IF  TRED2  HAS BEEN USED TO REDUCE THIS 
+C     FULL MATRIX TO TRIDIAGONAL FORM. 
+C 
+C     ON INPUT 
+C 
+C        NM MUST BE SET TO THE ROW DIMENSION OF TWO-DIMENSIONAL 
+C          ARRAY PARAMETERS AS DECLARED IN THE CALLING PROGRAM 
+C          DIMENSION STATEMENT. 
+C 
+C        N IS THE ORDER OF THE MATRIX. 
+C 
+C        D CONTAINS THE DIAGONAL ELEMENTS OF THE INPUT MATRIX. 
+C 
+C        E CONTAINS THE SUBDIAGONAL ELEMENTS OF THE INPUT MATRIX 
+C          IN ITS LAST N-1 POSITIONS.  E(1) IS ARBITRARY. 
+C 
+C        Z CONTAINS THE TRANSFORMATION MATRIX PRODUCED IN THE 
+C          REDUCTION BY  TRED2, IF PERFORMED.  IF THE EIGENVECTORS 
+C          OF THE TRIDIAGONAL MATRIX ARE DESIRED, Z MUST CONTAIN 
+C          THE IDENTITY MATRIX. 
+C 
+C      ON OUTPUT 
+C 
+C        D CONTAINS THE EIGENVALUES IN ASCENDING ORDER.  IF AN 
+C          ERROR EXIT IS MADE, THE EIGENVALUES ARE CORRECT BUT 
+C          UNORDERED FOR INDICES 1,2,...,IERR-1. 
+C 
+C        E HAS BEEN DESTROYED. 
+C 
+C        Z CONTAINS ORTHONORMAL EIGENVECTORS OF THE SYMMETRIC 
+C          TRIDIAGONAL (OR FULL) MATRIX.  IF AN ERROR EXIT IS MADE, 
+C          Z CONTAINS THE EIGENVECTORS ASSOCIATED WITH THE STORED 
+C          EIGENVALUES. 
+C 
+C        IERR IS SET TO 
+C          ZERO       FOR NORMAL RETURN, 
+C          J          IF THE J-TH EIGENVALUE HAS NOT BEEN 
+C                     DETERMINED AFTER 30 ITERATIONS. 
+C 
+C     CALLS PYTHAG FOR  DSQRT(A*A + B*B) . 
+C 
+C     QUESTIONS AND COMMENTS SHOULD BE DIRECTED TO BURTON S. GARBOW, 
+C     MATHEMATICS AND COMPUTER SCIENCE DIV, ARGONNE NATIONAL LABORATORY 
+C 
+C     THIS VERSION DATED AUGUST 1983. 
+C 
+C     ------------------------------------------------------------------ 
+C 
+      IERR = 0 
+      IF (N .EQ. 1) GO TO 1001 
+C 
+      DO 100 I = 2, N 
+  100 E(I-1) = E(I) 
+C 
+      E(N) = 0.0D0 
+C 
+      DO 240 L = 1, N 
+         J = 0 
+C     .......... LOOK FOR SMALL SUB-DIAGONAL ELEMENT .......... 
+  105    DO 110 M = L, N 
+            IF (M .EQ. N) GO TO 120 
+            TST1 = DABS(D(M)) + DABS(D(M+1)) 
+            TST2 = TST1 + DABS(E(M)) 
+            IF (TST2 .EQ. TST1) GO TO 120 
+  110    CONTINUE 
+C 
+  120    P = D(L) 
+         IF (M .EQ. L) GO TO 240 
+         IF (J .EQ. 30) GO TO 1000 
+         J = J + 1 
+C     .......... FORM SHIFT .......... 
+         G = (D(L+1) - P) / (2.0D0 * E(L)) 
+         R = PYTHAG(G,1.0D0) 
+         G = D(M) - P + E(L) / (G + DSIGN(R,G)) 
+         S = 1.0D0 
+         C = 1.0D0 
+         P = 0.0D0 
+         MML = M - L 
+C     .......... FOR I=M-1 STEP -1 UNTIL L DO -- .......... 
+         DO 200 II = 1, MML 
+            I = M - II 
+            F = S * E(I) 
+            B = C * E(I) 
+            R = PYTHAG(F,G) 
+            E(I+1) = R 
+            IF (R .EQ. 0.0D0) GO TO 210 
+            S = F / R 
+            C = G / R 
+            G = D(I+1) - P 
+            R = (D(I) - G) * S + 2.0D0 * C * B 
+            P = S * R 
+            D(I+1) = G + P 
+            G = C * R - B 
+C     .......... FORM VECTOR .......... 
+            DO 180 K = 1, N 
+               F = Z(K,I+1) 
+               Z(K,I+1) = S * Z(K,I) + C * F 
+               Z(K,I) = C * Z(K,I) - S * F 
+  180       CONTINUE 
+C 
+  200    CONTINUE 
+C 
+         D(L) = D(L) - P 
+         E(L) = G 
+         E(M) = 0.0D0 
+         GO TO 105 
+C     .......... RECOVER FROM UNDERFLOW .......... 
+  210    D(I+1) = D(I+1) - P 
+         E(M) = 0.0D0 
+         GO TO 105 
+  240 CONTINUE 
+C     .......... ORDER EIGENVALUES AND EIGENVECTORS .......... 
+      DO 300 II = 2, N 
+         I = II - 1 
+         K = I 
+         P = D(I) 
+C 
+         DO 260 J = II, N 
+            IF (D(J) .GE. P) GO TO 260 
+            K = J 
+            P = D(J) 
+  260    CONTINUE 
+C 
+         IF (K .EQ. I) GO TO 300 
+         D(K) = D(I) 
+         D(I) = P 
+C 
+         DO 280 J = 1, N 
+            P = Z(J,I) 
+            Z(J,I) = Z(J,K) 
+            Z(J,K) = P 
+  280    CONTINUE 
+C 
+  300 CONTINUE 
+C 
+      GO TO 1001 
+C     .......... SET ERROR -- NO CONVERGENCE TO AN 
+C                EIGENVALUE AFTER 30 ITERATIONS .......... 
+ 1000 IERR = L 
+ 1001 RETURN 
+      END 
+C
+C @(#)IMTQLB.F	3.5 (BNP) 4/28/89
+C
+      SUBROUTINE IMTQLB(N,D,E,BND,IERR) 
+C 
+      INTEGER I,J,L,M,N,II,MML,IERR 
+      REAL*8 D(N),E(N),BND(N)
+      REAL*8 B,C,F,G,P,R,S,TST1,TST2,PYTHAG 
+C 
+C     THIS SUBROUTINE IS A MODIFICATION OF THE ALGOL PROCEDURE IMTQL1, 
+C     NUM. MATH. 12, 377-383(1968) BY MARTIN AND WILKINSON, 
+C     AS MODIFIED IN NUM. MATH. 15, 450(1970) BY DUBRULLE. 
+C     HANDBOOK FOR AUTO. COMP., VOL.II-LINEAR ALGEBRA, 241-248(1971). 
+C 
+C     THIS SUBROUTINE FINDS THE EIGENVALUES OF A SYMMETRIC 
+C     TRIDIAGONAL MATRIX BY THE IMPLICIT QL METHOD. 
+C 
+C     ON INPUT 
+C 
+C        N IS THE ORDER OF THE MATRIX. 
+C 
+C        D CONTAINS THE DIAGONAL ELEMENTS OF THE INPUT MATRIX. 
+C 
+C        E CONTAINS THE SUBDIAGONAL ELEMENTS OF THE INPUT MATRIX 
+C          IN ITS LAST N-1 POSITIONS.  E(1) IS ARBITRARY. 
+C 
+C      ON OUTPUT 
+C 
+C        D CONTAINS THE EIGENVALUES IN ASCENDING ORDER.  IF AN 
+C          ERROR EXIT IS MADE, THE EIGENVALUES ARE CORRECT AND 
+C          ORDERED FOR INDICES 1,2,...IERR-1, BUT MAY NOT BE 
+C          THE SMALLEST EIGENVALUES. 
+C 
+C        E HAS BEEN DESTROYED. 
+C 
+C        BND WILL HOLD THE TOP ELEMENTS OF THE NORMALIZED EIGENVECTORS.
+C
+C        IERR IS SET TO 
+C          ZERO       FOR NORMAL RETURN, 
+C          J          IF THE J-TH EIGENVALUE HAS NOT BEEN 
+C                     DETERMINED AFTER 30 ITERATIONS. 
+C 
+C     CALLS PYTHAG FOR  DSQRT(A*A + B*B) . 
+C 
+C     THIS VERSION DATED AUGUST 1983 (NOVEMBER 1988). 
+C 
+      IERR = 0 
+      BND(1) = 1.0D0
+      IF (N .EQ. 1) GO TO 1001 
+C 
+      DO 100 I = 2, N 
+         BND(I) = 0.0D0
+  100 E(I-1) = E(I) 
+C 
+      E(N) = 0.0D0 
+C 
+      DO 290 L = 1, N 
+         J = 0 
+C     .......... LOOK FOR SMALL SUB-DIAGONAL ELEMENT .......... 
+  105    DO 110 M = L, N 
+            IF (M .EQ. N) GO TO 120 
+            TST1 = DABS(D(M)) + DABS(D(M+1)) 
+            TST2 = TST1 + DABS(E(M)) 
+            IF (TST2 .EQ. TST1) GO TO 120 
+  110    CONTINUE 
+C 
+  120    P = D(L) 
+         F = BND(L)
+         IF (M .EQ. L) GO TO 215 
+         IF (J .EQ. 30) GO TO 1000 
+         J = J + 1 
+C     .......... FORM SHIFT .......... 
+         G = (D(L+1) - P) / (2.0D0 * E(L)) 
+         R = PYTHAG(G,1.0D0) 
+         G = D(M) - P + E(L) / (G + DSIGN(R,G)) 
+         S = 1.0D0 
+         C = 1.0D0 
+         P = 0.0D0 
+         MML = M - L 
+C     .......... FOR I=M-1 STEP -1 UNTIL L DO -- .......... 
+         DO 200 II = 1, MML 
+            I = M - II 
+            F = S * E(I) 
+            B = C * E(I) 
+            R = PYTHAG(F,G) 
+            E(I+1) = R 
+            IF (R .EQ. 0.0D0) GO TO 210 
+            S = F / R 
+            C = G / R 
+            G = D(I+1) - P 
+            R = (D(I) - G) * S + 2.0D0 * C * B 
+            P = S * R 
+            D(I+1) = G + P 
+            G = C * R - B 
+            F = BND(I+1)
+            BND(I+1) = S*BND(I)+C*F
+            BND(I) = C*BND(I)-S*F
+  200    CONTINUE 
+C 
+         D(L) = D(L) - P 
+         E(L) = G 
+         E(M) = 0.0D0 
+         GO TO 105 
+C     .......... RECOVER FROM UNDERFLOW .......... 
+  210    D(I+1) = D(I+1) - P 
+         E(M) = 0.0D0 
+         GO TO 105 
+C     .......... ORDER EIGENVALUES .......... 
+  215    IF (L .EQ. 1) GO TO 250 
+C     .......... FOR I=L STEP -1 UNTIL 2 DO -- .......... 
+         DO 230 II = 2, L 
+            I = L + 2 - II 
+            IF (P .GE. D(I-1)) GO TO 270 
+            D(I) = D(I-1) 
+            BND(I) = BND(I-1)
+  230    CONTINUE 
+C 
+  250    I = 1 
+  270    D(I) = P 
+         BND(I) = F
+  290 CONTINUE 
+C 
+      GO TO 1001 
+C     .......... SET ERROR -- NO CONVERGENCE TO AN 
+C                EIGENVALUE AFTER 30 ITERATIONS .......... 
+ 1000 IERR = L 
+ 1001 RETURN 
+      END 
+      SUBROUTINE MACHAR(IBETA,IT,IRND,NGRD,MACHEP,NEGEP,IEXP,MINEXP,
+     1                   MAXEXP,EPS,EPSNEG,XMIN,XMAX)
+C-----------------------------------------------------------------------
+C  THIS FORTRAN 77 SUBROUTINE IS INTENDED TO DETERMINE THE PARAMETERS
+C   OF THE FLOATING-POINT ARITHMETIC SYSTEM SPECIFIED BELOW.  THE
+C   DETERMINATION OF THE FIRST THREE USES AN EXTENSION OF AN ALGORITHM
+C   DUE TO M. MALCOLM, CACM 15 (1972), PP. 949-951, INCORPORATING SOME,
+C   BUT NOT ALL, OF THE IMPROVEMENTS SUGGESTED BY M. GENTLEMAN AND S.
+C   MAROVICH, CACM 17 (1974), PP. 276-277.  AN EARLIER VERSION OF THIS
+C   PROGRAM WAS PUBLISHED IN THE BOOK SOFTWARE MANUAL FOR THE
+C   ELEMENTARY FUNCTIONS BY W. J. CODY AND W. WAITE, PRENTICE-HALL,
+C   ENGLEWOOD CLIFFS, NJ, 1980.  THE PRESENT VERSION IS DOCUMENTED IN 
+C   W. J. CODY, "MACHAR: A SUBROUTINE TO DYNAMICALLY DETERMINE MACHINE
+C   PARAMETERS," TOMS 14, DECEMBER, 1988.
+C
+C  PARAMETER VALUES REPORTED ARE AS FOLLOWS:
+C
+C       IBETA   - THE RADIX FOR THE FLOATING-POINT REPRESENTATION
+C       IT      - THE NUMBER OF BASE IBETA DIGITS IN THE FLOATING-POINT
+C                 SIGNIFICAND
+C       IRND    - 0 IF FLOATING-POINT ADDITION CHOPS
+C                 1 IF FLOATING-POINT ADDITION ROUNDS, BUT NOT IN THE
+C                   IEEE STYLE
+C                 2 IF FLOATING-POINT ADDITION ROUNDS IN THE IEEE STYLE
+C                 3 IF FLOATING-POINT ADDITION CHOPS, AND THERE IS
+C                   PARTIAL UNDERFLOW
+C                 4 IF FLOATING-POINT ADDITION ROUNDS, BUT NOT IN THE
+C                   IEEE STYLE, AND THERE IS PARTIAL UNDERFLOW
+C                 5 IF FLOATING-POINT ADDITION ROUNDS IN THE IEEE STYLE,
+C                   AND THERE IS PARTIAL UNDERFLOW
+C       NGRD    - THE NUMBER OF GUARD DIGITS FOR MULTIPLICATION WITH
+C                 TRUNCATING ARITHMETIC.  IT IS
+C                 0 IF FLOATING-POINT ARITHMETIC ROUNDS, OR IF IT
+C                   TRUNCATES AND ONLY  IT  BASE  IBETA DIGITS
+C                   PARTICIPATE IN THE POST-NORMALIZATION SHIFT OF THE
+C                   FLOATING-POINT SIGNIFICAND IN MULTIPLICATION;
+C                 1 IF FLOATING-POINT ARITHMETIC TRUNCATES AND MORE
+C                   THAN  IT  BASE  IBETA  DIGITS PARTICIPATE IN THE
+C                   POST-NORMALIZATION SHIFT OF THE FLOATING-POINT
+C                   SIGNIFICAND IN MULTIPLICATION.
+C       MACHEP  - THE LARGEST NEGATIVE INTEGER SUCH THAT
+C                 1.0+FLOAT(IBETA)**MACHEP .NE. 1.0, EXCEPT THAT
+C                 MACHEP IS BOUNDED BELOW BY  -(IT+3)
+C       NEGEPS  - THE LARGEST NEGATIVE INTEGER SUCH THAT
+C                 1.0-FLOAT(IBETA)**NEGEPS .NE. 1.0, EXCEPT THAT
+C                 NEGEPS IS BOUNDED BELOW BY  -(IT+3)
+C       IEXP    - THE NUMBER OF BITS (DECIMAL PLACES IF IBETA = 10)
+C                 RESERVED FOR THE REPRESENTATION OF THE EXPONENT
+C                 (INCLUDING THE BIAS OR SIGN) OF A FLOATING-POINT
+C                 NUMBER
+C       MINEXP  - THE LARGEST IN MAGNITUDE NEGATIVE INTEGER SUCH THAT
+C                 FLOAT(IBETA)**MINEXP IS POSITIVE AND NORMALIZED
+C       MAXEXP  - THE SMALLEST POSITIVE POWER OF  BETA  THAT OVERFLOWS
+C       EPS     - THE SMALLEST POSITIVE FLOATING-POINT NUMBER SUCH
+C                 THAT  1.0+EPS .NE. 1.0. IN PARTICULAR, IF EITHER
+C                 IBETA = 2  OR  IRND = 0, EPS = FLOAT(IBETA)**MACHEP.
+C                 OTHERWISE,  EPS = (FLOAT(IBETA)**MACHEP)/2
+C       EPSNEG  - A SMALL POSITIVE FLOATING-POINT NUMBER SUCH THAT
+C                 1.0-EPSNEG .NE. 1.0. IN PARTICULAR, IF IBETA = 2
+C                 OR  IRND = 0, EPSNEG = FLOAT(IBETA)**NEGEPS.
+C                 OTHERWISE,  EPSNEG = (IBETA**NEGEPS)/2.  BECAUSE
+C                 NEGEPS IS BOUNDED BELOW BY -(IT+3), EPSNEG MAY NOT
+C                 BE THE SMALLEST NUMBER THAT CAN ALTER 1.0 BY
+C                 SUBTRACTION.
+C       XMIN    - THE SMALLEST NON-VANISHING NORMALIZED FLOATING-POINT
+C                 POWER OF THE RADIX, I.E.,  XMIN = FLOAT(IBETA)**MINEXP
+C       XMAX    - THE LARGEST FINITE FLOATING-POINT NUMBER.  IN
+C                 PARTICULAR  XMAX = (1.0-EPSNEG)*FLOAT(IBETA)**MAXEXP
+C                 NOTE - ON SOME MACHINES  XMAX  WILL BE ONLY THE
+C                 SECOND, OR PERHAPS THIRD, LARGEST NUMBER, BEING
+C                 TOO SMALL BY 1 OR 2 UNITS IN THE LAST DIGIT OF
+C                 THE SIGNIFICAND.
+C
+C     LATEST REVISION - DECEMBER 4, 1987
+C
+C     AUTHOR - W. J. CODY
+C              ARGONNE NATIONAL LABORATORY
+C
+C-----------------------------------------------------------------------
+      INTEGER I,IBETA,IEXP,IRND,IT,ITEMP,IZ,J,K,MACHEP,MAXEXP,
+     1        MINEXP,MX,NEGEP,NGRD,NXRES
+      REAL*8
+     1   A,B,BETA,BETAIN,BETAH,CONV,EPS,EPSNEG,ONE,T,TEMP,TEMPA,
+     2   TEMP1,TWO,XMAX,XMIN,Y,Z,ZERO
+C-----------------------------------------------------------------------
+      CONV(I) = DBLE(I)
+      ONE = CONV(1)
+      TWO = ONE + ONE
+      ZERO = ONE - ONE
+C-----------------------------------------------------------------------
+C  DETERMINE IBETA, BETA ALA MALCOLM.
+C-----------------------------------------------------------------------
+      A = ONE
+   10 A = A + A
+         TEMP = A+ONE
+         TEMP1 = TEMP-A
+         IF (TEMP1-ONE .EQ. ZERO) GO TO 10
+      B = ONE
+   20 B = B + B
+         TEMP = A+B
+         ITEMP = INT(TEMP-A)
+         IF (ITEMP .EQ. 0) GO TO 20
+      IBETA = ITEMP
+      BETA = CONV(IBETA)
+C-----------------------------------------------------------------------
+C  DETERMINE IT, IRND.
+C-----------------------------------------------------------------------
+      IT = 0
+      B = ONE
+  100 IT = IT + 1
+         B = B * BETA
+         TEMP = B+ONE
+         TEMP1 = TEMP-B
+         IF (TEMP1-ONE .EQ. ZERO) GO TO 100
+      IRND = 0
+      BETAH = BETA / TWO
+      TEMP = A+BETAH
+      IF (TEMP-A .NE. ZERO) IRND = 1
+      TEMPA = A + BETA
+      TEMP = TEMPA+BETAH
+      IF ((IRND .EQ. 0) .AND. (TEMP-TEMPA .NE. ZERO)) IRND = 2
+C-----------------------------------------------------------------------
+C  DETERMINE NEGEP, EPSNEG.
+C-----------------------------------------------------------------------
+      NEGEP = IT + 3
+      BETAIN = ONE / BETA
+      A = ONE
+      DO 200 I = 1, NEGEP
+         A = A * BETAIN
+  200 CONTINUE
+      B = A
+  210 TEMP = ONE-A
+         IF (TEMP-ONE .NE. ZERO) GO TO 220
+         A = A * BETA
+         NEGEP = NEGEP - 1
+      GO TO 210
+  220 NEGEP = -NEGEP
+      EPSNEG = A
+C-----------------------------------------------------------------------
+C  DETERMINE MACHEP, EPS.
+C-----------------------------------------------------------------------
+      MACHEP = -IT - 3
+      A = B
+  300 TEMP = ONE+A
+         IF (TEMP-ONE .NE. ZERO) GO TO 320
+         A = A * BETA
+         MACHEP = MACHEP + 1
+      GO TO 300
+  320 EPS = A
+C-----------------------------------------------------------------------
+C  DETERMINE NGRD.
+C-----------------------------------------------------------------------
+      NGRD = 0
+      TEMP = ONE+EPS
+      IF ((IRND .EQ. 0) .AND. (TEMP*ONE-ONE .NE. ZERO)) NGRD = 1
+C-----------------------------------------------------------------------
+C  DETERMINE IEXP, MINEXP, XMIN.
+C
+C  LOOP TO DETERMINE LARGEST I AND K = 2**I SUCH THAT
+C         (1/BETA) ** (2**(I))
+C  DOES NOT UNDERFLOW.
+C  EXIT FROM LOOP IS SIGNALED BY AN UNDERFLOW.
+C-----------------------------------------------------------------------
+      I = 0
+      K = 1
+      Z = BETAIN
+      T = ONE + EPS
+      NXRES = 0
+  400 Y = Z
+         Z = Y * Y
+C-----------------------------------------------------------------------
+C  CHECK FOR UNDERFLOW HERE.
+C-----------------------------------------------------------------------
+         A = Z * ONE
+         TEMP = Z * T
+         IF ((A+A .EQ. ZERO) .OR. (DABS(Z) .GE. Y)) GO TO 410
+         TEMP1 = TEMP * BETAIN
+         IF (TEMP1*BETA .EQ. Z) GO TO 410
+         I = I + 1
+         K = K + K
+      GO TO 400
+  410 IF (IBETA .EQ. 10) GO TO 420
+      IEXP = I + 1
+      MX = K + K
+      GO TO 450
+C-----------------------------------------------------------------------
+C  THIS SEGMENT IS FOR DECIMAL MACHINES ONLY.
+C-----------------------------------------------------------------------
+  420 IEXP = 2
+      IZ = IBETA
+  430 IF (K .LT. IZ) GO TO 440
+         IZ = IZ * IBETA
+         IEXP = IEXP + 1
+      GO TO 430
+  440 MX = IZ + IZ - 1
+C-----------------------------------------------------------------------
+C  LOOP TO DETERMINE MINEXP, XMIN.
+C  EXIT FROM LOOP IS SIGNALED BY AN UNDERFLOW.
+C-----------------------------------------------------------------------
+  450 XMIN = Y
+         Y = Y * BETAIN
+C-----------------------------------------------------------------------
+C  CHECK FOR UNDERFLOW HERE.
+C-----------------------------------------------------------------------
+         A = Y * ONE
+         TEMP = Y * T
+         IF (((A+A) .EQ. ZERO) .OR. (DABS(Y) .GE. XMIN)) GO TO 460
+         K = K + 1
+         TEMP1 = TEMP * BETAIN
+         IF ((TEMP1*BETA .NE. Y) .OR. (TEMP .EQ. Y)) THEN
+               GO TO 450
+            ELSE
+               NXRES = 3
+               XMIN = Y
+         END IF
+  460 MINEXP = -K
+C-----------------------------------------------------------------------
+C  DETERMINE MAXEXP, XMAX.
+C-----------------------------------------------------------------------
+      IF ((MX .GT. K+K-3) .OR. (IBETA .EQ. 10)) GO TO 500
+      MX = MX + MX
+      IEXP = IEXP + 1
+  500 MAXEXP = MX + MINEXP
+C-----------------------------------------------------------------
+C  ADJUST IRND TO REFLECT PARTIAL UNDERFLOW.
+C-----------------------------------------------------------------
+      IRND = IRND + NXRES
+C-----------------------------------------------------------------
+C  ADJUST FOR IEEE-STYLE MACHINES.
+C-----------------------------------------------------------------
+      IF (IRND .GE. 2) MAXEXP = MAXEXP - 2
+C-----------------------------------------------------------------
+C  ADJUST FOR MACHINES WITH IMPLICIT LEADING BIT IN BINARY
+C  SIGNIFICAND, AND MACHINES WITH RADIX POINT AT EXTREME
+C  RIGHT OF SIGNIFICAND.
+C-----------------------------------------------------------------
+      I = MAXEXP + MINEXP
+      IF ((IBETA .EQ. 2) .AND. (I .EQ. 0)) MAXEXP = MAXEXP - 1
+      IF (I .GT. 20) MAXEXP = MAXEXP - 1
+      IF (A .NE. Y) MAXEXP = MAXEXP - 2
+      XMAX = ONE - EPSNEG
+      IF (XMAX*ONE .NE. XMAX) XMAX = ONE - BETA * EPSNEG
+      XMAX = XMAX / (BETA * BETA * BETA * XMIN)
+      I = MAXEXP + MINEXP + 3
+      IF (I .LE. 0) GO TO 520
+      DO 510 J = 1, I
+          IF (IBETA .EQ. 2) XMAX = XMAX + XMAX
+          IF (IBETA .NE. 2) XMAX = XMAX * BETA
+  510 CONTINUE
+  520 RETURN
+C---------- LAST CARD OF MACHAR ----------
+      END
+C
+C @(#)ORTBND.F	3.4 (BNP) 4/28/89; FROM ORTBND.F 2.7 10/17/87
+C
+      SUBROUTINE ORTBND(N,J,ALF,BET,ETA,OLDETA,RNM,EPS1)
+      INTEGER N,J
+      REAL*8 ALF(J),BET(J),ETA(J),OLDETA(J),RNM,EPS1
+C
+C.... UPDATE THE ETA RECURRENCE.
+C
+C.... INPUTS
+C.... N      DIMENSION OF THE EIGENPROBLEM
+C.... J      DIMENSION OF T
+C.... ALF    DIAGONAL ELEMENTS OF THE TRIDIAGONAL T
+C.... BET    OFF-DIAGONAL ELEMENTS OF T
+C.... ETA    ORTHOGONALITY ESTIMATE OF LANCZOS VECTORS AT STEP J
+C.... OLDETA ORTHOGONALITY ESTIMATE OF LANCZOS VECTORS AT STEP J-1
+C.... RNM    NORM OF THE NEXT RESIDUAL VECTOR
+C.... EPS1   ROUNDOFF ESTIMATE FOR DOT PRODUCT OF TWO UNIT VECTORS
+C
+C.... OUTPUTS
+C.... ETA    ORTHOGONALITY ESTIMATE OF LANCZOS VECTORS AT STEP J+1
+C.... OLDETA ORTHOGONALITY ESTIMATE OF LANCZOS VECTORS AT STEP J
+C
+C.... BLAS ROUTINES:    DSWAP
+C
+      INTEGER I
+C
+      IF (J.LE.1) RETURN
+      IF (RNM.EQ.0.0D0) GOTO 200
+      IF (J.GT.2) THEN
+         OLDETA(1) = (BET(2)*ETA(2)+(ALF(1)-ALF(J))*
+     *      ETA(1)-BET(J)*OLDETA(1))/RNM+EPS1
+      ENDIF
+      DO 100 I = 2,J-2
+         OLDETA(I) = (BET(I+1)*ETA(I+1)+(ALF(I)-ALF(J))*ETA(I)+
+     *      BET(I)*ETA(I-1)-BET(J)*OLDETA(I))/RNM+EPS1
+100   CONTINUE
+200   OLDETA(J-1) = EPS1
+      CALL DSWAP(J-1,OLDETA,1,ETA,1)
+      ETA(J) = EPS1
+      RETURN
+      END
+C
+C @(#)PURGE.F	3.12 (BNP) 4/29/89; FROM PURGE.F 2.13 6/25/88
+C
+      SUBROUTINE PURGE(N,LL,J,R,Q,RA,QA,WRK,ETA,OLDETA,MSGLVL)
+      INTEGER N,LL,J,MSGLVL
+      REAL*8 R(N),Q(N),RA(N),QA(N),WRK(N),ETA(J),OLDETA(J)
+C
+C.... THIS ROUTINE EXAMINES ETA TO DECIDE WHETHER
+C.... RE-ORTHOGONALIZATION SHOULD BE PERFORMED.
+C
+C.... N      DIMENSION OF THE EIGENPROBLEM
+C.... LL     NO. OF INITIAL LANCZOS VECTORS IN LOCAL ORTHOG.
+C.... J      CURRENT LANCZOS STEP
+C.... R      THE RESIDUAL VECTOR TO BECOME THE NEXT LANCZOS VECTOR
+C.... Q      THE CURRENT LANCZOS VECTOR
+C.... RA     THE PRODUCT OF THE MASS MATRIX AND R
+C.... QA     THE PRODUCT OF THE MASS MATRIX AND Q
+C.... WRK    A TEMPORARY VECTOR TO HOLD THE PREVIOUS LANCZOS VECTORS
+C.... ETA    STATE OF ORTHOGONALITY BETWEEN R AND PREVIOUS LANCZOS VECTORS
+C.... OLDETA STATE OF ORTHOGONALITY BETWEEN Q AND PREVIOUS LANCZOS VECTORS
+C
+C.... BLAS ROUTINES:    DAXPY,DDOT,IDAMAX
+C.... SUBROUTINES:      NONE
+C.... USER-SUPPLIED:    OPM,STORE
+C
+      INTEGER RETRQ
+      PARAMETER (RETRQ = 2)
+C
+      REAL*8 RNM,ANORM,TOL,EPS,EPS1,REPS,EPS34
+      COMMON/RDATA/RNM,ANORM,TOL,EPS,EPS1,REPS,EPS34
+      INTEGER K,I,LOOP,IDAMAX
+      REAL*8 T,TQ,TR,REPS1,DDOT
+C
+      IF (J.LE.LL+2) RETURN
+      K = IDAMAX(J-(LL+2),ETA(LL+1),1)+LL
+C
+      IF (DABS(ETA(K)).GT.REPS) THEN
+         REPS1 = EPS1/REPS
+         DO 55 LOOP = 1,2
+            IF (RNM.GT.TOL) THEN
+C
+C....       BRING IN A LANCZOS VECTOR T AND ORTHOGONALIZE BOTH R AND Q
+C....       AGAINST IT
+C
+               TQ = 0.0D0
+               TR = 0.0D0
+               DO 50 I = LL+1,J-1
+                  CALL STORE(N,RETRQ,I,WRK)
+                  T = -DDOT(N,QA,1,WRK,1)
+                  TQ = TQ+DABS(T)
+                  CALL DAXPY(N,T,WRK,1,Q,1)
+                  T = -DDOT(N,RA,1,WRK,1)
+                  TR = TR+DABS(T)
+                  CALL DAXPY(N,T,WRK,1,R,1)
+50             CONTINUE
+               CALL OPM(N,Q,QA)
+C
+C....          RESTORE LOCAL ORTHOGONALITY
+C
+               T = -DDOT(N,R,1,QA,1)
+               TR = TR+DABS(T)
+               CALL DAXPY(N,T,Q,1,R,1)
+C
+               CALL OPM(N,R,RA)
+               RNM = DSQRT(DDOT(N,RA,1,R,1))
+               IF (TQ.LE.REPS1.AND.TR.LE.REPS1*RNM) GOTO 58
+            ENDIF
+55       CONTINUE
+58       DO 60 I = LL+1,J
+            ETA(I) = EPS1
+            OLDETA(I) = EPS1
+60       CONTINUE
+      ENDIF
+      RETURN
+      END
+      REAL*8 FUNCTION PYTHAG(A,B) 
+      REAL*8 A,B 
+C 
+C     FINDS DSQRT(A**2+B**2) WITHOUT OVERFLOW OR DESTRUCTIVE UNDERFLOW 
+C 
+      REAL*8 P,R,S,T,U 
+      P = DMAX1(DABS(A),DABS(B)) 
+      IF (P .EQ. 0.0D0) GO TO 20 
+      R = (DMIN1(DABS(A),DABS(B))/P)**2 
+   10 CONTINUE 
+         T = 4.0D0 + R 
+         IF (T .EQ. 4.0D0) GO TO 20 
+         S = R/T 
+         U = 1.0D0 + 2.0D0*S 
+         P = U*P 
+         R = (S/U)**2 * R 
+      GO TO 10 
+   20 PYTHAG = P 
+      RETURN 
+      END 
+C
+C @(#)RANDOM.F	3.2 (BNP) 12/9/88; FROM RANDOM.F 2.2 10/13/87
+C
+      REAL*8 FUNCTION RANDOM(IY) 
+      INTEGER IY
+C
+C        RANDOM IS A UNIFORM RANDOM NUMBER GENERATOR BASED  ON  THEORY  AND
+C     SUGGESTIONS  GIVEN  IN  D.E.KNUTH (1969),  VOL  2.  THE INTEGER  IY
+C     SHOULD BE INITIALIZED TO AN ARBITRARY INTEGER PRIOR TO THE FIRST CALL
+C     TO RANDOM.THE CALLING PROGRAM SHOULD  NOT  ALTER  THE  VALUE  OF  IY
+C     BETWEEN SUBSEQUENT CALLS TO RANDOM.VALUES OF RANDOM WILL BE RETURNED
+C     IN THE INTERVAL (0,1).
+C
+      INTEGER M,IA,IC,MIC
+      REAL*8 HALFM,S
+C
+      INTEGER M2,ITWO
+      DATA M2,ITWO/0,2/
+      IF (M2.EQ.0) THEN
+C
+C        IF FIRST ENTRY, COMPUTE MACHINE INTEGER WORD LENGTH
+C
+         M = 1 
+10       M2 = M
+         M = ITWO*M2 
+         IF (M.GT.M2) GO TO 10 
+         HALFM = M2
+C
+C        COMPUTE MULTIPLIER AND INCREMENT FOR LINEAR CONGRUENTIAL METHOD
+C
+         IA = 8*IDINT(HALFM*DATAN(1.D0)/8.D0)+5
+         IC = 2*IDINT(HALFM*(0.5D0-DSQRT(3.D0)/6.D0))+1
+         MIC = (M2-IC)+M2
+C
+C        S IS THE SCALE FACTOR FOR CONVERTING TO FLOATING POINT 
+C
+         S = 0.5D0/HALFM 
+C
+C        COMPUTE NEXT RANDOM NUMBER 
+C
+      ENDIF
+      IY = IY*IA
+C
+C     THE FOLLOWING STATEMENT IS FOR COMPUTERS WHICH DO NOT ALLOW
+C     INTEGER OVERFLOW ON ADDITION 
+C
+      IF (IY.GT.MIC) IY = (IY-M2)-M2
+C
+      IY = IY+IC
+C
+C     THE FOLLOWING STATEMENT IS FOR COMPUTERS WHERE THE 
+C     WORD LENGTH FOR ADDITION IS GREATER THAN FOR MULTIPLICATION
+C
+      IF (IY/2.GT.M2) IY = (IY-M2)-M2 
+C
+C     THE FOLLOWING STATEMENT IS FOR COMPUTERS WHERE INTEGER 
+C     OVERFLOW AFFECTS THE SIGN BIT
+C
+      IF (IY.LT.0) IY = (IY+M2)+M2
+      RANDOM = DBLE(IY)*S 
+      RETURN
+      END 
+C
+C @(#)RITVEC.F	1.3 (BNP) 4/5/89
+C
+      SUBROUTINE RITVEC(N,J,EV,KAPPA,RNM,RITZ,BND,ALF,BET,S,WRK1,WRK2,
+     *   IERR,MSGLVL)
+C
+C.... COMMON BLOCK FOR S-VECTORS (SHOULD BE CONTAINED IN RITVEC ALSO)
+C
+C.... XV1, XV2 ARE TEMP ARRAYS NEEDED COMPUTING FOR SINGULAR VECTORS
+C.... (IF VECTORS.EQ.TRUE)
+C.... LEADING DIMENSIONS OF XV1 MUST BE .GE. (NROW+NCOL)
+C.... LEADING DIMENSIONS OF XV2 MUST BE THE ORDER OF A'A (NCOL)
+C
+      REAL*8 XV1,XV2
+      COMMON /VECTORS/ XV1(500,500),XV2(500),NSIG
+C
+      INTEGER N,J,EV,IERR,MSGLVL,NSIG
+      REAL*8 KAPPA,RNM,RITZ(J),BND(J),ALF(J),BET(J),
+     *   S(J,J),WRK1(N),WRK2(N)
+C
+C.... SUBROUTINES:      IMTQL2,STORE
+C.... BLAS ROUTINES:    DAXPY,DCOPY,DSCAL
+C
+      INTEGER RETRQ
+      PARAMETER (RETRQ = 2)
+C
+      INTEGER I,K,KOUNT
+C
+      CALL DSCAL(J*J,0.0D0,S,1)
+      DO 10 I = 1,J
+         S(I,I) = 1.0D0
+10    CONTINUE
+      CALL DCOPY(J,ALF,1,WRK1,-1)
+      CALL DCOPY(J-1,BET(2),1,WRK2(2),-1)
+      CALL IMTQL2(J,J,WRK1,WRK2,S,IERR)
+      IF (IERR.NE.0) RETURN
+C
+C.... ON RETURN WRK1 CONTAINS EIGENVALUES IN ASCENDING ORDER
+C....       AND S CONTAINS THE CORRESPONDING EIGENVECTORS
+C
+C.... REWIND(EV)
+C.... WRITE(EV)N,J,KAPPA
+      KOUNT=0
+      DO 50 K = 1,J
+C
+         IF (BND(K).LE.KAPPA*DABS(RITZ(K))) THEN
+C
+            CALL DSCAL(N,0.0D0,WRK1,1)
+C
+            DO 20 I = 1,J
+               CALL STORE(N,RETRQ,I,WRK2)
+               CALL DAXPY(N,S(J-I+1,K),WRK2,1,WRK1,1)
+20          CONTINUE
+C
+C....       WRITE(EV)RITZ(K),BND(K),(WRK1(I),I=1,N)
+            IF(EV.GT.0) WRITE(EV) (WRK1(I),I=1,N)
+            KOUNT=KOUNT+1
+            DO 60 II=1,N
+                  XV1(II,KOUNT)=WRK1(II)
+60          CONTINUE
+C
+         ENDIF
+C
+50    CONTINUE
+      NSIG=KOUNT
+C.... CLOSE(EV)
+      RETURN
+      END
+C
+C @(#)STARTV.F	1.4 (BNP) 12/9/88
+C
+      REAL*8 FUNCTION STARTV(N,J,R,WRK,NQ,EPS,IERR,MSGLVL)
+      INTEGER N,J,NQ(4),IERR,MSGLVL
+      REAL*8 R(5*N),WRK(N),EPS
+C
+C.... THIS ROUTINE DELIVERS A STARTING VECTOR IN R AND RETURNS |R|;
+C.... IT RETURNS ZERO IF RANGE IS SPANNED.  IERR GETS SET TO NON-ZERO
+C.... IF NO STARTING VECTOR WITHIN RANGE OF OPERATOR CAN BE FOUND.
+C
+C.... N      DIMENSION OF THE EIGENPROBLEM
+C.... J      STARTING INDEX FOR A LANCZOS RUN
+C.... R      AN ARRAY CONTAINING [R(J),Q(J),Q(J-1),P(J),P(J-1)/MR(J)]
+C.... NQ(4)  LOCATION POINTERS FOR THE ARRAY R
+C
+C.... BLAS ROUTINES:    DAXPY,DDOT
+C.... SUBROUTINES:      RANDOM
+C.... USER-SUPPLIED:    OPB,OPM,STORE
+C
+      INTEGER RETRQ
+      PARAMETER (RETRQ = 2)
+C
+      INTEGER IRAND,I,ID
+      REAL*8 RNM2,T,RANDOM,DDOT
+C
+      REAL*8 ONE,ZERO
+      DATA ONE,ZERO/1.0D0,0.0D0/
+C
+C.... GET INITIAL VECTOR, DEFAULT IS RANDOM
+C
+      RNM2 = DDOT(N,R,1,R,1)
+      IRAND = 918272+J
+      DO 20 ID = 1,3
+         IF (ID.GT.1.OR.J.GT.1.OR.RNM2.EQ.ZERO) THEN
+            DO 10 I = 1,N
+               R(I) = RANDOM(IRAND)
+10          CONTINUE
+         ENDIF
+         CALL OPM(N,R,R(NQ(3)))
+C
+C....    APPLY OPERATOR TO PUT R IN RANGE (ESSENTIAL IF M SINGULAR)
+C
+         CALL OPB(N,R(NQ(3)),R)
+         CALL OPM(N,R,R(NQ(3)))
+         RNM2 = DDOT(N,R,1,R(NQ(3)),1)
+         IF (RNM2.GT.ZERO) GOTO 30
+20    CONTINUE
+C
+C.... FATAL ERROR
+C
+      IERR = 8192
+      STARTV = -ONE
+      RETURN
+30    IF (J.GT.1) THEN
+         DO 40 I = 1,J-1
+            CALL STORE(N,RETRQ,I,WRK)
+            T = -DDOT(N,R(NQ(3)),1,WRK,1)
+            CALL DAXPY(N,T,WRK,1,R,1)
+40       CONTINUE
+C
+C....    MAKE SURE Q(J) IS ORTHOGONAL TO Q(J-1)
+C
+         T = DDOT(N,R(NQ(4)),1,R,1)
+         CALL DAXPY(N,-T,R(NQ(2)),1,R,1)
+C
+         CALL OPM(N,R,R(NQ(3)))
+         T = DDOT(N,R(NQ(3)),1,R,1)
+         IF (T.LE.EPS*RNM2) T = ZERO
+         RNM2 = T
+      ENDIF
+      STARTV = DSQRT(RNM2)
+      RETURN
+      END
+C
+C @(#)STORE.F	3.3 (BNP) 3/16/89; FROM STORE.F 2.2 10/13/87
+C
+      SUBROUTINE STORE(N,ISW,J,S)
+      INTEGER N,ISW,J
+      REAL*8 S(N)
+C
+      INTEGER MAXLL
+      PARAMETER (MAXLL = 2)
+C
+      INTEGER STORQ,RETRQ,STORP,RETRP
+      PARAMETER (STORQ = 1,RETRQ = 2,STORP = 3,RETRP = 4)
+C
+      REAL*8 A
+      COMMON/GETPUT/A(500000)
+C
+      IF (ISW.EQ.STORQ) THEN
+         CALL DCOPY(N,S,1,A((J+MAXLL-1)*N+1),1)
+      ELSE IF (ISW.EQ.RETRQ) THEN
+         CALL DCOPY(N,A((J+MAXLL-1)*N+1),1,S,1)
+      ELSE IF (ISW.EQ.STORP) THEN
+         IF (J.GT.MAXLL) STOP 'STORE: (STORP) J.GT.MAXLL'
+         CALL DCOPY(N,S,1,A((J-1)*N+1),1)
+      ELSE IF (ISW.EQ.RETRP) THEN
+         IF (J.GT.MAXLL) STOP 'STORE: (RETRP) J.GT.MAXLL'
+         CALL DCOPY(N,A((J-1)*N+1),1,S,1)
+      ENDIF
+      RETURN
+      END
+C
+C @(#)STPONE.F	3.6 (BNP) 12/9/88; FROM STPONE.F 2.8 6/17/88
+C
+      SUBROUTINE STPONE(N,R,WRK,ALF,NQ,IERR,MSGLVL)
+      INTEGER N,NQ(4),IERR,MSGLVL
+      REAL*8 R(5*N),WRK(N),ALF(1)
+C
+C.... THIS ROUTINE PERFORMS THE FIRST STEP OF THE LANCZOS ALGORITHM.
+C.... IT PERFORMS A STEP OF EXTENDED LOCAL RE-ORTHOGONALIZATION.
+C
+C.... N      DIMENSION OF THE EIGENPROBLEM
+C.... R      AN ARRAY CONTAINING [R(J),Q(J),Q(J-1),P(J),P(J-1)/MR(J)]
+C.... ALF    DIAGONAL ELEMENTS OF T
+C.... NQ(4)  LOCATION POINTERS FOR THE ARRAY R
+C
+C.... BLAS ROUTINES:    DATX,DAXPY,DDOT,DSCAL
+C.... SUBROUTINES:      STARTV
+C.... USER-SUPPLIED:    OPB,OPM,STORE
+C
+      REAL*8 RNM,ANORM,TOL,EPS,EPS1,REPS,EPS34
+      COMMON/RDATA/RNM,ANORM,TOL,EPS,EPS1,REPS,EPS34
+C
+      REAL*8 T,STARTV,DDOT
+C
+      REAL*8 ONE,ZERO
+      DATA ONE,ZERO/1.0D0,0.0D0/
+C
+C.... GET INITIAL VECTOR, DEFAULT IS RANDOM
+C
+      RNM = STARTV(N,1,R,WRK,NQ,EPS,IERR,MSGLVL)
+      IF (RNM.EQ.ZERO.OR.IERR.NE.0) RETURN
+C
+C.... NORMALIZE STARTING VECTOR
+C
+      T = ONE/RNM
+      CALL DATX(N,T,R,1,R(NQ(1)),1)
+      CALL DSCAL(N,T,R(NQ(3)),1)
+C
+C.... TAKE THE FIRST STEP
+C
+      CALL OPB(N,R(NQ(3)),R)
+      ALF(1) = DDOT(N,R,1,R(NQ(3)),1)
+      CALL DAXPY(N,-ALF(1),R(NQ(1)),1,R,1)
+      T = DDOT(N,R,1,R(NQ(3)),1)
+      CALL DAXPY(N,-T,R(NQ(1)),1,R,1)
+      ALF(1) = ALF(1)+T
+      CALL OPM(N,R,R(NQ(4)))
+      RNM = DSQRT(DDOT(N,R,1,R(NQ(4)),1))
+      ANORM = RNM+DABS(ALF(1))
+      TOL = REPS*ANORM
+C
+      RETURN
+      END
+C
+      SUBROUTINE DAXPY( N, DA, DX, INCX, DY, INCY )
+*
+*     CONSTANT TIMES A VECTOR PLUS A VECTOR.
+*     USES UNROLLED LOOPS FOR INCREMENTS EQUAL TO ONE.
+*     JACK DONGARRA, LINPACK, 3/11/78.
+*
+*     .. SCALAR ARGUMENTS ..
+      INTEGER           INCX, INCY, N
+      REAL*8  DA
+*     ..
+*     .. ARRAY ARGUMENTS ..
+      REAL*8  DX( 1 ), DY( 1 )
+*     ..
+*     .. LOCAL SCALARS ..
+      INTEGER           I, IX, IY, M, MP1
+*     ..
+*     .. INTRINSIC FUNCTIONS ..
+      INTRINSIC         MOD
+*     ..
+*     .. EXECUTABLE STATEMENTS ..
+*
+      IF( N.LE.0 )
+     $   RETURN
+      IF( DA.EQ.0.0D0 )
+     $   RETURN
+      IF( INCX.EQ.1 .AND. INCY.EQ.1 )
+     $   GO TO 20
+*
+*        CODE FOR UNEQUAL INCREMENTS OR EQUAL INCREMENTS
+*          NOT EQUAL TO 1
+*
+      IX = 1
+      IY = 1
+      IF( INCX.LT.0 )
+     $   IX = ( -N+1 )*INCX + 1
+      IF( INCY.LT.0 )
+     $   IY = ( -N+1 )*INCY + 1
+      DO 10 I = 1, N
+         DY( IY ) = DY( IY ) + DA*DX( IX )
+         IX = IX + INCX
+         IY = IY + INCY
+   10 CONTINUE
+      RETURN
+*
+*        CODE FOR BOTH INCREMENTS EQUAL TO 1
+*
+*
+*        CLEAN-UP LOOP
+*
+   20 M = MOD( N, 4 )
+      IF( M.EQ.0 )
+     $   GO TO 40
+      DO 30 I = 1, M
+         DY( I ) = DY( I ) + DA*DX( I )
+   30 CONTINUE
+      IF( N.LT.4 )
+     $   RETURN
+   40 MP1 = M + 1
+      DO 50 I = MP1, N, 4
+         DY( I ) = DY( I ) + DA*DX( I )
+         DY( I+1 ) = DY( I+1 ) + DA*DX( I+1 )
+         DY( I+2 ) = DY( I+2 ) + DA*DX( I+2 )
+         DY( I+3 ) = DY( I+3 ) + DA*DX( I+3 )
+   50 CONTINUE
+      RETURN
+      END
+      SUBROUTINE DCOPY( N, DX, INCX, DY, INCY )
+*
+*     COPIES A VECTOR, X, TO A VECTOR, Y.
+*     USES UNROLLED LOOPS FOR INCREMENTS EQUAL TO ONE.
+*     JACK DONGARRA, LINPACK, 3/11/78.
+*
+*     .. SCALAR ARGUMENTS ..
+      INTEGER           INCX, INCY, N
+*     ..
+*     .. ARRAY ARGUMENTS ..
+      REAL*8  DX( 1 ), DY( 1 )
+*     ..
+*     .. LOCAL SCALARS ..
+      INTEGER           I, IX, IY, M, MP1
+*     ..
+*     .. INTRINSIC FUNCTIONS ..
+      INTRINSIC         MOD
+*     ..
+*     .. EXECUTABLE STATEMENTS ..
+*
+      IF( N.LE.0 )
+     $   RETURN
+      IF( INCX.EQ.1 .AND. INCY.EQ.1 )
+     $   GO TO 20
+*
+*        CODE FOR UNEQUAL INCREMENTS OR EQUAL INCREMENTS
+*          NOT EQUAL TO 1
+*
+      IX = 1
+      IY = 1
+      IF( INCX.LT.0 )
+     $   IX = ( -N+1 )*INCX + 1
+      IF( INCY.LT.0 )
+     $   IY = ( -N+1 )*INCY + 1
+      DO 10 I = 1, N
+         DY( IY ) = DX( IX )
+         IX = IX + INCX
+         IY = IY + INCY
+   10 CONTINUE
+      RETURN
+*
+*        CODE FOR BOTH INCREMENTS EQUAL TO 1
+*
+*
+*        CLEAN-UP LOOP
+*
+   20 M = MOD( N, 7 )
+      IF( M.EQ.0 )
+     $   GO TO 40
+      DO 30 I = 1, M
+         DY( I ) = DX( I )
+   30 CONTINUE
+      IF( N.LT.7 )
+     $   RETURN
+   40 MP1 = M + 1
+      DO 50 I = MP1, N, 7
+         DY( I ) = DX( I )
+         DY( I+1 ) = DX( I+1 )
+         DY( I+2 ) = DX( I+2 )
+         DY( I+3 ) = DX( I+3 )
+         DY( I+4 ) = DX( I+4 )
+         DY( I+5 ) = DX( I+5 )
+         DY( I+6 ) = DX( I+6 )
+   50 CONTINUE
+      RETURN
+      END
+      REAL*8 FUNCTION DDOT( N, DX, INCX, DY, INCY )
+*
+*     FORMS THE DOT PRODUCT OF TWO VECTORS.
+*     USES UNROLLED LOOPS FOR INCREMENTS EQUAL TO ONE.
+*     JACK DONGARRA, LINPACK, 3/11/78.
+*
+*     .. SCALAR ARGUMENTS ..
+      INTEGER                         INCX, INCY, N
+*     ..
+*     .. ARRAY ARGUMENTS ..
+      REAL*8                DX( 1 ), DY( 1 )
+*     ..
+*     .. LOCAL SCALARS ..
+      INTEGER                         I, IX, IY, M, MP1
+      REAL*8                DTEMP
+*     ..
+*     .. INTRINSIC FUNCTIONS ..
+      INTRINSIC                       MOD
+*     ..
+*     .. EXECUTABLE STATEMENTS ..
+*
+      DDOT = 0.0D0
+      DTEMP = 0.0D0
+      IF( N.LE.0 )
+     $   RETURN
+      IF( INCX.EQ.1 .AND. INCY.EQ.1 )
+     $   GO TO 20
+*
+*        CODE FOR UNEQUAL INCREMENTS OR EQUAL INCREMENTS
+*          NOT EQUAL TO 1
+*
+      IX = 1
+      IY = 1
+      IF( INCX.LT.0 )
+     $   IX = ( -N+1 )*INCX + 1
+      IF( INCY.LT.0 )
+     $   IY = ( -N+1 )*INCY + 1
+      DO 10 I = 1, N
+         DTEMP = DTEMP + DX( IX )*DY( IY )
+         IX = IX + INCX
+         IY = IY + INCY
+   10 CONTINUE
+      DDOT = DTEMP
+      RETURN
+*
+*        CODE FOR BOTH INCREMENTS EQUAL TO 1
+*
+*
+*        CLEAN-UP LOOP
+*
+   20 M = MOD( N, 5 )
+      IF( M.EQ.0 )
+     $   GO TO 40
+      DO 30 I = 1, M
+         DTEMP = DTEMP + DX( I )*DY( I )
+   30 CONTINUE
+      IF( N.LT.5 )
+     $   GO TO 60
+   40 MP1 = M + 1
+      DO 50 I = MP1, N, 5
+         DTEMP = DTEMP + DX( I )*DY( I ) + DX( I+1 )*DY( I+1 ) +
+     $           DX( I+2 )*DY( I+2 ) + DX( I+3 )*DY( I+3 ) +
+     $           DX( I+4 )*DY( I+4 )
+   50 CONTINUE
+   60 DDOT = DTEMP
+      RETURN
+      END
+      SUBROUTINE DSCAL( N, DA, DX, INCX )
+*
+*     SCALES A VECTOR BY A CONSTANT.
+*     USES UNROLLED LOOPS FOR INCREMENT EQUAL TO ONE.
+*     JACK DONGARRA, LINPACK, 3/11/78.
+*
+*     .. SCALAR ARGUMENTS ..
+      INTEGER           INCX, N
+      REAL*8  DA
+*     ..
+*     .. ARRAY ARGUMENTS ..
+      REAL*8  DX( 1 )
+*     ..
+*     .. LOCAL SCALARS ..
+      INTEGER           I, IX, M, MP1, NINCX
+*     ..
+*     .. INTRINSIC FUNCTIONS ..
+      INTRINSIC         MOD
+*     ..
+*     .. EXECUTABLE STATEMENTS ..
+*
+      IF( N.LE.0 )
+     $   RETURN
+      IF( INCX.EQ.1 )
+     $   GO TO 20
+*
+*        CODE FOR INCREMENT NOT EQUAL TO 1
+*
+      IX = 1
+      IF( INCX.LT.0 )
+     $   IX = 1 - ( N-1 )*INCX
+      NINCX = IX + ( N-1 )*INCX
+      DO 10 I = IX, NINCX, INCX
+         DX( I ) = DA*DX( I )
+   10 CONTINUE
+      RETURN
+*
+*        CODE FOR INCREMENT EQUAL TO 1
+*
+*
+*        CLEAN-UP LOOP
+*
+   20 M = MOD( N, 5 )
+      IF( M.EQ.0 )
+     $   GO TO 40
+      DO 30 I = 1, M
+         DX( I ) = DA*DX( I )
+   30 CONTINUE
+      IF( N.LT.5 )
+     $   RETURN
+   40 MP1 = M + 1
+      DO 50 I = MP1, N, 5
+         DX( I ) = DA*DX( I )
+         DX( I+1 ) = DA*DX( I+1 )
+         DX( I+2 ) = DA*DX( I+2 )
+         DX( I+3 ) = DA*DX( I+3 )
+         DX( I+4 ) = DA*DX( I+4 )
+   50 CONTINUE
+      RETURN
+      END
+      SUBROUTINE DSWAP( N, DX, INCX, DY, INCY )
+*
+*     INTERCHANGES TWO VECTORS.
+*     USES UNROLLED LOOPS FOR INCREMENTS EQUAL ONE.
+*     JACK DONGARRA, LINPACK, 3/11/78.
+*
+*     .. SCALAR ARGUMENTS ..
+      INTEGER           INCX, INCY, N
+*     ..
+*     .. ARRAY ARGUMENTS ..
+      REAL*8  DX( 1 ), DY( 1 )
+*     ..
+*     .. LOCAL SCALARS ..
+      INTEGER           I, IX, IY, M, MP1
+      REAL*8  DTEMP
+*     ..
+*     .. INTRINSIC FUNCTIONS ..
+      INTRINSIC         MOD
+*     ..
+*     .. EXECUTABLE STATEMENTS ..
+*
+      IF( N.LE.0 )
+     $   RETURN
+      IF( INCX.EQ.1 .AND. INCY.EQ.1 )
+     $   GO TO 20
+*
+*        CODE FOR UNEQUAL INCREMENTS OR EQUAL INCREMENTS
+*          NOT EQUAL TO 1
+*
+      IX = 1
+      IY = 1
+      IF( INCX.LT.0 )
+     $   IX = ( -N+1 )*INCX + 1
+      IF( INCY.LT.0 )
+     $   IY = ( -N+1 )*INCY + 1
+      DO 10 I = 1, N
+         DTEMP = DX( IX )
+         DX( IX ) = DY( IY )
+         DY( IY ) = DTEMP
+         IX = IX + INCX
+         IY = IY + INCY
+   10 CONTINUE
+      RETURN
+*
+*        CODE FOR BOTH INCREMENTS EQUAL TO 1
+*
+*
+*        CLEAN-UP LOOP
+*
+   20 M = MOD( N, 3 )
+      IF( M.EQ.0 )
+     $   GO TO 40
+      DO 30 I = 1, M
+         DTEMP = DX( I )
+         DX( I ) = DY( I )
+         DY( I ) = DTEMP
+   30 CONTINUE
+      IF( N.LT.3 )
+     $   RETURN
+   40 MP1 = M + 1
+      DO 50 I = MP1, N, 3
+         DTEMP = DX( I )
+         DX( I ) = DY( I )
+         DY( I ) = DTEMP
+         DTEMP = DX( I+1 )
+         DX( I+1 ) = DY( I+1 )
+         DY( I+1 ) = DTEMP
+         DTEMP = DX( I+2 )
+         DX( I+2 ) = DY( I+2 )
+         DY( I+2 ) = DTEMP
+   50 CONTINUE
+      RETURN
+      END
+      INTEGER          FUNCTION IDAMAX( N, DX, INCX )
+*
+*     FINDS THE INDEX OF ELEMENT HAVING MAX. ABSOLUTE VALUE.
+*     JACK DONGARRA, LINPACK, 3/11/78.
+*
+*     .. SCALAR ARGUMENTS ..
+      INTEGER                           INCX, N
+*     ..
+*     .. ARRAY ARGUMENTS ..
+      REAL*8                  DX( 1 )
+*     ..
+*     .. LOCAL SCALARS ..
+      INTEGER                           I, IX
+      REAL*8                  DMAX
+*     ..
+*     .. INTRINSIC FUNCTIONS ..
+      INTRINSIC                         DABS
+*     ..
+*     .. EXECUTABLE STATEMENTS ..
+*
+      IDAMAX = 0
+      IF( N.LT.1 )
+     $   RETURN
+      IDAMAX = 1
+      IF( N.EQ.1 )
+     $   RETURN
+      IF( INCX.EQ.1 )
+     $   GO TO 30
+*
+*        CODE FOR INCREMENT NOT EQUAL TO 1
+*
+      IX = 1
+      IF( INCX.LT.0 )
+     $   IX = 1 - ( N-1 )*INCX
+      DMAX = DABS( DX( IX ) )
+      IX = IX + INCX
+      DO 20 I = 2, N
+         IF( DABS( DX( IX ) ).LE.DMAX )
+     $      GO TO 10
+         IDAMAX = I
+         DMAX = DABS( DX( IX ) )
+   10    IX = IX + INCX
+   20 CONTINUE
+      IF( INCX.LT.0 )
+     $   IDAMAX = N - IDAMAX + 1
+      RETURN
+*
+*        CODE FOR INCREMENT EQUAL TO 1
+*
+   30 DMAX = DABS( DX( 1 ) )
+      DO 40 I = 2, N
+         IF( DABS( DX( I ) ).LE.DMAX )
+     $      GO TO 40
+         IDAMAX = I
+         DMAX = DABS( DX( I ) )
+   40 CONTINUE
+      RETURN
+      END

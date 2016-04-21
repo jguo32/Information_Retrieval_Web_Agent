@@ -1,0 +1,93 @@
+.TH COMMAND 1 local
+.SH NAME
+tchar \- convert a tree to or from character format
+.SH SYNOPSIS
+.B tchar
+[\fB\-a\fR] \fIattribute_file treein treeout\fR
+.SH DESCRIPTION
+.PP
+.B tchar 
+converts a tree from the binary format to character format.
+Not implemented for graphs.
+This can be useful for manual pruning or alterations to the tree.
+Convert the tree to character form, edit, then convert back to
+binary form.
+.PP
+Each line contains an indented node description.
+Lines are in printed in the same order as 
+.B tprint
+(with a left to right pre-order traversal).
+Fields are:
+node type, 
+class counts (or class probabilities) for that node
+for each class followed by the total count, and 
+leaf probability in parenthesis.
+Test nodes have additional
+node-flags (see data structures),
+and a representation of the test made 
+(cuts begin with 6, discrete splits with 10).
+Option trees are more complicated again.
+To understand fully you'll need to look at
+the tree header file "/IND/Include/TREE.h"
+and the routines in "/IND/Treelib/write_chtr.c".
+.PP
+For example, given the tree below,
+grown using "mktree -s mml -o -d4 hypo" and
+printed using "tprint -cd hypo.attr hypo.treec",
+.sp
+.br
+  TSH < 6: +0+0+0+340 negative
+  TSH >= 6: 
+  |   TSH_measured = f: +0+0+0+18 negative
+  |   TSH_measured = t: 
+  |   |   FTI < 62.5: 
+  |   |   |   sick = f: +13.5+0+0+0.5 primary_hypothyroid
+  |   |   |   sick = t: +0+0+0.5+0 compensated_hypothyroid
+  |   |   FTI >= 62.5: 
+  |   |   |   on_thyroxine = f: +0.5+0+21.5+2.5 compensated_hypothyroid
+  |   |   |   on_thyroxine = t: +0+0+0+3 negative
+.sp
+and running
+"tchar hypo.attr hypo.treec hypo.ctr ; cat hypo.ctr"
+we get the following:
+.sp
+.br
+ SIZE: 11 6 0 0 0 1
+ PRIOR: 1 0 0 0 100 4 0
+ 100000,  14+0+22+364 = 400 (-156.37,0) 0 100 18 6 (-5.67702 -0.0350913 -67.1225)
+ 100000,  14+0+22+24 = 60 (-71.4343,0) 0 40 17 (0 -0.693147 -52.603)
+   100000,  14+0+22+6 = 42 (-47.7557,0) 0 100 26 62.5 (-3.39805 -0.693147 -34.139)
+     100000,  0.5+0+21.5+5.5 = 27.5 (-21.5918,0) 0 40 3 (0 -0.693147 -19.1836)
+       40000,  0+0+0+3 = 3 (0,0)
+       40000,  0.5+0+21.5+2.5 = 24.5 (0,0)
+     100000,  13.5+0+0.5+0.5 = 14.5 (-8.7838,0) 0 40 6 (0 -0.693147 -8.70362)
+       40000,  0+0+0.5+0 = 0.5 (5.91281e-40,0)
+       40000,  13.5+0+0+0.5 = 14 (1.56945e-43,0)
+   40000,  0+0+0+18 = 18 (0,0)
+ 40000,  0+0+0+340 = 340 (0,0)
+.sp
+.br
+Notice the node and leaf counts respectively are given after
+"SIZE",
+details of the original prior specified with the \-A and \-P options
+are given after PRIOR and each line following represents a node or leaf.
+Test nodes begin with 100000 and leaf nodes with 40000
+(although these flags are system dependent).
+The first line of counts indicate the training set had 400
+examples, 364 of the most common class.
+The first test on "TSH" has attribute number 18,
+"negative" has class value number 1, etc.
+
+.SH OPTIONS
+.TP
+.B \-a
+Converts in the reverse direction (from character to binary).
+.TP
+.B \-c
+If its a tree with counts instead of probabilities,
+assume the leaf counts are correct and total all other counts and totals
+accordingly.
+
+.SH "SEE ALSO"
+.br
+.IR tprint (1).

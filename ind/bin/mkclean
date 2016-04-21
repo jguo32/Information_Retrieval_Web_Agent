@@ -1,0 +1,86 @@
+#!/bin/csh
+# IND-version2.0
+#    IND 2.0 released 9/15/92   contact: ind@kronos.arc.nasa.gov
+#    by Wray Buntine (and others, see IND/README)
+#    NASA Ames Research Center, MS 269-2, Moffett Field, CA 94035
+#
+#   clean directory of mess made by tree routines
+#	-t	leave trees
+#       -c  	dont check data file is compressed
+#       -r  	tar and compress trials
+
+set savetrees  rmout  tar  echoon
+set compress = 0
+
+while ( 1 )
+switch ( $1 )
+case "-D":
+        shift
+        set echoon = 1
+        breaksw
+case "-r":
+        shift
+        set tar = 1
+        breaksw
+case "-t":
+        shift
+        set savetrees = 1
+        breaksw
+case "-c":
+        shift
+        set compress = 1
+        breaksw
+default:
+        break
+endsw
+end
+if ( $#argv > 1 ) then
+    echo "mkclean:  wrong arguments: $*"
+    echo "mkclean:  [-cDrt] filestem"
+    exit 1
+endif
+
+if ( $echoon ) set echo
+
+set filestem = $1
+set nonomatch
+
+if ( $filestem == "" ) then
+	rm -f *.tst *.bld *.bld.[0-9] *.bld.[0-9][0-9] *.data *.test ind.xg \
+			*.encspl core gggggg
+	if ( $savetrees == "" ) rm -f *.tree* *.cl* *.chtr* gggggg
+else
+	if ( $savetrees == "" ) rm -f ${filestem}.tree* ${filestem}.cl* ${filestem}.chtr* gggggg
+	if ( -e ${filestem}.dta && -e ${filestem}.dta.Z ) \
+		 rm -f  ${filestem}.dta
+	if ( -e ${filestem}.dat && -e ${filestem}.dat.Z ) \
+		 rm -f ${filestem}.dat
+	if ( -e ${filestem}.all && -e ${filestem}.all.Z ) \
+		 rm -f  ${filestem}.all
+	if ( "$compress" == 0 ) then
+	  if ( -e ${filestem}.dta && ! ( -e ${filestem}.dta.Z )  ) \
+		 compress ${filestem}.dta
+	  if ( -e ${filestem}.dat && ! ( -e ${filestem}.dat.Z ) ) \
+		 compress ${filestem}.dat
+	  if ( -e ${filestem}.all && ! ( -e ${filestem}.all.Z ) ) \
+		 compress ${filestem}.all
+	  if ( -e ${filestem}.enc && ! ( -e ${filestem}.enc.Z ) ) \
+		 compress ${filestem}.enc
+	endif
+	rm -f ${filestem}.tst ${filestem}.bld ${filestem}.bld.[0-9] ${filestem}.bld.[0-9][0-9] core gggggg
+	rm -f ${filestem}.test ${filestem}.data gggggg  ${filestem}.encspl
+	rm -f tmp.enc ind.xg
+	if ( $tar ) then
+		tar cf $1.trials.tar $1.trial.*
+		if ( $status )   exit 1
+		compress $1.trials.tar
+		if ( $status )   exit 1
+		rm -f $1.trial.*
+	endif
+	if ( "`grep -l '^stratify' ${filestem}.attr`" != "" ) then
+		cp $filestem.attr $filestem.temp
+		unset noclobber
+		sed "s/^stratify/|stratify/" $filestem.temp > $filestem.attr
+		rm -f $filestem.tmp
+	endif
+endif

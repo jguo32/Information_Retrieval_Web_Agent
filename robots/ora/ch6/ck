@@ -1,0 +1,462 @@
+#!/usr/local/bin/perl -w
+use strict;
+
+use vars qw($opt_a $opt_v $opt_l $opt_r $opt_R $opt_n $opt_b
+            $opt_h $opt_m $opt_p $opt_e $opt_d);
+use Getopt::Std;
+
+
+# Important variables
+#----------------------------
+# @lookat     queue of URLs to look at
+# %local      $local{$URL}=1  (local URLs in associative array)
+# %remote     $remote{$URL}=1 (remote URLs in associative array)
+# %ref        $ref{$URL}="URL\nURL\n" (list of URLs separated by \n)
+# %touched    $touched{$URL}=1 (URLs that have been visited)
+# %notweb     $notweb{$URL}=1 if URL is non-HTTP
+# %badlist    $badlist{$URL}="reason" (URLs that failed. Separated with \n)
+
+getopts('avlrRnbhm:p:e:d:');
+
+# Display help upon -q, no args, or no e-mail address
+
+if ($opt_h || $#ARGV == -1 || (! $opt_e) ) {
+  print_help();
+  exit(-1);
+}
+
+# set maximum number of URLs to visit to be unlimited
+
+my ($print_local, $print_remote, $print_ref, $print_not_web,
+    $print_bad,   $verbose,      $max,       $proxy,
+    $email,       $delay,        $url);
+
+$max=0;
+
+if ($opt_l) {$print_local=1;}
+if ($opt_r) {$print_remote=1;}
+if ($opt_R) {$print_ref=1;}
+if ($opt_n) {$print_not_web=1;}
+if ($opt_b) {$print_bad=1;}
+if ($opt_v) {$verbose=1;}
+if (defined $opt_m) {$max=$opt_m;}
+if ($opt_p) {$proxy=$opt_p;}
+if ($opt_e) {$email=$opt_e;}
+if (defined $opt_d) {$delay=$opt_d;}
+if ($opt_a) {
+  $print_local=$print_remote=$print_ref=$print_not_web=$print_bad = 1;
+}
+
+my $root_url=shift @ARGV;
+
+# if there's no URL to start with, tell the user
+unless ($root_url) {
+  print "Error: need URL to start with\n";
+  exit(-1);
+}
+
+# if no "output" options are selected, make "print_bad" the default
+if (!($print_local || $print_remote || $print_ref ||
+  $print_not_web || $print_bad)) {
+  $print_bad=1;
+}
+
+# create CheckSite object and tell it to scan the site
+my $site = new CheckSite($email, $delay, $max, $verbose, $proxy);
+$site->scan($root_url);
+
+# done with checking URLs.  Report results
+
+
+# print out references to local machine
+if ($print_local) {
+  my %local = $site->local;
+
+  print "\nList of referenced local URLs:\n";
+  foreach $url (keys %local) {
+    print "local: $url\n";
+  }
+}
+
+
+# print out references to remote machines
+if ($print_remote) {
+  my %remote = $site->remote;
+
+  print "\nList of referenced remote URLs:\n";
+  foreach $url (keys %remote) {
+    print "remote: $url\n";
+  }
+}
+
+
+# print non-HTTP references
+if ($print_not_web) {
+  my %notweb = $site->not_web;
+
+  print "\nReferenced non-HTTP links:\n";
+  foreach $url (keys %notweb) {
+    print "notweb: $url\n";
+  }
+}
+
+# print reference list (what URL points to what)
+if ($print_ref) {
+  my $refer_by;
+  my %ref = $site->ref;
+
+  print "\nReference information:\n";
+  while (($url,$refer_by) = each %ref) {
+    print "\nref: $url is referenced by:\n";
+    $refer_by =~ s/\n/\n  /g;  # insert two spaces after each \n
+    print "  $refer_by";
+  }
+}
+
+# print out bad URLs, the server response line, and the Referer
+if ($print_bad) {
+  my $reason;
+  my $refer_by;
+  my %bad = $site->bad;
+  my %ref = $site->ref;
+
+  print "\nThe following links are bad:\n";
+  while (($url,$reason) = each %bad) {
+    print "\nbad: $url  Reason: $reason";
+    print "Referenced by:\n";
+     $refer_by = $ref{$url};
+     $refer_by =~ s/\n/\n  /g;  # insert two spaces after each \n
+     print "  $refer_by";
+  } # while there's a bad link
+} # if bad links are to be reported
+
+
+sub print_help() {
+  print <<"USAGETEXT";
+Usage:  $0 URL\n
+Options:
+  -l         Display local URLs
+  -r         Display remote URLs
+  -R         Display which HTML pages refers to what
+  -n         Display non-HTML links
+  -b         Display bad URLs (default)
+  -a         Display all of the above
+  -v         Print out URLs when they are examined
+  -e email   Mandatory: Specify email address to include
+	     in HTTP request. 
+  -m #       Examine at most # URLs\n
+  -p url     Use this proxy server
+  -d #       Delay # minutes between requests.  (default=1)
+	     Warning: setting # to 0 is not very nice.
+  -h         This help text
+
+Example: $0 -e me\@host.com -p http://proxy/ http://site_to_check/
+USAGETEXT
+  }
+
+
+
+package CheckSite;
+
+use HTTP::Status;
+use HTTP::Request;
+use HTTP::Response;
+use LWP::RobotUA;
+use URI::URL;
+
+sub new {
+
+  my ($class, $email, $delay, $max, $verbose, $proxy) = @_;
+  my $self = {};
+  bless $self, $class;
+
+
+  # Create a User Agent object, give it a name, set delay between requests
+  $self->{'ua'} = new LWP::RobotUA 'ORA_checksite/1.0', $email;
+  if (defined $delay) {$self->{'ua'}->delay($delay);}
+
+  # If proxy server specified, define it in the User Agent object
+  if (defined $proxy) {
+    $self->{'ua'}->proxy('http', $proxy);
+  }
+
+  $self->{'max'} = $max;
+  $self->{'verbose'} = $verbose;
+
+  $self;
+}
+
+sub scan {
+
+  my ($self, $root_url)   = @_;
+  my $verbose_link;
+  my $num_visited = 0;
+  my @urls;
+
+  # clear out variables from any previous call to scan()
+  undef %{ $self->{'bad'} };
+  undef %{ $self->{'not_web'} };
+  undef %{ $self->{'local'} };
+  undef %{ $self->{'remote'} };
+  undef %{ $self->{'type'} };
+  undef %{ $self->{'ref'} };
+  undef %{ $self->{'touched'} };
+
+  my $url_strict_state = URI::URL::strict();   # to restore state later
+  URI::URL::strict(1);
+
+
+  my $parsed_root_url = eval { new URI::URL $root_url; };
+  push (@urls , $root_url);
+  $self->{'ref'}{$root_url} = "Root URL\n";
+
+
+  while (@urls) {            # while URL queue not empty
+    my $url=shift @urls;      # pop URL from queue & parse it
+
+    # increment number of URLs visited and check if maximum is reached
+    $num_visited++;
+    last if (  ($self->{'max'}) && ($num_visited > $self->{'max'}) );
+
+    # handle verbose information
+    print STDERR "Looking at $url\n" if ($self->{'verbose'});
+
+    my $parsed_url = eval { new URI::URL $url; };
+
+    # if malformed URL (error in eval) , skip it
+    if ($@) {
+      $self->add_bad($url, "parse error: $@");
+      next;
+    }
+
+    # if not HTTP, skip it
+    if ($parsed_url->scheme !~ /http/i) {
+      $self->{'not_web'}{$url}=1;
+      next;
+    }
+
+    # skip urls that are not on same server as root url
+    if (same_server($parsed_url, $parsed_root_url)) { 
+      $self->{'local'}{$url}=1;
+    } else {                                     # remote site
+      $self->{'remote'}{$url}=1;
+      next;              # only interested in local references
+    }
+
+    # Ask the User Agent object to get headers for the url
+    # Results go into the response object (HTTP::Response).
+
+
+    my $request  = new HTTP::Request('HEAD', $url);
+    my $response = $self->{'ua'}->request($request);
+
+    # if response wasn't RC_OK (200), skip it
+    if ($response->code != RC_OK) {
+      my $desc = status_message($response->code);
+      $self->add_bad($url, "${desc}\n");
+      next;
+    }
+
+    # keep track of every url's content-type
+    $self->{'type'}{$url} = $response->header('Content-Type');
+
+    # if not HTML, don't bother to search it for URLs
+    next if ($response->header('Content-Type') !~ m@text/html@ );
+
+    
+    # it is text/html, get the entity-body this time
+    $request->method('GET');
+    $response = $self->{'ua'}->request($request);
+
+    # if not OK or text/html... weird, it was a second ago.  skip it.
+    next if ($response->code != RC_OK);
+    next if ($response->header('Content-Type') !~ m@text/html@ );
+
+    my $data     = $response->content;
+    my @rel_urls = grab_urls($data);
+
+    foreach $verbose_link (@rel_urls) {
+
+      my $full_child =  eval {
+        (new URI::URL $verbose_link, $response->base)->abs($response->base,1);
+      };
+      
+      # if LWP doesn't recognize the child url, treat it as malformed
+      if ($@) {
+
+	# update list of bad urls, remember where it happened
+	$self->add_bad($verbose_link, "unrecognized format: $@");
+        $self->add_ref($verbose_link, $url);
+
+        next;
+      }
+      else {
+
+        # remove fragment in http urls
+        if ( ($full_child->scheme() =~ /http/i) ) {
+          $full_child->frag('');
+        }
+
+        # handle reference list and push unvisited links onto queue
+        $self->add_ref($full_child, $url);
+        if (! defined $self->{'touched'}{$full_child}) {
+          push (@urls, $full_child);
+	}
+
+        # remember which url we just pushed, to avoid repushing
+        $self->{'touched'}{$full_child} = 1;
+
+      }   # process valid links on page
+    }     # foreach url in this page
+  }       # while url(s) in queue
+
+  URI::URL::strict($url_strict_state);  # restore state before exiting
+
+} # scan
+
+sub same_server {
+  my ($host1, $host2) = @_;
+
+  my $host2_name = $host2->host;
+
+  if ($host1->host !~ /^$host2_name$/i) {return 0;}
+  if ($host1->port != $host2->port) {return 0;}
+
+  1;
+}
+
+# grab_urls($html_content) returns an array of links that are referenced
+# from within the html.  Covers <body background>, <img src> and <a href>.
+# This includes more a little more functionality than the 
+# HTML::Element::extract_links() method.
+#BACK
+sub grab_urls {
+
+  my ($data) = @_;
+  my @urls;
+  my $key;
+  my $link;
+
+
+  my %tags = (
+    'body' => 'background', 
+    'img'  => 'src',
+    'a'    => 'href'
+  );
+
+  # while there are HTML tags
+  skip_others: while ($data =~ s/<([^>]*)>//)  {
+
+    my $in_brackets=$1;
+
+    foreach $key (keys %tags) {
+
+      if ($in_brackets =~ /^\s*$key\s+/i) {     # if tag matches, try parms
+        if ($in_brackets =~ /\s+$tags{$key}\s*=\s*["']([^"']*)["']/i) {
+          $link=$1;
+          $link =~ s/[\n\r]//g;  # kill newlines,returns anywhere in url
+          push @urls, $link;
+	  next skip_others;
+        } 
+	# handle case when url isn't in quotes (ie: <a href=thing>)
+        elsif ($in_brackets =~ /\s+$tags{$key}\s*=\s*([^\s]+)/i) {
+          $link=$1;
+          $link =~ s/[\n\r]//g;  # kill newlines,returns anywhere in url
+          push @urls, $link;
+	  next skip_others;
+        }    
+      }       # if tag matches
+    }         # foreach <a|img|body>
+  }           # while there are brackets
+  @urls;
+}
+
+# public interface to class's internal variables
+
+# return associative array of bad urls and their error messages
+sub bad {
+  my $self = shift;
+  %{ $self->{'bad'} };
+}
+
+# return associative array of encountered urls that are not http based
+sub not_web {
+  my $self = shift;
+  %{ $self->{'not_web'} };
+}
+
+# return associative array of encountered urls that are local to the
+# web server that was queried in the latest call to scan()
+
+sub local {
+  my $self = shift;
+  %{ $self->{'local'} };
+}
+
+# return associative array of encountered urls that are not local to the
+# web server that was queried in the latest call to scan()
+
+sub remote {
+  my $self = shift;
+  %{ $self->{'remote'} };
+}
+
+# return associative array of encountered urls and their content-type
+sub type {
+  my $self = shift;
+  %{ $self->{'type'} };
+}
+
+# return associative array of encountered urls and their parent urls,
+# where parent urls are separated by newlines in one big string
+
+sub ref {
+  my $self = shift;
+  %{ $self->{'ref'} };
+}
+
+# return associative array of encountered urls.  If we didn't push it
+# into the queue of urls to visit, it isn't here.
+
+sub touched {
+  my $self = shift;
+  %{ $self->{'touched'} };
+}
+
+# add_bad($child, $parent)
+#   This keeps an associative array of urls, where the associated value 
+#   of each url is an error message that was encountered when
+#   parsing or accessing the url.  If error messages already exist for
+#   the url, any additional error messages are concatenated to existing
+#   messages.
+
+sub add_bad {
+  my ($self, $url, $msg) = @_;
+
+  if (! defined $self->{'bad'}{$url} ) {
+    $self->{'bad'}{$url}  = $msg;
+  }
+  else {
+    $self->{'bad'}{$url} .= $msg;
+  }
+}
+
+# add_ref($child, $parent)
+#   This keeps an associative array of urls, where the associated value
+#   of each url is a string of urls that refer to it.  So if 
+#   url 'a' and 'b' refer to url 'c', then $self->{'ref'}{'c'}
+#   would have a value of 'a\nb\n'.  The newline separates parent urls.
+
+sub add_ref {
+
+  my ($self, $child, $parent) = @_;
+
+  if (! defined  $self->{'ref'}{$child} ) {
+    $self->{'ref'}{$child} = "$parent\n";
+  } 
+  elsif ($self->{'ref'}{$child} !~ /$parent\n/) {
+    $self->{'ref'}{$child} .= "$parent\n";
+  }
+
+}
+

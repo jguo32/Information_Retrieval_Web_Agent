@@ -1,0 +1,33 @@
+#!/bin/csh
+
+#   run this in a datafile directory to check the C option,
+#	change to D,30 to check the D option
+
+set stem = cart
+set seed = $1
+set parts = 7
+set i = 0
+
+rm -f try.l
+encsmpl -g N $stem | sort >  try.l
+cat try.l
+
+while ( $i < $parts )
+	echo --------------------- $i from $parts
+	rm -f try.d
+	encsmpl -c C,${parts},${i},${seed} $stem > try.d
+	encsmpl -g C,${parts},${i},${seed} $stem >> try.d
+	sort try.d | diff - try.l
+	@ i ++
+end
+
+
+set i = 1
+rm -f try.d
+encsmpl -c C,${parts},0,${seed} $stem > try.d
+while ( $i < $parts )
+	encsmpl -c C,${parts},${i},${seed} $stem >> try.d
+	@ i ++
+end
+echo --------------------- total of parts
+sort try.d | diff - try.l

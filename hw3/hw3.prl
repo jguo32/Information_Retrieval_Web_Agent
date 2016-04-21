@@ -1,0 +1,980 @@
+#!/usr/bin/perl -w
+
+use strict;
+use Carp;
+use FileHandle;
+
+############################################################
+## Program Defaults and Global Variables
+############################################################
+
+my %docs_freq_hash = ();
+my %corp_freq_hash = ();
+
+my @sensenum = ();
+my @doc_vector = ();
+
+my @titles_vector = ();
+my %stoplist_hash = ();
+
+my %v_profile1 = ();
+my %v_profile2 = ();
+
+# For Bayesian Model
+my $EPSILON = 0.2;
+my %llike = ();
+
+&main_loop;
+
+sub main_loop {
+
+   while (1) {
+
+	print <<"EndOfMenu";
+
+	============================================================
+	==     Welcome to the 600.466 Lexical Ambiguity Resolution
+	==                                                  
+        == Total Documents: 3600                     
+	== Total Queries:   400                     
+	============================================================
+
+	OPTIONS:
+	  1 = Do evaluation for all combinations
+	  2 = Evaluate with detailed output
+	  3 = Quit
+
+	============================================================
+
+EndOfMenu
+    ;
+
+		print "Enter Option: ";
+
+		my    $option = <STDIN>;
+		chomp $option;
+
+		next if ($option !~/[0-9]/);
+
+		exit 0 if $option == 3;
+
+		&do_evaluation and next if $option == 1;
+		&do_detail_evaluation  and next if $option == 2;
+
+		# default and choice 1 is
+
+		next if ($option != 1 && $option != 2);
+    } 
+
+
+}
+
+sub do_evaluation {
+	my $category = "plant";
+	my $stem_type = "tokenized";	#	stemmed or tokenized
+	my $weight_type = "uniform";
+	my $collo_model = "bag_of_word"; # or lr
+
+
+	print <<"EndOfMenu";
+	stemming	Position 	Local Collocation
+			Weighting 	Modelling 	tank 	plant 	pers/place
+	==========================================================================
+EndOfMenu
+    ;
+    my $tank_result = undef;
+    my $plant_result = undef;
+    my $perplace_result = undef;
+    # Test all combinations, which are hard-wired in
+    $tank_result = &do_classify("tank", "tokenized", "uniform", "bag-of-words");
+    $plant_result = &do_classify("plant", "tokenized", "uniform", "bag-of-words");
+    $perplace_result = &do_classify("perplace", "tokenized", "uniform", "bag-of-words");
+    print "1	unstemmed	uniform 	bag-of-words 	$tank_result 	$plant_result 	$perplace_result\n";
+
+	$tank_result = &do_classify("tank", "stemmed", "expndecay", "bag-of-words");
+	$plant_result = &do_classify("plant", "stemmed", "expndecay", "bag-of-words");
+	$perplace_result = &do_classify("perplace", "stemmed", "expndecay", "bag-of-words");
+    print "2	stemmed 	expndecay 	bag-of-words 	$tank_result 	$plant_result 	$perplace_result\n";
+
+	$tank_result = &do_classify("tank", "tokenized", "expndecay", "bag-of-words");
+	$plant_result = &do_classify("plant", "tokenized", "expndecay", "bag-of-words");
+	$perplace_result = &do_classify("perplace", "tokenized", "expndecay", "bag-of-words");
+  	print "3	unstemmed 	expndecay 	bag-of-words 	$tank_result 	$plant_result 	$perplace_result\n";
+
+	$tank_result = &do_classify("tank", "tokenized", "expndecay", "lr");
+	$plant_result = &do_classify("plant", "tokenized", "expndecay", "lr");
+	$perplace_result = &do_classify("perplace", "tokenized", "expndecay", "lr");
+  	print "4	unstemmed 	expndecay 	adjacent-LR 	$tank_result 	$plant_result 	$perplace_result\n";
+
+	$tank_result = &do_classify("tank", "tokenized", "stepped", "lr");
+	$plant_result = &do_classify("plant", "tokenized", "stepped", "lr");
+	$perplace_result = &do_classify("perplace", "tokenized", "stepped", "lr");
+  	print "5	unstemmed 	stepped 	adjacent-LR 	$tank_result 	$plant_result 	$perplace_result\n";
+
+	$tank_result = &do_classify("tank", "tokenized", "custom", "lr");
+	$plant_result = &do_classify("plant", "tokenized", "custom", "lr");
+	$perplace_result = &do_classify("perplace", "tokenized", "custom", "lr");
+  	print "6	unstemmed 	customized 	adjacent-LR 	$tank_result 	$plant_result 	$perplace_result\n";
+
+	$tank_result = &do_classify_by_bayes("tank", "stemmed");
+	$plant_result = &do_classify_by_bayes("plant", "stemmed");
+	$perplace_result = &do_classify_by_bayes("perplace", "stemmed");
+  	print "7	stemmed 	Bayesian 	bag-of-words 	$tank_result 	$plant_result 	$perplace_result\n";
+
+
+}
+
+sub do_detail_evaluation {
+		print << "EndOfMenu";
+    Choose dataset:
+        (1) Plant
+	(2) Tank
+	(3) Pers/Place
+	The default choice is plant.
+EndOfMenu
+    ;
+	print "Choice: ";
+	my	$category = <STDIN>;
+	chomp $category;
+
+	if ($category !~/^[1-3]$/) { $category = 1;}
+	if ($category eq 1) {
+		$category = "plant";
+	}
+	elsif ($category eq 2) {
+		$category = "tank";
+	}
+	else {
+		$category = "perplace";
+	}
+
+	print << "EndOfMenu";
+    Choose stemming method:
+        (1) Stemmed
+	(2) Unstemmed
+	The default choice is stemmed.
+EndOfMenu
+    ;
+	print "Choice: ";
+	my	$stem_type = <STDIN>;
+	chomp $stem_type;
+
+	if ($stem_type !~/^[1-2]$/) { $stem_type = 1;}
+	if ($stem_type eq 1) {
+		$stem_type = "stemmed";
+	}
+	else {
+		$stem_type = "tokenized";
+	}
+
+	print << "EndOfMenu";
+    Choose weighting method:
+        (1) Uniform
+	(2) Expndecay
+	(3) Stepped
+	(4) Customized
+	The default choice is uniform.
+EndOfMenu
+    ;
+	print "Choice: ";
+	my	$weight_type = <STDIN>;
+	chomp $weight_type;
+
+	if ($weight_type !~/^[1-4]$/) { $weight_type = 1;}
+	if ($weight_type eq 1) {
+		$weight_type = "uniform";
+	}
+	elsif ($weight_type eq 2){
+		$weight_type = "expndecay";
+	}
+	elsif ($weight_type eq 3) {
+		$weight_type = "stepped";
+	}
+	else {
+		$weight_type = "custom";
+	}
+
+	print << "EndOfMenu";
+    Choose local collocation modelling:
+        (1) bag-of-words
+	(2) adjacent-LR
+	The default choice is bag-of-words.
+EndOfMenu
+    ;
+	print "Choice: ";
+	my	$collo_model = <STDIN>;
+	chomp $collo_model;
+
+	if ($collo_model !~/^[1-2]$/) { $collo_model = 1;}
+	if ($collo_model eq 1) {
+		$collo_model = "bag-of-words";
+	}
+	else {
+		$collo_model = "lr";
+	}
+
+	
+	print << "EndOfMenu";
+    Choose classification model:
+        (1) Basic Model
+	(2) Bayesian Model
+	The default choice is basic model.
+EndOfMenu
+    ;
+	print "Choice: ";
+	my	$model = <STDIN>;
+	chomp $model;
+
+	if ($model !~/^[1-2]$/) { $collo_model = 1;}
+	if ($model eq 1) {
+		&init_stoplist($stem_type);
+		&init_corp_freq($category, $stem_type);
+		&init_titles($category);
+		&init_vectors($category, $stem_type, $weight_type, $collo_model);
+		&classify_with_detail($category);
+	}
+	else {
+		&init_stoplist($stem_type);
+		&init_titles($category);
+		&init_bayes_vectors($category, $stem_type);
+		&classify_by_bayes_with_detail($category);
+	}
+
+}
+
+sub do_classify {
+	my $category = shift;
+	my $stem_type = shift;
+	my $weight_type = shift;
+	my $collo_model = shift;
+
+	&init_stoplist($stem_type);
+	&init_corp_freq($category, $stem_type);
+	&init_titles($category);
+	&init_vectors($category, $stem_type, $weight_type, $collo_model);
+
+	my $result = &classify($category);
+	&clear;
+	return $result;
+}
+
+sub do_classify_by_bayes {
+	my $category = shift;
+	my $stem_type = shift;
+	my $weight_type = "uniform";
+
+	&init_stoplist($stem_type);
+
+	&init_titles($category);
+	&init_bayes_vectors($category, $stem_type);
+
+	my $result = &classify_by_bayes($category);
+	&clear;
+	return $result;
+	# &classify_by_bayes_with_detail;
+}
+
+sub init_stoplist {
+	my $stem_type = shift;
+	my $stoplist_fh;
+	if (defined($stem_type) and $stem_type =~ /stemmed/) {
+		$stoplist_fh = new FileHandle "\./common_words\.stemmed", "r"
+		or croak "Failed opening stop words";
+	}
+	else {
+		$stoplist_fh = new FileHandle "\./common_words", "r"
+		or croak "Failed opening stop words";		
+	}
+
+	my $stopword = undef;
+
+	while (defined( $stopword = <$stoplist_fh> )) {
+		chomp $stopword;
+		$stoplist_hash{ $stopword } = 1;
+	}
+}
+
+sub init_corp_freq {
+	my $category = shift;
+	my $stem_type = shift;
+
+	my $corp_freq_fh = new FileHandle "\./$category\.$stem_type\.hist", "r"
+	or croak "Failed opening \./$category\.$stem_type\.hist";
+
+	my $line = undef;
+
+	while (defined( $line = <$corp_freq_fh>)) {
+		my ($str) = ($line =~ /^\s*(\S.*)/);
+		my ($doc_freq,
+			$cor_freq,
+			$term	) = split /\s+/, $str;
+		$docs_freq_hash{$term} += $doc_freq;
+		$corp_freq_hash{$term} += $cor_freq;
+
+	}
+}
+
+sub init_titles {
+	my $category = shift;
+
+	my $titles_fh = new FileHandle "\./$category\.titles", "r"
+	or croak "Failed \./$category\.titles";
+
+	my $title = undef;
+
+	push @titles_vector, "";
+
+	while (defined( $title = <$titles_fh> )) {
+		chomp $title;
+		push @titles_vector, $title;
+	}
+}
+
+sub init_bayes_vectors {
+	my $category = shift;
+	my $stem_type = shift;
+	my $weight_type = "uniform";
+	my $collo_model = "bag-of-words";
+
+	my $docs_fh = new FileHandle "\./$category\.$stem_type", "r"
+	or croak "Failed \./$category\.$stem_type";
+
+	my $word = undef;
+	my $cnt_sense = undef;
+	my $doc_number = 0;
+
+	my @word_list = ();
+
+	push @doc_vector, {};
+
+	while (defined( $word = <$docs_fh> )) {
+		chomp $word;
+		
+		if ($word =~ /^\.I\s+[0-9]+\s+1/) {
+			if (@word_list) {
+				&uniform(\@word_list, $doc_number, $cnt_sense, $collo_model);
+			}
+			@word_list = ();
+
+			push @doc_vector, {};
+			$doc_number++;
+			$sensenum[$doc_number] = 1;
+			$cnt_sense = 1;
+
+			next;
+		}
+		elsif ($word =~ /^\.I\s+[0-9]+\s+2/) {
+			if (@word_list) {
+				&uniform(\@word_list, $doc_number, $cnt_sense, $collo_model);
+			}	
+			@word_list = ();
+
+			push @doc_vector, {};
+			$doc_number++;
+			$sensenum[$doc_number] = 2;
+			$cnt_sense = 2;
+
+			next;
+		}
+
+		push @word_list, $word;
+	}
+
+	# Here %v_profile serves as V_sum for Bayesian model
+	# Step (c) in NOTES
+	foreach my $key (keys %v_profile2) {
+		if ( defined($v_profile1{ $key }) and $v_profile1{ $key } > 0 ) {
+			$llike{ $key } = log ( $v_profile1{ $key } / $v_profile2{ $key });
+		}
+		else {
+			$llike{ $key } = log ( $EPSILON / $v_profile2{ $key });
+		}	
+	}
+
+	foreach my $key (keys %v_profile1) {
+		if (!defined($v_profile2{ $key }) or ($v_profile2{ $key } <= 0)) {
+			$llike{ $key } = log ( $v_profile1{ $key } / $EPSILON );
+		}
+	}
+}
+
+
+sub init_vectors {
+	my $category = shift;
+	my $stem_type = shift;
+	my $weight_type = shift;
+	my $collo_model = shift;
+
+	my $docs_fh = new FileHandle "\./$category\.$stem_type", "r"
+	or croak "Failed \./$category\.$stem_type";
+
+	my $word = undef;
+	my $cnt_sense = undef;
+	my $doc_number = 0;
+
+	my $count1 = 0;
+	my $count2 = 0;
+
+	my @word_list = ();
+
+	push @doc_vector, {};
+
+	while (defined( $word = <$docs_fh> )) {
+		chomp $word;
+		
+		if ($word =~ /^\.I\s+[0-9]+\s+1/) {
+			if (@word_list) {
+				if ($weight_type =~ /uniform/) {
+					&uniform(\@word_list, $doc_number, $cnt_sense, $collo_model);
+				}
+				elsif ($weight_type =~ /expndecay/) {
+					&expndecay(\@word_list, $doc_number, $cnt_sense, $collo_model);
+				}
+				elsif ($weight_type =~ /stepped/) {
+					&stepped(\@word_list, $doc_number, $cnt_sense, $collo_model);
+				}
+				elsif ($weight_type =~ /custom/) {
+					&custom_weighting(\@word_list, $doc_number, $cnt_sense, $collo_model);
+				}
+			}
+			@word_list = ();
+
+			push @doc_vector, {};
+			$doc_number++;
+			$sensenum[$doc_number] = 1;
+			$cnt_sense = 1;
+
+			if ($doc_number <= 3600) {
+				$count1++;
+			}
+			next;
+		}
+		elsif ($word =~ /^\.I\s+[0-9]+\s+2/) {
+			if (@word_list) {
+				if ($weight_type =~ /uniform/) {
+					&uniform(\@word_list, $doc_number, $cnt_sense, $collo_model);
+				}
+				elsif ($weight_type =~ /expndecay/) {
+					&expndecay(\@word_list, $doc_number, $cnt_sense, $collo_model);
+				}
+				elsif ($weight_type =~ /stepped/) {
+					&stepped(\@word_list, $doc_number, $cnt_sense, $collo_model);
+				}
+				elsif ($weight_type =~ /custom/) {
+					&custom_weighting(\@word_list, $doc_number, $cnt_sense, $collo_model);
+				}
+			}	
+			@word_list = ();
+
+			push @doc_vector, {};
+			$doc_number++;
+			$sensenum[$doc_number] = 2;
+			$cnt_sense = 2;
+
+			if ($doc_number <= 3600) {
+				$count2++;
+			}
+			next;
+		}
+
+		push @word_list, $word;
+	}
+
+	# Convert the weight to TF-IDF weight
+	foreach my $hash (@doc_vector) {
+		foreach my $key (keys %{ $hash }) {
+			my $tmp_key = $key;
+			if ( $key =~ /^[LR]-/) {
+				$tmp_key = substr($key, 2);
+			}
+			$hash->{ $key } = $hash-> { $key } * log( 3600 / $docs_freq_hash{ $tmp_key });
+		}
+	}
+
+	foreach my $key (keys %v_profile1) {
+		my $tmp_key = $key;
+		if ( $key =~ /^[LR]-/) {
+			$tmp_key = substr($key, 2);
+		}
+		$v_profile1{ $key } = $v_profile1{ $key } * log( 3600 / $docs_freq_hash{ $tmp_key });
+	}
+
+	foreach my $key (keys %v_profile2) {
+		my $tmp_key = $key;
+		if ( $key =~ /^[LR]-/) {
+			$tmp_key = substr($key, 2);
+		}
+		$v_profile2{ $key } = $v_profile2{ $key } * log( 3600 / $docs_freq_hash{ $tmp_key });
+	}
+
+	# Calculate centroid 
+	while (my ($term, $freq) = each %v_profile1) {
+		$v_profile1{$term} = $freq / $count1;
+	}
+
+	while (my ($term, $freq) = each %v_profile2) {
+		$v_profile2{$term} = $freq / $count2;
+	}
+
+}
+
+########################################################
+## 
+## Initialize document vectors
+## uniformly
+##
+########################################################
+
+sub uniform {
+	my $list_temp = shift;
+	my $doc_number = shift;
+	my $cnt_sense = shift;
+	my $collo_model = shift;
+	my @word_list = @{$list_temp};
+
+	my $weight = 1;
+	my $target_pos = 0;
+	while ($word_list[$target_pos] !~ /\.[Xx]/) {
+		$target_pos++;
+	}
+
+	for (my $i = 0; $i < scalar @word_list; $i++) {
+		if ($collo_model =~ /lr/) {
+			# Initialize LR vector
+			if ($i - $target_pos eq -1) {
+				$word_list[$i] = "L-$word_list[$i]";
+			}
+			elsif ($i - $target_pos eq 1) {
+				$word_list[$i] = "R-$word_list[$i]";
+			}
+		}
+
+		if ($word_list[$i] !~ /^\.[Xx]/ and $word_list[$i] =~ /[a-zA-Z]/ and ! exists $stoplist_hash{ $word_list[$i] }) {
+			
+			$doc_vector[$doc_number]{$word_list[$i]} += $weight;
+			if ($doc_number <= 3600) {
+				if ($cnt_sense == 1) {
+					$v_profile1{ $word_list[$i] } += $weight;
+				}
+				elsif ($cnt_sense == 2) {
+					$v_profile2{ $word_list[$i] } += $weight;
+				}	
+			}
+		}
+	}
+}
+
+########################################################
+## 
+## Initialize document vectors
+## with a smooth exponential distance decay
+## 
+########################################################
+
+sub expndecay {
+	my $list_temp = shift;
+	my $doc_number = shift;
+	my $cnt_sense = shift;
+	my $collo_model = shift;
+	my @word_list = @{$list_temp};
+
+	my $weight = 1;
+	my $target_pos = 0;
+	while ($word_list[$target_pos] !~ /\.[Xx]/) {
+		$target_pos++;
+	}
+
+	for (my $i = 0; $i < scalar @word_list; $i++) {
+
+		if ($collo_model =~ /lr/) {
+			# Initialize LR vector
+			if ($i - $target_pos eq -1) {
+				$word_list[$i] = "L-$word_list[$i]";
+			}
+			elsif ($i - $target_pos eq 1) {
+				$word_list[$i] = "R-$word_list[$i]";
+			}
+		}
+
+		# Smooth exponential distance decay
+		if ($word_list[$i] !~ /^\.[Xx]/ and $word_list[$i] =~ /[a-zA-Z]/ and ! exists $stoplist_hash{ $word_list[$i] }) {
+			
+
+			$weight = abs( 1 / ($i - $target_pos ));
+			$doc_vector[$doc_number]{$word_list[$i]} += $weight;
+
+			if ($doc_number <= 3600) {
+				if ($cnt_sense == 1) {
+					$v_profile1{ $word_list[$i] } += $weight;
+				}
+				elsif ($cnt_sense == 2) {
+					$v_profile2{ $word_list[$i] } += $weight;
+				}	
+			}
+		}
+	}
+}
+
+########################################################
+## 
+## Initialize document vectors
+## with a stepped weighting function
+##
+########################################################
+sub stepped {
+	my $list_temp = shift;
+	my $doc_number = shift;
+	my $cnt_sense = shift;
+	my $collo_model = shift;
+	my @word_list = @{$list_temp};
+
+	my $weight = 1;
+	my $target_pos = 0;
+	while ($word_list[$target_pos] !~ /\.[Xx]/) {
+		$target_pos++;
+	}
+
+	for (my $i = 0; $i < scalar @word_list; $i++) {
+		if ($collo_model =~ /lr/) {
+			# Initialize LR vector
+			if ($i - $target_pos eq -1) {
+				$word_list[$i] = "L-$word_list[$i]";
+			}
+			elsif ($i - $target_pos eq 1) {
+				$word_list[$i] = "R-$word_list[$i]";
+			}
+		}
+
+		if ($word_list[$i] !~ /^\.[Xx]/ and $word_list[$i] =~ /[a-zA-Z]/ and ! exists $stoplist_hash{ $word_list[$i] }) {
+			
+			my $distance = abs( $i - $target_pos);
+			if ( $distance < 2) {
+				$weight = 6;
+			}
+			elsif ( $distance < 4) {
+				$weight = 3;
+			}
+			else {
+				$weight = 1;
+			}
+
+			$doc_vector[$doc_number]{$word_list[$i]} += $weight;
+			# print "the weight of $i th/ $len  word $word_list[$i] is $weight\n";
+
+			if ($doc_number <= 3600) {
+				if ($cnt_sense == 1) {
+					$v_profile1{ $word_list[$i] } += $weight;
+				}
+				elsif ($cnt_sense == 2) {
+					$v_profile2{ $word_list[$i] } += $weight;
+				}	
+			}
+		}
+	}
+}
+
+########################################################
+## 
+## Initialize document vectors
+## with a custom weighting function
+##
+########################################################
+sub custom_weighting {	my $list_temp = shift;
+	my $doc_number = shift;
+	my $cnt_sense = shift;
+	my $collo_model = shift;
+	my @word_list = @{$list_temp};
+
+	my $weight = 1;
+	my $target_pos = 0;
+	while ($word_list[$target_pos] !~ /\.[Xx]/) {
+		$target_pos++;
+	}
+
+	for (my $i = 0; $i < scalar @word_list; $i++) {
+		if ($collo_model =~ /lr/) {
+			# Initialize LR vector
+			if ($i - $target_pos eq -1) {
+				$word_list[$i] = "L-$word_list[$i]";
+			}
+			elsif ($i - $target_pos eq 1) {
+				$word_list[$i] = "R-$word_list[$i]";
+			}
+		}
+
+		if ($word_list[$i] !~ /^\.[Xx]/ and $word_list[$i] =~ /[a-zA-Z]/ and ! exists $stoplist_hash{ $word_list[$i] }) {
+			
+			my $distance = abs( $i - $target_pos);
+			if ( $distance < 2) {
+				$weight = 3;
+			}
+			elsif ( $distance < 4) {
+				$weight = 2;
+			}
+			# elsif ( $distance < 4) {
+			# 	$weight = 2;
+			# }
+			else {
+				$weight = 1;
+			}
+
+			$doc_vector[$doc_number]{$word_list[$i]} += $weight;
+
+			if ($doc_number <= 3600) {
+				if ($cnt_sense == 1) {
+					$v_profile1{ $word_list[$i] } += $weight;
+				}
+				elsif ($cnt_sense == 2) {
+					$v_profile2{ $word_list[$i] } += $weight;
+				}	
+			}
+		}
+	}
+}
+
+sub classify {
+	my $category = shift;
+	my $correct  = 0;
+
+	for my $i (3601 .. 4000) {
+		my $sim1 = &cosine_sim_a($doc_vector[$i], \%v_profile1);
+		my $sim2 = &cosine_sim_a($doc_vector[$i], \%v_profile2);
+		my $title = substr $titles_vector[$i], 0, 40;
+
+		$sim1 = sprintf "%0.8f", $sim1;
+		$sim2 = sprintf "%0.8f", $sim2;
+
+		if ($sim1 > $sim2) {
+			if ($sensenum[$i] == 1) {
+				$correct++;
+			}
+		}
+		else {
+			if ($sensenum[$i] == 2) {
+				$correct++;
+			}
+		}
+	}
+
+	my $incorrect = 400 - $correct;
+	# print "correct: $correct, incorrect: $incorrect, correct percent: ", $correct/400, "\n";
+	my $result = sprintf "%0.2f", $correct/400;
+	return $result;
+}
+
+sub classify_by_bayes {
+	my $category = shift;
+	my $correct  = 0;
+	my $sumofLL = 0;
+
+	for my $i (3601 .. 4000) {
+		$sumofLL = 0;
+
+		foreach my $key (keys %{ $doc_vector[$i] }) {
+			if (defined($llike{ $key })) {
+				$sumofLL += $llike {$key} * $doc_vector[$i]{ $key };
+			}
+			else {
+				$sumofLL = 0;
+			}
+			
+		}
+
+
+		my $title = substr $titles_vector[$i], 0, 40;
+
+		if ( $sumofLL > 0) {
+			if ($sensenum[$i] == 1) {
+				$correct++;
+			}
+		}
+		else {
+			if ($sensenum[$i] == 2) {
+				$correct++;
+			}
+		}
+	}
+
+	my $incorrect = 400 - $correct;
+	my $result = sprintf "%0.2f", $correct / 400;
+	return $result;
+}
+
+sub classify_with_detail {
+	my $category = shift;
+	my $correct  = 0;
+
+	print << "EndOfList";
+
+    ***********************************************************************
+	Classify result of $category
+    ***********************************************************************
+    Similarity1  Similarity2  Result  Label   Title
+    ===========  ===========  ======  =====   =============================
+EndOfList
+    ;
+	for my $i (3601 .. 4000) {
+		my $sim1 = &cosine_sim_a($doc_vector[$i], \%v_profile1);
+		my $sim2 = &cosine_sim_a($doc_vector[$i], \%v_profile2);
+		my $title = substr $titles_vector[$i], 0, 40;
+
+		# print "    ";
+		$sim1 = sprintf "%0.8f", $sim1;
+		$sim2 = sprintf "%0.8f", $sim2;
+
+		if ($sim1 > $sim2) {
+			if ($sensenum[$i] == 1) {
+				print "+   ";
+				$correct++;
+			}
+			else {
+				print "    ";
+			}
+			print $sim1, "   ", $sim2, "    ", "   1    ", $sensenum[$i], "      ", "$title \n";
+		}
+		else {
+			if ($sensenum[$i] == 2) {
+				print "+   ";
+				$correct++;
+			}
+			else {
+				print "    ";
+			}
+			print $sim1, "   ", $sim2, "    ", "   2    ", $sensenum[$i], "      ", "$title\n";
+		}
+	}
+
+	my $incorrect = 400 - $correct;
+	print "correct: $correct, incorrect: $incorrect, correct percent: ", $correct/400, "\n";
+	&clear;
+}
+
+sub classify_by_bayes_with_detail {
+	my $category = shift;
+	my $correct  = 0;
+	my $sumofLL = 0;
+
+	print << "EndOfList";
+
+	***********************************************************************
+	Classify result of $category using Bayesian Model
+	***********************************************************************
+	SumofLL 	Result 	Label 	Title
+	=======================================================================
+
+EndOfList
+    ;
+	for my $i (3601 .. 4000) {
+		$sumofLL = 0;
+
+		foreach my $key (keys %{ $doc_vector[$i] }) {
+			if (defined($llike{ $key })) {
+				$sumofLL += $llike {$key} * $doc_vector[$i]{ $key };
+			}
+			else {
+				$sumofLL = 0;
+			}
+			
+		}
+
+		my $title = substr $titles_vector[$i], 0, 40;
+		$sumofLL = sprintf "%.5f", $sumofLL;
+
+		if ( $sumofLL > 0) {
+			if ($sensenum[$i] == 1) {
+				print "+	";
+				$correct++;
+			}
+			else {
+				print "	";
+			}
+			print $sumofLL, " \t", "1 \t", $sensenum[$i], " \t", "$title \n";
+		}
+		else {
+			if ($sensenum[$i] == 2) {
+				print "+	";
+				$correct++;
+			}
+			else {
+				print "	";
+			}
+			print $sumofLL, " \t", "1 \t", $sensenum[$i], " \t", "$title \n";
+		}
+	}
+
+	my $incorrect = 400 - $correct;
+	print "correct: $correct, incorrect: $incorrect, correct percent: ", $correct/400, "\n";
+	&clear;
+}
+
+
+########################################################
+## CLEAR
+## 
+## Clear all variables that might be used by another 
+## category
+########################################################
+
+sub clear {
+	%docs_freq_hash = ();
+	%corp_freq_hash = ();
+
+	@sensenum = ();
+	@doc_vector = ();
+
+	@titles_vector = ();
+	%stoplist_hash = ();
+
+	%v_profile1 = ();
+	%v_profile2 = ();
+
+	%llike = ();
+}
+
+########################################################
+## COSINE_SIM_A
+## 
+## Computes the cosine similarity for two vectors
+## represented as associate arrays.
+########################################################
+
+sub cosine_sim_a {
+
+    my $vec1 = shift;
+    my $vec2 = shift;
+
+    my $num     = 0;
+    my $sum_sq1 = 0;
+    my $sum_sq2 = 0;
+
+    my @val1 = values %{ $vec1 };
+    my @val2 = values %{ $vec2 };
+
+    # determine shortest length vector. This should speed 
+    # things up if one vector is considerable longer than
+    # the other (i.e. query vector to document vector).
+    if ((scalar @val1) > (scalar @val2)) {
+	my $tmp  = $vec1;
+	   $vec1 = $vec2;
+	   $vec2 = $tmp;
+    }
+
+    # calculate the cross product
+    my $key = undef;
+    my $val = undef;
+
+    while (($key, $val) = each %{ $vec1 }) {
+	$num += $val * ($$vec2{ $key } || 0);
+    }
+
+    # calculate the sum of squares
+    my $term = undef;
+
+    foreach $term (@val1) { $sum_sq1 += $term * $term; }
+    foreach $term (@val2) { $sum_sq2 += $term * $term; }
+	
+	if ($sum_sq1 * $sum_sq2 == 0) {
+		return 0;
+	}
+    return ( $num / sqrt( $sum_sq1 * $sum_sq2 ));
+}

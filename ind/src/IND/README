@@ -1,0 +1,43 @@
+This is Version 2.1 if of IND.  This version is a beta-test version
+including extensions on the previous Version 2.0.  
+Conditions of use for the beta-test were included in 
+your original request letter for IND.
+We would love to hear about your comments, suggests and
+bug reports, etc. on this release.   Please contact Wray at:
+                Wray Buntine 
+                NASA Ames Research Center 
+                MS 269-2 
+                Moffett Field, CA, 94035-1000 
+                email:   wray@kronos.arc.nasa.gov
+
+Major differences in usage between Versions 1.X and 2.X are as follows:
+ *	enc & encsmpl must now be used to prepare data sets
+ *    	mktree has styles with the "-s" option
+Flip through the examples in Sect. 1.4 and 2.2 in the new manual.
+Note also the additional documentation in the /Doc directory.
+
+An installation guide appears in the manual.  While you should print
+out the manual and other companion documents, if you just
+want to install, then most of the information
+is reproduced in the primary Makefile.
+So check the Makefile for how to install.
+
+If you obtained IND via a diskette or tape, then all directories 
+are compressed in the distribution.
+To uncompress run:
+	make uncompress
+This is not necessary if you obtained IND via a shar file.
+
+The IND manual is in the directory "IND/Doc" in Postscript form.
+This is in US letter format, and was created using LaTeX and dvi2ps.
+The manual is completed by printing the "man" pages.
+The IND "man" pages are in the directory "IND/Man/man1"
+and a command for printing the lot appears there.  
+
+Lots of other documentation exists in "IND/Doc" as well.
+
+If you have trouble printing the Postscript files, then ask
+for versions to be sent to you, explaining the problem.  
+
+
+Good luck!

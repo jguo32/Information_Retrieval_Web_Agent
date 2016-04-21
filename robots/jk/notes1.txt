@@ -1,0 +1,202 @@
+Explanation of Parsers
+
+Both lwp_parser and lwp_parser_two make use of the libwww package. This package
+takes care of most of the details of connecting and communicating with a web
+server. 
+
+To understand basically what's going on in these programs try this
+
+	jhu> telnet www.jhu.edu 80
+	
+	# returned by server
+
+	Trying 128.220.2.80...
+	Connected to jhuniverse.hcf.jhu.edu.
+	Escape character is '^]'.
+
+	# typed by you
+
+	GET / HTTP/1.0 <CR><CR>
+
+	# returned by server
+
+	HTTP/1.0 200 OK
+	Server: Netscape-Enterprise/2.01
+	Date: Wed, 22 Apr 1998 14:37:34 GMT
+	Accept-ranges: bytes
+	Last-modified: Tue, 21 Apr 1998 13:32:29 GMT
+	Content-length: 6053
+	Content-type: text/html
+ 
+	<HTML> 
+	<HEAD>
+	<BODY BGCOLOR="#fffafc" link="#330099" vlink="#006666"
+	alink="#6666cc" text="#000000"
+	BACKGROUND="/www/images/bk_home.gif"> 
+ 
+	<TITLE>JOHNS HOPKINS UNIVERSITY</TITLE>
+
+	 ... other nifty stuff
+ 
+What you have done is contacted JHU's web server and asked for the root page 
+using the GET method. The first few lines 
+
+	HTTP/1.0 200 OK
+	Server: Netscape-Enterprise/2.01
+	...
+
+are the header. They tell what type of content is being presented (text/html),
+when the page was last modified (Tuesday, April 21), what server is being used
+(Netscape), etc. The following text is the body or content
+
+	<HTML> 
+	<HEAD>
+	<BODY BGCOLOR="#fffafc" link="#330099" vlink="#006666"
+	...
+
+which represents the page we requested ("/").
+
+The tcp_client.pl program shows how to do the preceeding with sockets. But the
+libwww package provides an easier way. The parsers use the class LWP::UserAgent
+to act as a liason between the server and the program. To contact a server and
+retrieve a particular page is done as simply as
+
+	use HTTP::Request;
+	use HTTP::Response;
+	use LWP::UserAgent;
+
+	my $ua = new LWP::UserAgent; 
+
+	my $request  = new HTTP::Request 'GET' => "http://www.jhu.edu";
+	my $response = $ua->request( $request );
+
+We first create our liason, $ua. We then create a HTTP::Request object. This
+object associates the page we want to retrieve with the method we want to use
+to retrieve it. We then request the page from the UserAgent which contacts the
+server and retrieves the text and stores it in an HTTP::Response object. To 
+print out this text we code
+
+	if ($response->is_success) {
+	    print $response->content;
+	} else {
+	    print "Error: " . $response->code . " " . $res->message;
+	}	 
+	
+We first check to see if everything went smoothly (did we get the page) and if
+so print out the content. Otherwise we report the error code and message that
+the server passed to our UserAgent.
+
+Explanation of lwp_parser.pl
+
+The lwp_parser parses through a retrieved text/html file, parses and prints
+out all the links within the page. It does this by first retreiving the text
+via the method above and then parsing the text using an HTML::TreeBuilder. A 
+TreeBuilder object simply takes an html page and creates a tree were each HTML
+tag represents a node in the tree. This structure can get very large and take
+a tremendous amount of memory but for small pages it's okay. To make the 
+TreeBuilder we code
+
+	my $html_tree = new HTML::TreeBuilder;
+	$html_tree->parse( $response->content );
+
+We can then easily extract all links via
+
+	foreach my $item (@{ $html_tree->extract_links( )}) {
+
+	    my $link = shift @$item;
+	    my $furl = (new URI::URL $link)->abs( $response->base );
+
+	    print $furl, "\n";
+	}
+
+This simple extracts each link of the form
+
+	<a  href="somelink.html"   ... >
+	<img src="somepicture.jpg" ... >
+	<body background="somebackground.jpg" ... >
+
+The line
+
+	(new URI::URL $link)->abs( $response->base );
+
+creates a new fully qualified URL by prepending the base URL of the $response
+object to it. For example if the retrieved link is "../img/picture.jpg" and we
+retrieved the link from the page "http://www.cs.jhu.edu/~jkloss/pictures"
+then the above object would return
+
+	http://www.cs.jhu.edu/~jkloss/img/picture.jpg
+
+When we are done with the TreeBuilder Object we should delete it since perl's
+garbage collector has trouble with circular links (which the TreeBuilder 
+creates).
+
+Explanation of lwp_parser_two.pl
+
+lwp_parser_two does the same thing as lwp_parser only in a different way.
+lwp_parser_two uses an HTML::LinkExtor to extract links while the page is being
+transfered to the UserAgent object. To create an HTML::LinkExtor we first must
+create a parsing function. This function will be passed two elements
+
+	sub function {
+	    my ( $tag        ,     # the current HTML tag being parsed
+	         %attributes ,     # the attributes of that tag
+	       );
+	    ....
+	}
+
+For example, if we are currently parsing the line
+
+	<a href="../sad_things/my_resume.ps"> And another sad thing . . .
+
+The above function would be passed
+
+	$tag = "a";
+	$attributes{ "href" } = "../sad_things/my_resume.ps";
+
+This function is passed by reference to a newly instantiated HTML::LinkExtor
+object and is called every time we call the HTML::LinkExtor->parse([$text])
+method. So to create an HTML::LinkExtor we code
+
+	sub function {
+	    my ( $tag    ,
+	         %attribs,
+	       );
+
+	    ... check to see if it's what we want ...
+	}
+
+	my $extract = new HTML::LinkExtor( \&function );
+
+The UserAgent->request( ) method allows you to pass it a function reference
+which it will call every time it receives a chunk of text from the web server.
+The received text will be passed to this function. So to let the 
+HTML::LinkExtor parse this text we wrap the object in a function and pass the
+function to the UserAgent->request( ) method
+
+	my $ua = new LWP::UserAgent;
+	my $request  = new HTTP::Request 'GET' => "http://www.jhu.edu";
+	my $response = $ua->request( $request, sub { $extract->parse($_[0])} );
+
+That's it.
+
+
+Assignment 4 part 1
+
+	modify either lwp_parser.pl or lwp_parser_two.pl so that it extracts
+	only links which are not self-referencing or non-local. 
+
+	A self-referencing link is of the form
+
+	<a href="somepage.html#samepage">
+
+	A non-local link is a link referencing a URL from some other domain.
+	For example if we retrieved a page from "www.cs.jhu.edu" then the
+	following link
+
+	<a href="www.ora.com/index.html">Cool book place</a>
+
+	is non-local
+
+by the way to get the base URL of a HTTP::Response object use the method
+
+	my $base_url = $response->base;

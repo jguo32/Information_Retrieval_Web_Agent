@@ -1,0 +1,36 @@
+|    text after the '|' indicates a comment
+
+class :	compensated_hypothyroid,negative,
+	primary_hypothyroid,secondary_hypothyroid.	
+|    the name "class" tells IND this is the decision attribute
+
+age:		cont 0..100.
+
+|    '?' means determine other values from the data at runtime
+sex:		M,F,?.
+
+|    this list of attributes all have the same values
+on_thyroxine query_on_thyroxine on_antithyroid_medication sick pregnant
+thyroid_surgery I131_treatment query_hypothyroid query_hyperthyroid:  f,t.
+
+|    so do these
+lithium goitre tumor hypopituitary psych:		f,t.
+
+TSH_measured:	f,t.
+TSH:		cont 0..600 (?).	|  this attribute has missing values
+T3_measured:	asfor TSH_measured.	|  same type as TSH_measured
+T3:		cont 0..100 (?).
+TT4_measured:	asfor TSH_measured.
+TT4:		cont.			|  we dont care about ranges for TT4
+T4_measured:	asfor TSH_measured.
+T4:		cont 0..3 (?).
+FTI_measured:	asfor TSH_measured.
+FTI:		cont 0..400 (?).
+TBG_measured:	asfor TSH_measured.
+TBG:		cont 0..100 (?).
+referral_source:  SVI,STMW,WEST,SVHC,
+		  SVHD,other (subset=full).	|  do subsetting on this
+
+contexts :
+	 TBG onlyif TBG_measured .
+

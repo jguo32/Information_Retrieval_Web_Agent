@@ -1,0 +1,18 @@
+#!/usr/local/bin/perl 
+
+use LWP::RobotUA;
+use HTTP::Request;
+use HTTP::Response;
+
+my $ua = new LWP::RobotUA('hcat_RobotUA', 'examples@ora.com');
+
+$ua->proxy('http', 'http://proxy.ora.com:8080/');
+$ua->no_proxy('ora.com');
+
+my $request = new HTTP::Request('GET', $ARGV[0]);
+my $response = $ua->request($request);
+if ($response->is_success) {
+     print $response->content;
+} else {
+     print $response->error_as_HTML;
+}

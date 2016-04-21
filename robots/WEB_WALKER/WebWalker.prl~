@@ -1,0 +1,1808 @@
+#!/usr/local/bin/perl
+
+# ==========================================================================
+# Copyright (c) 1995 Fah-Chun Cheong. All rights reserved.
+# --------------------------------------------------------------------------
+# WebWalker/1.00 -- A World-Wide Web spider for diagnosis and maintenance of
+#                   distributed hypertext infostructures.
+# ==========================================================================
+#
+# WebWalker is based upon code and architecture derived from Roy Fielding's
+# publicly available MOMspider program. Roy Fielding's MOMspider, for
+# Multi-Owner Maintenance spider, traverses the World-Wide Web to perform
+# Web maintenance. For teaching purposes, we have built a simpler WWW robot
+# called WebWalker to illustrate the important characteristics and internal
+# architecture of a WWW spider that performs Web maintenance. WebWalker
+# performs WWW traversal for individual sites and tests for the integrity
+# of all hyperlinks to external sites. 
+#
+# ==========================================================================
+# Before changing things here, the installer should first set three things:
+#   (1) The first line which specifies the perl interpreter;
+#   (2) The @INClude path for libwww-perl library packages $WWWlib;
+#   (3) The $LocalNetwork definition using network domain name.
+# ==========================================================================
+
+$LibWWW  = "/usr/local/lib/libwww-perl-0.40";
+$WWWlib  = ($ENV{'LIBWWW_PERL'} || $LibWWW || '.');
+unshift(@INC, $WWWlib);
+
+$Version = 'WebWalker/1.00';                # Robot identification
+$HOMEdir = ($ENV{'HOME'} || $ENV{'home'} || '.');
+$PWDdir  = ($ENV{'PWD'}  || $ENV{'cwd'}  || '.');
+$TMPdir  = ($ENV{'TMPDIR'}               || '/tmp');
+
+require "getopts.pl";                       # Perl library package
+require "www.pl";                           # libwww-perl library package
+require "wwwurl.pl";                        # ditto
+require "wwwdates.pl";                      # ditto
+require "wwwhtml.pl";                       # ditto
+require "wwwmime.pl";                       # ditto
+
+# ==========================================================================
+# Local Network should be the network domain which you consider to be local.
+# (i.e., a network request to sites in this domain do not create any external
+# network costs to your organization).  YOU WILL WANT TO CHANGE THIS!!!
+# ==========================================================================
+
+$LocalNetwork = '\.www\.cs\.jhu\.edu';             # Use backslash to escape periods
+
+# ==========================================================================
+# Set the default location of the task instruction file of allowed tasks.
+# ==========================================================================
+
+$TaskFile = "$HOMEdir/.webwalk";
+
+# ==========================================================================
+# The following options allow WebWalker to decode traversable response
+# content that has been encoded (so far, this only means compressed).
+# This may never be used if your site does not compress any HTML files.
+# ==========================================================================
+
+# The following association maps content-encodings to their decoder command.
+
+%CEdecoder = (
+    'x-compress', 'uncompress',             # Decode Adaptive Lempel-Ziv
+    'x-gzip',     'gunzip',                 # Decode LZ77
+);
+
+# The following association maps content-encodings to the file extension
+# expected by the decoder.
+
+%CEextension = (
+    'x-compress', '.Z',                     # Adaptive Lempel-Ziv encoding
+    'x-gzip',     '.gz',                    # LZ77 encoding
+);
+
+# The following sets the temporary filename [without .(Z|gz) suffix] for
+# file decoding.
+
+$CEfile = "$TMPdir/webwalk$$-comp.html";
+
+# ==========================================================================
+# The following is the standard name for the url which defines for any site
+# where robots are not allowed. See Martijn Koster's proposal at:
+# <http://web.nexor.co.uk/mak/doc/robots/norobots.html> for more info.
+# ==========================================================================
+
+$RobotsURL   = "/robots.txt";
+
+# ==========================================================================
+# Set things which control the traversal process.
+# ==========================================================================
+
+$BaseURL     = "file://localhost$PWDdir/";
+                        # The initial base URL to use if TopURL is relative
+
+$MaxDepth    = 20;      # Default maximum traversal depth. Can be overridden
+                        #   by task instructions or command line.
+
+$Timeout     = 30;      # Maximum number of seconds to wait for a response.
+                        # Increase if you have a slow network connection.
+
+$MaxConsec   = 50; #15; # Maximum number of consecutive requests to any site
+                        #   before a long pause is required.
+
+$PauseTime   = 1; #20;  # The number of seconds for a long pause.
+                        # Increase if your server is very slow.
+
+$BetweenTime = 0; #5;   # Amount of time required between any two requests
+                        #   to the same site. Increase if server is slow.
+
+# ==========================================================================
+# Define symbolic names for HTTP response codes.
+# ==========================================================================
+
+$RC_unknown                = 000;
+$RC_ok                     = 200;
+$RC_created                = 201;
+$RC_accepted               = 202;
+$RC_partial                = 203;
+$RC_no_response            = 204;
+$RC_moved                  = 301;
+$RC_found                  = 302;
+$RC_method                 = 303;
+$RC_not_modified           = 304;
+$RC_bad_request            = 400;
+$RC_unauthorized           = 401;
+$RC_payment_required       = 402;
+$RC_forbidden              = 403;
+$RC_not_found              = 404;
+$RC_internal_error         = 500;
+$RC_not_implemented        = 501;
+$RC_bad_response           = 502;
+$RC_too_busy               = 503;
+$RC_bad_request_client     = 600;
+$RC_not_implemented_client = 601;
+$RC_connection_failed      = 602;
+$RC_timed_out              = 603;
+
+# ==========================================================================
+# Define all HTTP response messages indexed by response code.
+# ==========================================================================
+
+%RespMessage = (
+    000, 'Unknown Error',
+    200, 'OK',
+    201, 'CREATED',
+    202, 'Accepted',
+    203, 'Partial Information',
+    204, 'No Response',
+    301, 'Moved',
+    302, 'Found',
+    303, 'Method',
+    304, 'Not Modified',
+    400, 'Bad Request',
+    401, 'Unauthorized',
+    402, 'Payment Required',
+    403, 'Forbidden',
+    404, 'Not Found',
+    500, 'Internal Error',
+    501, 'Not Implemented',
+    502, 'Bad Response',
+    503, 'Too Busy',
+    600, 'Bad Request in Client',
+    601, 'Not Implemented in Client',
+    602, 'Connection Failed',
+    603, 'Timed Out',
+);
+
+# ==========================================================================
+# The set of all possible actions after issuing 'GET' or 'HEAD' requests.
+# ==========================================================================
+
+$DO_continue = 1;                               # Continue processing
+$DO_ok_stop  = 2;                               # Stop processing, no error
+$DO_redirect = 3;                               # Redirected URL
+$DO_broken   = 4;                               # Signal broken link
+
+# ==========================================================================
+# Figure out what to do given the following response codes. Note that many
+# of these should never be generated by a normal 'GET' or 'HEAD' request.
+# ==========================================================================
+
+%WhatToDo = (
+    $RC_unknown,                $DO_broken,     # 000
+    $RC_ok,                     $DO_continue,   # 200
+    $RC_created,                $DO_ok_stop,    # 201
+    $RC_accepted,               $DO_ok_stop,    # 202
+    $RC_partial,                $DO_continue,   # 203
+    $RC_no_response,            $DO_ok_stop,    # 204
+    $RC_moved,                  $DO_redirect,   # 301
+    $RC_found,                  $DO_redirect,   # 302
+    $RC_method,                 $DO_ok_stop,    # 303
+    $RC_not_modified,           $DO_ok_stop,    # 304
+    $RC_bad_request,            $DO_broken,     # 400
+    $RC_unauthorized,           $DO_ok_stop,    # 401
+    $RC_payment_required,       $DO_ok_stop,    # 402
+    $RC_forbidden,              $DO_broken,     # 403
+    $RC_not_found,              $DO_broken,     # 404
+    $RC_internal_error,         $DO_broken,     # 500
+    $RC_not_implemented,        $DO_broken,     # 501
+    $RC_bad_response,           $DO_broken,     # 502
+    $RC_too_busy,               $DO_broken,     # 503
+    $RC_bad_request_client,     $DO_broken,     # 600
+    $RC_not_implemented_client, $DO_ok_stop,    # 601
+    $RC_connection_failed,      $DO_broken,     # 602
+    $RC_timed_out,              $DO_broken,     # 603
+);
+
+# ==========================================================================
+# Status of a seen node (yes, the order is very important).
+# ==========================================================================
+
+$S_not_seen        = 0; # Node has not yet been seen (also undefined)
+$S_seen_not_tested = 1; # Node has been seen but not yet tested
+$S_avoided         = 2; # Node has been avoided
+$S_will_leaf       = 3; # Node will be  leafed
+$S_will_test       = 4; # Node will be  tested
+$S_tested_unknown  = 5; # Node has been tested but has unknown leaf status
+$S_leafed          = 6; # Node has been tested and determined to be a leaf
+$S_will_traverse   = 7; # Node has been placed on the traversal queue
+$S_traversed       = 8; # Node has been traversed
+
+# ==========================================================================
+# Initialize the infostructure task tables.
+# ==========================================================================
+
+@TaskName         = (); # Required task name for descriptive use
+@TaskTopURL       = (); # Required WWW URL for the starting top document
+@TaskBoundURL     = (); # Required task boundary URL prefix
+@TaskChangeWindow = (); # Optional days a change is still interesting
+@TaskExpireWindow = (); # Optional days before expiring is interesting
+@TaskExclude      = (); # Optional URLs to exclude (leaf) from this task
+
+# ==========================================================================
+# Initialize the sites, avoids and leaf tables.
+# ==========================================================================
+
+$SitesNum    = 0;       # Number of entries in @SitesAddr
+@SitesAddr   = ();      # Sites table
+%Sites       = ();      # Reverse sites table (for duplication detection)
+
+$AvoidNum    = 0;       # Number of entries in @AvoidURL
+@AvoidURL    = ();      # Avoids table
+
+$LeafNum     = 0;       # Number of entries in @LeafURL
+@LeafURL     = ();      # Leaf table
+
+# ==========================================================================
+# Initialize traversal history information.
+# ==========================================================================
+
+$VisNumber   = 0;       # Number of URLs visited since process start
+%Visited     = ();      # Associative array of URLs visited -> @Vis* index
+@VisURL      = ();      # URL of node (maps @Vis* index -> URL visited)
+@VisStatus   = ();      # Status of a seen node
+@VisRespCode = ();      # Server response code from last access
+
+@VisConType  = ();      # MIME Content-type of response
+@VisRedirect = ();      # Redirected URL (from a 302 Moved response)
+@VisTitle    = ();      # Title text from headers or last traversal
+@VisOwner    = ();      # Owner name from headers or last traversal
+@VisReplyTo  = ();      # Reply-To address from headers or last traversal
+@VisLastMod  = ();      # Last-modified date from headers
+@VisExpires  = ();      # Expires date from headers
+
+@VisInTask   = ();      # Seen during the current task?
+@VisLocal    = ();      # URL considered to be local to this network?
+
+# ==========================================================================
+# Initialize nodes traversal data structures.
+# ==========================================================================
+
+$CurConsec   =  1;     # Current number of consecutive requests to a site
+$PrevSite    = '';     # Site of the last network request
+$PrevTime    =  0;     # Time of the last network request
+
+@TravNodes   = ();     # Nodes that we have yet to traverse for this task
+@TravDepth   = ();     #   and their traversal depth
+@TravParent  = ();     #   and their parent's url
+
+# ==========================================================================
+# The statistical table summary format generally look like this:
+#
+#            .-----------------------------------------------.
+#            |  References   |  Unique URLs  |  Local URLs   |
+#            | number   pct  | number   pct  | number   pct  |
+#            |---------------+---------------+---------------|
+# Traversed  | NNNNNN NNN.NN | NNNNNN NNN.NN | NNNNNN NNN.NN |
+# Tested     | NNNNNN NNN.NN | NNNNNN NNN.NN | NNNNNN NNN.NN |
+# Reused     | NNNNNN NNN.NN | NNNNNN NNN.NN | NNNNNN NNN.NN |
+# Avoided    | NNNNNN NNN.NN | NNNNNN NNN.NN | NNNNNN NNN.NN |
+# Untestable | NNNNNN NNN.NN | NNNNNN NNN.NN | NNNNNN NNN.NN |
+#            |---------------+---------------+---------------|
+# Broken     | NNNNNN NNN.NN | NNNNNN NNN.NN | NNNNNN NNN.NN |
+# Redirected | NNNNNN NNN.NN | NNNNNN NNN.NN | NNNNNN NNN.NN |
+# Changed NN | NNNNNN NNN.NN | NNNNNN NNN.NN | NNNNNN NNN.NN |
+# Expired NN | NNNNNN NNN.NN | NNNNNN NNN.NN | NNNNNN NNN.NN |
+#            |---------------+---------------+---------------|
+# Local      | NNNNNN NNN.NN | NNNNNN NNN.NN | NNNNNN 100.00 |
+# Remote     | NNNNNN NNN.NN | NNNNNN NNN.NN |      0   0.00 |
+#            |---------------+---------------+---------------|
+# Totals     | NNNNNN 100.00 | NNNNNN NNN.NN | NNNNNN NNN.NN |
+#            `-----------------------------------------------'
+# 
+# ==========================================================================
+
+$SummaryFormat = <<'EOF';
+           .-----------------------------------------------.
+           |  References   |  Unique URLs  |  Local URLs   |
+           | number   pct  | number   pct  | number   pct  |
+           |---------------+---------------+---------------|
+Traversed  |%7d %6.2f |%7d %6.2f |%7d %6.2f |
+Tested     |%7d %6.2f |%7d %6.2f |%7d %6.2f |
+Reused     |%7d %6.2f |%7d %6.2f |%7d %6.2f |
+Avoided    |%7d %6.2f |%7d %6.2f |%7d %6.2f |
+Untestable |%7d %6.2f |%7d %6.2f |%7d %6.2f |
+           |---------------+---------------+---------------|
+Broken     |%7d %6.2f |%7d %6.2f |%7d %6.2f |
+Redirected |%7d %6.2f |%7d %6.2f |%7d %6.2f |
+Changed%3d |%7d %6.2f |%7d %6.2f |%7d %6.2f |
+Expired%3d |%7d %6.2f |%7d %6.2f |%7d %6.2f |
+           |---------------+---------------+---------------|
+Local      |%7d %6.2f |%7d %6.2f |%7d %6.2f |
+Remote     |%7d %6.2f |%7d %6.2f |%7d %6.2f |
+           |---------------+---------------+---------------|
+Totals     |%7d %6.2f |%7d %6.2f |%7d %6.2f |
+           `-----------------------------------------------'
+EOF
+
+# ==========================================================================
+# Get the command-line options.
+# ==========================================================================
+
+if (!(&Getopts('hi:d:')) || $opt_h) { &usage; }
+
+if ($opt_i) { $TaskFile = $opt_i; }         # Overrides default task file
+if ($opt_d) { $MaxDepth = $opt_d; }         # Overrides default max depth
+
+select((select(STDERR), $| = 1)[0]);        # Make STDERR unbuffered
+$| = 1;                                     # Make STDOUT unbuffered
+
+# ==========================================================================
+# Main processing loop cycling over infostructure-based tasks.
+# ==========================================================================
+
+print $Version, ' starting at ', &wwwdates'wtime(time, ''), "\n";
+&read_task || &read_tasks;                  # From query string or tasks file
+
+&www'set_def_header('http', 'User-Agent', $Version);
+
+foreach $task (1 .. $#TaskName)             # For each specified task
+{
+    next unless $TaskName[$task];           # Skip if task not properly defined
+
+    $LeafNum = 0;                           # Zero entries in leaf table
+    @LeafURL = ();                          # Empty leaf table
+
+    foreach $leafurl (split(/#/, $TaskExclude[$task]))
+    {
+        &add_leaf($leafurl);                # Add url to exclude in leaf table
+    }
+                                            # Traverse the web infostructure
+    &traverse_web($task, $TaskName[$task],
+                         $TaskTopURL[$task],
+                         $TaskBoundURL[$task]);
+}
+
+print $Version, ' finished at ', &wwwdates'wtime(time, ''), "\n";
+
+# ==========================================================================
+# Print usage information if help requested (-h) or an invalid option given.
+# ==========================================================================
+sub usage
+{
+    die <<"EndUsage";
+usage: webwalk [-h] [-i taskfile] [-d maxdepth]
+$Version
+WWW Robot for maintenance of distributed hypertext infostructures.
+Options:                                                      [DEFAULT]
+     -h  Help -- just display this message and quit.
+     -i  Get your task instructions from the following file.  [$TaskFile]
+     -d  Maximum traversal depth.                             [$MaxDepth]
+EndUsage
+}
+
+# ==========================================================================
+# Handle GET and POST method parameters if used as CGI script.
+# ==========================================================================
+sub read_task
+{
+    local($qstr);                           # Query string
+
+    if ($ENV{'REQUEST_METHOD'} eq "GET")    # GET method?
+    {
+        $qstr = $ENV{'QUERY_STRING'};       # Extract query string
+    }
+    elsif ($ENV{'REQUEST_METHOD'} eq "POST")# POST method?
+    {
+        read(STDIN, $qstr, $ENV{'CONTENT_LENGTH'});
+    }
+    else { return $CGI = 0; }               # Script not used in CGI context
+
+    $qstr =~ s/%([\dA-Fa-f][\dA-Fa-f])/pack("C",hex($1))/ge;
+    $qstr =~ s/\+/ /g;                      # Restore blanks in argument values
+    local(%env) = split (/[&=]/, $qstr);    # Parse into associative array
+    local(@env) = split (/&/, $qstr);       # Parse into list
+ 
+    $TaskName[1]         = $env{'Name'};
+    $TaskTopURL[1]       = $env{'TopURL'};
+    $TaskBoundURL[1]     = $env{'BoundURL'};
+    $TaskChangeWindow[1] = $env{'ChangeWindow'};
+    $TaskExpireWindow[1] = $env{'ExpireWindow'};
+    $TaskExclude[1]      = $env{'Exclude'};
+    $MaxDepth            = $env{'MaxDepth'};
+    $ReplyTo             = $env{'ReplyTo'};
+
+    if ($ReplyTo)                           # Email address of WebWalker user
+    {
+        &www'set_def_header('http', 'From', $ReplyTo);
+    }
+
+    print "Content-type: text/html\012\012";
+
+    if    (!$TaskName[1])     { die "Task has no Name";     }
+    elsif (!$TaskTopURL[1])   { die "Task has no TopURL";   }
+    elsif (!$TaskBoundURL[1]) { die "Task has no BoundURL"; }
+
+    return $CGI = 1;                        # Script is used in CGI context
+}
+
+# ==========================================================================
+# Read task instructions from the $TaskFile and fill in the @Task* tables.
+# ==========================================================================
+sub read_tasks
+{
+    local($task)   = 0;                     # Task index into @Task* tables
+    local($intask) = 0;                     # Inside of task description?
+    local($taskno) = 0;                     # No. of task instructions seen
+    local($reason) = '';                    # Why task description is bad
+
+    print "Reading task specifications from $TaskFile\n\n";
+
+    if (!open(TASK, $TaskFile))             # Open task file for read
+    {
+        print STDERR "Cannot open task file: $!\n";
+        &usage;                             # Show proper usage
+    }
+
+    while (<TASK>)                          # For each line of task file
+    {
+        next if (/^$/ || /^\#/);            # Ignore blank and comment lines
+
+        if (!$intask)                       # If not within a task?
+        {
+            $taskno++;                      # Increment task instruction no.
+            if (/^</)                       # Start of next task?
+            {                               # Fill in the defaults if needed
+                $task++;                    # New task index
+                $TaskChangeWindow[$task] = 7;
+                $TaskExpireWindow[$task] = 0;
+                $TaskExclude[$task]      = '';
+                $intask = 1;                # Now inside a task
+            }
+            elsif (/^MaxDepth\s+(\d+)\s/)   # Maximum depth of traversal
+            {
+                if (!$opt_d) { $MaxDepth = $1; }
+            }
+            elsif (/^ReplyTo\s+(\S.*)/)     # Email address of WebWalker user
+            {
+                &www'set_def_header('http', 'From', $1);
+            }
+            else
+            {
+                print STDERR "Unrecognized instruction at line $.\n";
+                print STDERR "  of $TaskFile\n";
+            }
+            next;                           # Next instructions
+        }
+                                            # Currently within a task
+        if (/^</)                           # Indicates beginning of task?
+        {
+            die "Task $taskno is not properly terminated, stopped";
+        }
+        elsif (/^\s*Name\s+((\S+\s*)+)\n$/) { $TaskName        [$task] = $1; }
+        elsif (/^\s*TopURL\s+(\S+)/)        { $TaskTopURL      [$task] = $1; }
+        elsif (/^\s*BoundURL\s+(\S+)/)      { $TaskBoundURL    [$task] = $1; }
+        elsif (/^\s*ChangeWindow\s+(\d+)/)  { $TaskChangeWindow[$task] = $1; }
+        elsif (/^\s*ExpireWindow\s+(\d+)/)  { $TaskExpireWindow[$task] = $1; }
+        elsif (/^\s*Exclude\s+([^#\s]+)/)   { $TaskExclude     [$task].= $1.'#'; }
+        elsif (/^>\s*$/)                    # Line indicates End of Task?
+        {
+            $intask = 0;                    # No longer inside task
+            $reason = '';                   # No bad task reason until told
+
+            if    (!$TaskName[$task])     { $reason = "has no Name";     }
+            elsif (!$TaskTopURL[$task])   { $reason = "has no TopURL";   }
+            elsif (!$TaskBoundURL[$task]) { $reason = "has no BoundURL"; }
+
+            if ($reason)                    # If task requirement was not met
+            {                               #   then undo its task options
+                print(STDERR "Task $taskno ", $reason, ", skipping it.\n");
+                undef $TaskName        [$task];
+                undef $TaskTopURL      [$task];
+                undef $TaskBoundURL    [$task];
+                undef $TaskChangeWindow[$task];
+                undef $TaskExpireWindow[$task];
+                undef $TaskExclude     [$task];
+                $task--;                    # Bad task don't count
+            }
+        }
+        else
+        {
+            print STDERR "Unrecognized option in task $taskno\n";
+            print STDERR "  at line $. of $TaskFile\n";
+        }
+    }
+
+    if ($intask)                            # Inside task but end of file?
+    {
+        die "Last instruction is not properly terminated, stopped";
+    }
+    close TASK;                             # Close task file
+}
+
+# ==========================================================================
+# Check the given $url for any restrictions on its access.
+# Return  0 => no restrictions on access
+#         1 => leaf (okay to test, but don't traverse)
+#         2 => avoid (no access allowed)
+# ==========================================================================
+sub check_url
+{
+    local($url) = @_;                       # Url to be checked
+    local($site);                           # Url site
+    local($idx);                            # Index into Avoid and Leaf arrays
+    local($prefix);                         # Url prefix
+
+    if (($url =~ /^http:/) &&               # Url scheme is http
+        ($site = &wwwurl'get_site($url)))   #   and site is specified
+    {
+        if (&check_site($site))             # If site not previously checked
+        {
+            &add_site($site);               # It is checked now
+        }                                   #  and added to sites table
+    }
+
+    for ($idx = 1; $idx <= $AvoidNum; $idx++)
+    {                                       # For each entry in avoid table
+        next unless ($AvoidURL[$idx]);      # Skip over undefined avoid url
+        $prefix = $AvoidURL[$idx];          # Prefix is url to be avoided
+        return 2 if ($url =~ m#^$prefix#);  # Url less general than prefix
+    }
+
+    for ($idx = 1; $idx <= $LeafNum; $idx++)
+    {                                       # For each entry in sites table
+        $prefix = $LeafURL[$idx];           # Prefix is url to be leafed
+        return 1 if ($url =~ m#^$prefix#);  # Url less general than prefix
+    }
+
+    return 0;                               # No restrictions on access
+}
+
+# ==========================================================================
+# Check the sites table to see if this $site has already been checked for
+# restrictions. If it hasn't, perform the check on that site using the
+# RobotsNotWanted protocol and update the avoids and sites tables. See the
+# details at <http://web.nexor.co.uk/mak/doc/robots/norobots.html>.
+# Return  0 => RobotsURL at site previously checked
+#         1 => this site never checked before
+# ==========================================================================
+sub check_site
+{
+    local($site) = @_;                      # Site to be checked
+    local($drs);                            # List of disallowed names
+
+    return 0 if defined($Sites{$site});     # Has RobotsURL been checked?
+
+    local($url) = "http://$site$RobotsURL"; # RobotsNotWanted url to check
+    local(%headers) = ();                   # To hold parsed response headers
+    local($headers) = '';                   # To hold response headers
+    local($content) = '';                   # To hold response content
+
+    print "Checking for $url ... ";         # Make 'GET' request on RobotsURL
+    local($response) = &www'request('GET', $url, *headers, *content, $Timeout);
+    print "$response $RespMessage{$response}\n";
+
+    return 1 unless ($response == $RC_ok);  # Do not proceed if response is bad
+
+    local($whoami)  = $Version;             # "WebWalker/1.xx"
+    $whoami         =~ s#/.*##;             # Remove version or library info
+    local($in_def)  = 0;                    # Default '*' record boundaries
+    local($in_mine) = 0;                    # My own record boundaries
+    local($def_dr)  = '';                   # Store default disallow names
+    local($mine_dr) = '';                   # Store my own disallow names
+
+    foreach (split(/\n/, $content))         # For each line in body content
+    {
+        next if (/^\s*#/);                  # Ignore comment-only lines
+        s/\s*#.*//;                         # Remove any other comments
+
+        if (/^\s*$/)                        # Records separated by blank lines
+        {
+            last if ($in_mine);             # Break out loop if end of mine
+            $in_def = 0;                    # Not in default '*' by default
+        }
+        elsif (/^\s*User-Agent:\s*(.*)\s*$/i)
+        {                                   # List of robot names
+            next if ($in_mine);
+            local($agent) = $1;
+            if ($agent =~ /\b$whoami\b/i) { $in_mine = 1; next; }
+            if ($agent =~ /^\*/)          { $in_def  = 1; }
+        }
+        elsif (/^\s*Disallow:\s*(.*)\s*$/i)
+        {                                   # List of url's to avoid
+            next unless ($in_def || $in_mine);
+            $drs = $1;
+            if ($in_mine) { $mine_dr .= ' '. $drs; next; }
+            if ($in_def)  { $def_dr  .= ' '. $drs; }
+        }
+    }
+
+    if ($in_mine) { $def_dr = $mine_dr; }   # My own record takes precedence
+
+    if ($def_dr !~ /^\s*$/)                 # If not a blank line
+    {
+        foreach $drs (split(' ', $def_dr))  # For each url to avoid
+        {                                   # Add to avoids table
+            &add_avoid(&wwwurl'absolute($url, $drs));
+        }
+    }
+    return 1;                               # New site is now checked
+}
+
+# ==========================================================================
+# Add the given $site to the sites table, duplication will be detected.
+# ==========================================================================
+sub add_site
+{
+    local($site) = @_;                      # Site to be added to table
+    local($idx)  = $Sites{$site};           # Retrieve index based upon site
+
+    if (!$idx)                              # Index not defined?
+    {
+        $idx = ++$SitesNum;                 # Must create new index
+        $Sites{$site} = $idx;               # Make room for new site
+    }
+    $SitesAddr[$idx] = $site;               # Enter into sites table
+}
+
+# ==========================================================================
+# Add the given $url to the avoids table. All existing avoid or leaf entries
+# will be checked first for duplication or overlapping.
+# ==========================================================================
+sub add_avoid
+{
+    local($url) = @_;                       # Url to be added to avoids table
+    local($old);                            # Old url in avoids table
+    local($idx);                            # Index into avoids table
+    local($pos);                            # Position in avoids table
+
+    undef $pos;                             # Set to be undefined
+
+    foreach $idx (1 .. $AvoidNum)           # For each node in avoids table
+    {
+        if (!$AvoidURL[$idx])               # Gap exists in avoids table?
+        {
+            $pos = $idx;  next;             # Fill any gaps
+        }
+        $old = $AvoidURL[$idx];             # Recall old url to be matched
+        if (($url eq $old) ||               # Url duplicates an old one?
+            ($url =~ m#^$old#))             # Url less general than old one?
+        {
+            return;                         # Don't need to add to table
+        }
+        if ($old =~ m#^$url#)               # Url more general than old one?
+        {
+            $pos = $idx;  last;             # Update with more general url
+        }
+    }
+
+    if (!defined($pos)) { $pos = ++$AvoidNum; }
+    $AvoidURL[$pos] = $url;                 # Add url to avoids table
+}
+
+# ==========================================================================
+# Add the given $url to the leaf table for the duration of the current
+# traversal (useful for delineating the bounds of a traversal process).
+# All existing leaf entries will be checked for duplication or overlapping.
+# ==========================================================================
+sub add_leaf
+{
+    local($url) = @_;                       # Url to be added to leaf table
+    local($old);                            # Old url in leaf table
+    local($idx);                            # Index into leaf table
+
+    foreach $idx (1 .. $LeafNum)            # For each node in leaf table
+    {
+        $old = $LeafURL[$idx];              # Recall old url to be matched
+        return if ($url =~ m#^$old#);       # Url less general than old one?
+    }    
+    $LeafURL[++$LeafNum] = $url;            # Add url to leaf table
+}
+
+# ==========================================================================
+# Set the current traversal $status of the given $node, provided it is more
+# advanced than previously recorded status.
+# Return true (1) if okay, else false (0) if $node not found.
+# ==========================================================================
+sub set_status
+{
+    local($node, $status) = @_;             # Status of node to be set
+
+    return 0 unless defined($VisURL[$node]);# Node not found in history
+
+    local($cstat) = $VisStatus[$node];      # Recall node traversal status
+
+    if (!defined($cstat) ||                 # Undefined old status or
+        ($cstat < $status))                 # Current status more advanced 
+    {
+        $VisStatus[$node] = $status;        # Set current improved status
+    }
+    return 1;                               # Status ok
+}
+
+# ==========================================================================
+# Reset the status of all visited nodes in history so that they are no
+# longer considered traversed.
+# ==========================================================================
+sub reset_status
+{
+    local($node);
+
+    foreach $node (1 .. $VisNumber)         # For each node in history
+    {
+        next unless defined($VisURL[$node]);# Skip over holes in history
+        $VisInTask[$node] = 0;              # Not considered in this task
+
+        if ($VisStatus[$node] > $S_tested_unknown)
+        {
+            $VisStatus[$node] = $S_tested_unknown;
+        }
+        elsif (($VisStatus[$node] == $S_seen_not_tested) ||
+               ($VisStatus[$node] == $S_will_leaf)       ||
+               ($VisStatus[$node] == $S_will_test))
+        {
+            $VisStatus[$node] = $S_not_seen;
+        }
+    }
+}
+
+# ==========================================================================
+# Check to see if the passed-in absolute $url is in history. If so, update
+# its $status iff the new status is more advanced and return the $node index
+# to its history record. If not, create a history record for the new $url
+# with the given $status.
+# ==========================================================================
+sub remember
+{
+    local($url, $status) = @_;              # Url and status to be remembered
+    local($node) = $Visited{$url};          # Retrieve node index from url
+
+    if (!$node)                             # If node not found in history
+    {
+        $node               = ++$VisNumber; # Create new node index
+        $Visited{$url}      = $node;        # Remember this node
+        $VisURL[$node]      = $url;         # Remember this url
+        $VisStatus[$node]   = $status;      # Remember url's status
+        $VisRespCode[$node] = 0;            # Init http response code
+
+        if (($url =~ m#^file:#) ||          # Is url local?
+            ($url =~ m#://[^/]*$LocalNetwork#io))
+        {
+            $VisLocal[$node] = 1;           # Yes, mark it as local
+        }
+    }
+    else                                    # Node is found in past history
+    {
+        &set_status($node, $status);        # Update status of node in history
+    }
+
+    $VisInTask[$node] = 1;                  # This node is in current task
+    return $node;                           # Return node index
+}
+
+# ==========================================================================
+# Store and update history from meta information held in *headers for the
+# given $node along with its $status and $response code from a recent WWW
+# request. Return 1 if okay, or 0 if the $node was not found in history.
+# ==========================================================================
+sub store
+{
+    local($node, $status, $response, *headers) = @_;
+
+    return 0 unless defined($VisURL[$node]);            # Node not found?
+
+    if (($VisStatus[$node] == $S_will_leaf) &&          # Will be leafed and
+        ($status           == $S_tested_unknown))       #   already tested?
+    {
+        $status = $S_leafed;                            # Then treat as leafed
+    }
+    &set_status($node, $status);                        # Store status
+
+    $VisConType[$node]  =  $headers{'content-type'};    # MIME Content-type
+    $VisRedirect[$node] = ($headers{'uri'} ||
+                           $headers{'location'});       # Redirected URL
+    $VisTitle[$node]    =  $headers{'title'};           # Title text
+    $VisOwner[$node]    =  $headers{'owner'};           # Owner name
+    $VisReplyTo[$node]  =  $headers{'reply-to'};        # Reply-To address
+    $VisLastMod[$node]  =  $headers{'last-modified'};   # Last-modified date
+    $VisExpires[$node]  =  $headers{'expires'};         # Expires date
+    $VisRespCode[$node] =  $response;                   # Latest response code
+
+    return 1;                                           # Store operation ok
+}
+
+# ==========================================================================
+# Recall meta information stored in history for the given $node, to be
+# passed back inside the %headers array. Return the most recent response
+# code or 0 if the given $node was not found in history.
+# ==========================================================================
+sub recall
+{
+    local($node, *headers) = @_;
+
+    return 0 unless defined($VisURL[$node]);            # Node not found?
+
+    $headers{'content-type'}  = $VisConType[$node];     # MIME Content-type
+    $headers{'uri'}           = $VisRedirect[$node];    # Redirected URL
+    $headers{'title'}         = $VisTitle[$node];       # Title text
+    $headers{'owner'}         = $VisOwner[$node];       # Owner name
+    $headers{'reply-to'}      = $VisReplyTo[$node];     # Reply-To address
+    $headers{'last-modified'} = $VisLastMod[$node];     # Last-modified date
+    $headers{'expires'}       = $VisExpires[$node];     # Expires date
+
+    return $VisRespCode[$node];                         # Latest response code
+}
+
+# ==========================================================================
+# Return true (1) if the given $node has been avoided.
+# Return false (0) if the given $node was not found in history.
+# ==========================================================================
+sub was_avoided
+{
+    local($node) = @_;
+
+    return 0 unless defined($VisURL[$node]);            # Node not found?
+    return ($VisStatus[$node] == $S_avoided);
+}
+
+# ==========================================================================
+# Return true (1) if the given $node has been tested.
+# Return false (0) if the given $node was not found in history.
+# ==========================================================================
+sub was_tested
+{
+    local($node) = @_;
+
+    return 0 unless defined($VisURL[$node]);            # Node not found?
+    return ($VisStatus[$node] >= $S_tested_unknown);
+}
+
+# ==========================================================================
+# Return true (1) if the given $node is untestable.
+# Return false (0) if the given $node was not found in history.
+# ==========================================================================
+sub is_untestable
+{
+    local($node) = @_;
+
+    return 0 unless defined($VisURL[$node]);            # Node not found?
+    return ($VisRespCode[$node] == $RC_not_implemented_client);
+}
+
+# ==========================================================================
+# Return true (1) if the given $node will be or has already been checked for
+# its traversal status for this infostructure.
+# Return false (0) if the given $node was not found in history.
+# ==========================================================================
+sub is_known
+{
+    local($node) = @_;
+
+    return 0 unless defined($VisURL[$node]);            # Node not found?
+    return ($VisStatus[$node] > $S_tested_unknown);
+}
+
+# ==========================================================================
+# Return true (1) if the given $node will be or has already been traversed
+# (or leafed) for this infostructure.
+# Return false (0) if the given $node was not found in history.
+# ==========================================================================
+sub is_traversing
+{
+    local($node) = @_;
+
+    return 0 unless defined($VisURL[$node]);            # Node not found?
+    return ($VisStatus[$node] >= $S_will_traverse);
+}
+
+# ==========================================================================
+# Return true (1) if the given $node has been traversed.
+# Return false (0) if the given $node was not found in history.
+# ==========================================================================
+sub was_traversed
+{
+    local($node) = @_;
+
+    return 0 unless defined($VisURL[$node]);            # Node not found?
+    return ($VisStatus[$node] == $S_traversed);
+}
+
+# ==========================================================================
+# Return true if given $node is considered local. Return undef otherwise.
+# ==========================================================================
+sub is_local
+{
+    return $VisLocal[$_[0]];
+}
+
+# ==========================================================================
+# Return the stored url of the given $node. Return undef if not found.
+# ==========================================================================
+sub get_url
+{
+    return $VisURL[$_[0]];
+}
+
+# ==========================================================================
+# Traverse an entire infostructure in breadth-first manner. The
+# infostructure is indexed at $task and named $taskname. Start traversal at
+# $tasktop url and continuing until there are no more nodes to traverse
+# within the infostructure bounded by $taskbound, or $MaxDepth is reached.
+# ==========================================================================
+sub traverse_web
+{
+    local($task, $taskname, $tasktop, $taskbound) = @_;
+
+    &begin_summary($task);                  # Start of infostructure traversal
+
+    local($url)    = &wwwurl'absolute($BaseURL, $tasktop);
+    local($node)   = &remember($url, $S_seen_not_tested);
+    local($depth)  = 0;                     # Current depth starts at zero
+    local($parent) = '';                    # Parent of current node
+    $tasktop       = $url;                  # The absolute form of tasktop
+
+    if (&should_avoid($node))               # Node should be avoided?
+    {
+        print "Avoided Top URL $url ... ";
+        &traversed($node);                  # Node considered traversed
+        undef $node;                        # Node is undefined now
+    }
+
+    while ($node)                           # While more nodes in queue
+    {
+        next if (!$url);                    # Skip in case node was deleted
+
+        print "Traversing $url ... ";
+        &traverse_link($node, $parent);     # Traverse link to GET node url
+        &traversed($node);                  # Node marked as traversed
+
+        while ($TestLinks[0])               # While more links to test
+        {
+            local($child) = shift(@TestLinks);  # $url is now the parent
+            local($abs)   = shift(@TestAbs);    # Absolute url
+            local($orig)  = shift(@TestOrig);   # Original href
+            local($type)  = shift(@TestType);   # Anchor type
+
+            next if (!$child);              # Skip if child not defined
+                                            # Remember child as seen
+            local($vidx) = &remember($child, $S_seen_not_tested);
+            local($reused);                 # Flag indicates reuse of test
+
+            if (&was_tested($vidx))         # Was child tested before?
+            {
+                print "Reusing test of $child ... ";
+                $reused = 1;                # Yes, previous result reused
+            }
+            else
+            {
+                if (&should_avoid($vidx))   # Should child be avoided?
+                {
+                    print "Avoiding $child ... ";
+                    &tested($vidx, 1);      # Child considered tested
+                    next;                   # Next child to test
+                }
+
+                print "Testing $child ... ";
+                &test_link($vidx, $url);    # Test url link with HEAD
+                $reused = 0;                # Mark as not reused
+            }
+
+            if ($depth >= $MaxDepth)        # Maximum depth exceeded?
+            {                               # Don't go beyond max depth
+                ; # Do Nothing              # Don't mark as leaf either
+            }
+            elsif (&should_traverse($vidx, $type, $taskbound))
+            {                               # Child should be traversed
+                local($pos)       = $#TravNodes + 1;
+                $TravNodes[$pos]  = $vidx;
+                $TravDepth[$pos]  = $depth + 1;
+                $TravParent[$pos] = $url;
+                &set_status($vidx, $S_will_traverse);
+            }
+            else                            # Child should be leafed
+            {
+                &set_status($vidx, $S_leafed);
+            }
+
+            &tested($vidx, $reused);        # Mark child as tested
+        }
+        print "Done Traversing $url ...\n... at ", &wwwdates'wtime(time,''),
+              "-- ", $#TravNodes + 1, " remaining on queue\n\n";
+    }
+    continue
+    {
+        $node   = shift(@TravNodes);        # Next in queue to examine
+        $depth  = shift(@TravDepth);
+        $parent = shift(@TravParent);
+        if ($node) { $url = &get_url($node); }
+    }
+
+    &end_summary($task);                    # End of infostructure traversal
+    &reset_status;                          # Reset status of node history
+}
+
+# ==========================================================================
+# Return true (1) if the given $node should be or has already been avoided.
+# Return false (0) otherwise.
+# ==========================================================================
+sub should_avoid
+{
+    local($node) = @_;                      # Should this node be avoided?
+
+    # Has this node already been avoided? So should avoid.
+    # Has this node already been checked? So should not avoid.
+
+    return 1 if ( $VisStatus[$node] == $S_avoided);
+    return 0 if (($VisStatus[$node] >  $S_avoided) &&
+                 ($VisStatus[$node] != $S_tested_unknown));
+
+    local($url) = $VisURL[$node];           # Get this node's url
+    return 1 unless ($url);                 #   or should avoid if not found
+
+    local($check) = &check_url($url);       # Check Avoid/Leaf status
+    return 0 unless ($check);               # Check 0 => no restrictions
+
+    if ($check == 1)                        # Check 1 => must leaf this url
+    {
+        $VisStatus[$node] = ($VisStatus[$node] == $S_tested_unknown)
+                          ?  $S_leafed : $S_will_leaf;
+        return 0;                           # Don't have to avoid
+    }
+
+    $VisStatus[$node] = $S_avoided;         # Check 2 => must avoid this url
+    return 1;                               # Should avoid this url
+}
+
+# ==========================================================================
+# Determine whether or not the given $node should be traversed or leafed for
+# the current infostructure. Don't traverse if:
+#     (1) node $type is Image or Queries;
+#     (2) node should be avoided;
+#     (3) node already traversed (or will soon);
+#     (4) result from previous test was not OK;
+#     (5) node content is not HTML;
+#     (6) node $url is not below $taskbound.
+# Return  1 => should traverse this node
+#         0 => should leaf     this node
+# ==========================================================================
+sub should_traverse
+{
+    local($node, $type, $taskbound) = @_;
+
+    return 0 if (($type eq 'I') ||          # Don't traverse links of IMG's
+                 ($type eq 'Q'));           #   or Queries anchor type
+
+    return 0 if (&should_avoid($node));     # Don't traverse if should avoid
+    return 0 if (&is_known($node));         # Don't traverse again if already
+                                            #   traversed (or will soon)
+
+    local(%headers) = ();                   # Holds headers meta information
+    local($response);                       # Http response code
+    $response = &recall($node, *headers);   # Recall results from 'HEAD' test
+
+                                            # Don't traverse if test not OK
+    return 0 unless (($WhatToDo{$response} == $DO_continue) ||
+                     ($WhatToDo{$response} == $DO_redirect));
+
+    local($url) = &get_url($node);          # Retrieve url from node index
+                                            # Don't traverse if not HTML
+    return 0 unless (&is_html($url, *headers));
+
+    local($scheme,  $addr,  $port,  $path,  $query,  $frag)
+          = &wwwurl'parse($url);            # $url -> scheme://addr:port
+
+    local($_scheme, $_addr, $_port, $_path, $_query, $_frag)
+          = &wwwurl'parse($taskbound);      # $taskbound -> scheme://addr:port
+
+    return 0 unless (($scheme eq $_scheme) &&
+                     ($addr   eq $_addr)   &&
+                     ($port   eq $_port));  # Don't traverse if not equal
+
+    $_path =~ s#/[^/]*$#/#;                 # Trim any filename off $TaskBound
+    return 0 unless ($path =~ /^$_path/);   # Check if url is below $TaskBound
+
+    return 1;                               # Otherwise should traverse!
+}
+
+# ==========================================================================
+# Test url indexed by given $node via http 'HEAD' request, may slow down to
+# moderate its speed as needed. Its $parent node is actually its 'Referer'
+# for purpose of providing http meta information to server. Store response
+# code and headers meta information in history and update its status.
+# Return the http server response code.
+# ==========================================================================
+sub test_link
+{
+    local($node, $parent) = @_;             # Current node and its parent
+
+    local($url)       = &get_url($node);    # Retrieve stored url from history
+    local(%headers)   = ();                 # To hold parsed response headers
+    local($headers)   = '';                 # To hold response headers
+    local($content)   = '';                 # To hold response content
+
+                                            # Set up the HTTP request headers
+    $headers{'Accept'}  = '*/*';            # All content types are of interest
+    $headers{'Referer'} = $parent;          # Parent node refers this url
+
+                                            # Do not make too many consecutive
+    &slow_down($url);                       #   requests too fast. May sleep...
+
+    # Issue http 'HEAD' request for $url subject to $Timeout, pass back
+    # $response code, *headers meta information and *content.
+
+    local($response) = &www'request('HEAD', $url, *headers, *content, $Timeout);
+
+    # Store $response code and *headers meta information in history.
+
+    &store($node, $S_tested_unknown, $response, *headers);
+
+    return $response;                       # Return http response code
+}
+
+# ==========================================================================
+# Traverse url indexed by given $node via http 'GET' request, may slow down
+# to moderate its speed as needed. Its $parent node is actually its
+# 'Referer' for purpose of providing http meta information to server. Add
+# any links extracted from headers or content of this $node to the @Test*
+# queues for further traversal. Store response code and headers meta
+# information in history and update its status. Return the http server
+# response code.
+# ==========================================================================
+sub traverse_link
+{
+    local($node, $parent) = @_;             # Current node and its parent
+
+    local($url)       = &get_url($node);    # Retrieve stored url from history
+    local(%headers)   = ();                 # To hold parsed response headers
+    local($headers)   = '';                 # To hold response headers
+    local($content)   = '';                 # To hold response content
+
+                                            # Set up the HTTP request headers
+    $headers{'Accept'}  = 'text/html';      # Only "text/html" is of interest
+    $headers{'Referer'} = $parent;          # Parent node refers this url
+
+                                            # Do not make too many consecutive
+    &slow_down($url);                       #   requests too fast. May sleep...
+
+    # Issue http 'GET' request for $url subject to $Timeout, pass back
+    # $response code, *headers meta information and *content.
+
+    local($response) = &www'request('GET', $url, *headers, *content, $Timeout);
+
+    # Extract links from *headers and *content for use in later traversal.
+
+    &extract_links($url, *headers, *content, $response);
+
+    # Store $response code and *headers meta information in history.
+
+    &store($node, $S_traversed, $response, *headers);
+
+    return $response;                       # Return http response code
+}
+
+# ==========================================================================
+# Extract $url document meta information and links from *headers and
+# *content, and deposit in @Test* arrays for use in further traversal. The
+# $response argument determines whether redirected link is encountered. 
+# ==========================================================================
+sub extract_links
+{
+    local($url, *headers, *content, $response) = @_;
+	
+    @TestLinks = ();                        # Absolute url's (w/o query or tag)
+    @TestAbs   = ();                        # Absolute url's (w/  query or tag)
+    @TestOrig  = ();                        # Original href
+    @TestType  = ();                        # (Link, Image, Query, Redirect)
+
+    if (($WhatToDo{$response} == $DO_continue) &&
+        (&is_html($url, *headers)))         # Only HTML contains links
+    {
+        local($encoding) = $headers{'content-encoding'};
+
+        if (&decode($encoding, *content))   # Decode document if compressed
+        {
+            # Extract $url document meta information, links, and anchor types
+            # from *headers and *content, and passed back for traversal use.
+
+            &wwwhtml'extract_links($url, *headers, *content,  *TestLinks,
+                                         *TestAbs, *TestOrig, *TestType);
+        }
+    }
+
+    if ($WhatToDo{$response} == $DO_redirect)
+    {
+        local($redir);                      # Redir treated as single child
+
+        if ($redir = $headers{'location'})
+        {
+            $redir =~ s/, .*//;             # Get rid of multiple
+        }                                   #   Location: entries
+        elsif ($redir = $headers{'uri'})
+        {
+            $redir =~ s/\s*;.*//;
+            $redir =~ s/, .*//;             # Eliminate multiple URI: entries
+        }
+
+        if ($redir)                         # Redirected link exists?
+        {
+            $TestLinks[0] = $redir;         # Absolute url to be tested
+            $TestAbs[0]   = $redir;         # Original HREF in absolute form
+            $TestOrig[0]  = $redir;         # Original HREF
+            $TestType[0]  = 'R';            # Redirected link type
+        }
+    }
+}
+
+# ==========================================================================
+# Given the $url to test or traverse, make sure that WebWalker is not making
+# too many consecutive requests and/or going too fast with respect to a
+# single site. This prevents WebWalker from completely dominating the
+# resources of a particular server. The remedy is to sleep for a while
+# within this routine before returning.
+# ==========================================================================
+sub slow_down
+{
+    local($url) = @_;                       # Given url to test or traverse
+    local($site);                           # Http site extracted from url
+    local($secs);                           # Wake up time (secs after Epoch)
+
+    return unless ($url =~ m#^http#);       # Applicable to http only
+    return unless ($site = &wwwurl'get_site($url));
+
+    LOITER: {
+        if ($site ne $PrevSite)             # Not same as previous site?
+        {
+            $CurConsec = 1;                 # Init current consec request
+            last LOITER;                    # Break out LOITER scope
+        }
+
+        if (++$CurConsec > $MaxConsec)      # Too many consecutive requests?
+        {                                   #   to the same site?
+            sleep($PauseTime);              # Yes, take a breather
+            $CurConsec = 1;                 # Re-init current consec request
+            last LOITER;                    # Break out LOITER scope
+        }
+
+        $secs = ($PrevTime + $BetweenTime); # Wake up time in seconds
+        if ($secs > time)                   # Not quite time yet to wake up
+        {
+            sleep($secs - time);            # Sleep the remaining seconds
+        }
+    }
+
+    $PrevSite = $site;                      # Remember latest site
+    $PrevTime = time;                       # Remember current time
+}
+
+# ==========================================================================
+# Determine from the given $url and response *headers whether it points to a
+# "text/html" document. Note that this routine also has the side-effect of
+# setting the content-type and content-encoding if they were previously
+# undefined.
+# Return  1 => text/html content-type
+#         0 => not text/html content-type
+# ==========================================================================
+sub is_html
+{
+    local($url, *headers) = @_;             # Url and http response headers
+
+    if (!defined($headers{'content-type'})) # No content-type specified?
+    {
+        $_ = $url;                          # Start with url string
+        s#/[^/.]*\.([^/]*)$#/#;             # Grab filename extension off url
+        local($suffix) = ($1 || '');        # Assign suffix string, if any
+
+        # Set content-type and content-encoding headers based on $suffix
+
+        &wwwmime'set_content($suffix, *headers);
+    }
+
+    # Match content-type with "text/html" string and return success/failure
+
+    return 1 if ($headers{'content-type'} =~ m#\btext/html\b#io);
+    return 0;                               # Not text/html content-type
+}
+
+# ==========================================================================
+# Translate encoded content, of type $encoding and held in $content, into
+# its decoded form. The new *content is passed back in place of the old.
+# Return  0 => failed to decode content
+#         1 => succeeded in decoding content
+# ==========================================================================
+sub decode
+{
+    local($encoding, *content) = @_;        # Encoding type, encoded content
+
+    return 1 unless ($encoding);            # Return success if not encoded!
+
+    local($com) =  $CEdecoder{$encoding};   # Command for decoding
+    local($ext) = ($CEextension{$encoding}  # File name extension
+                   || '');                  #   is optional
+
+    return 0 unless ($CEfile && $com);      # Must have file name and command
+
+    if (!open(ENCODE, "> $CEfile$ext"))     # Can't open file for write
+    {
+        print STDERR "Can't write to $CEfile$ext: $!\n";
+        return 0;                           # Failed to decode content
+    }
+
+    print ENCODE $content;                  # Write encoded content to file
+    close(ENCODE);                          # Close encoded file
+    undef $content;                         # Empty all contents
+
+    system("$com $CEfile$ext");             # Execute decoding command
+    if (!open(DECODE, $CEfile))             # Can't open file for read
+    {
+        print STDERR "Can't open decompressed $CEfile: $!\n";
+        return 0;                           # Failed to decode content
+    }
+
+    local($/);                              # Input record separator
+    undef($/);                              # No record separator is matched
+    $content = <DECODE>;                    # Read to end of DECODE file
+    close(DECODE);                          # Close decoded file
+    unlink($CEfile);                        # Remove decoded file
+
+    return 1;                               # Succeeded in decoding content
+}
+
+# ==========================================================================
+# At the beginning of an infostructure traversal, print out a prologue,
+# initialize all counters for statistical summary, and specify values for
+# change window and expire window, as appropriate. Also empty all
+# information arrays for broken or redirected links, and changed or expired
+# nodes. The infostructure is represented in arrays @Task* indexed by $task.
+# ==========================================================================
+sub begin_summary
+{
+    local($task) = @_;                      # Current index into @Task*
+                                            # Print infostructure prologue
+    if ($CGI) { print "<PRE>\n"; }          # HTML formatting as required
+    print 'Starting Infostructure [', $TaskName[$task], '] at ',
+           &wwwdates'wtime(time, ''), "\n";
+
+    if (defined($TaskChangeWindow[$task]))  # Task change window specified?
+    {
+        $ChangeDays   = $TaskChangeWindow[$task];
+        $ChangeWindow = $TaskChangeWindow[$task] * 86400;
+    }
+    else { $ChangeDays = $ChangeWindow = 0; }
+
+    if (defined($TaskExpireWindow[$task]))  # Task expire window specified?
+    {
+        $ExpireDays   = $TaskExpireWindow[$task];
+        $ExpireWindow = $TaskExpireWindow[$task] * 86400;
+    }
+    else { $ExpireDays = $ExpireWindow = 0; }
+
+    &init_summary;                          # Init all counters for summary
+
+    %BrokenNodes   = ();                    # Init broken nodes info array
+    %RedirectNodes = ();                    # Init redirected nodes info array
+    %ChangedNodes  = ();                    # Init changed nodes info array
+    %ExpiredNodes  = ();                    # Init expired nodes info array
+}
+
+# ==========================================================================
+# Initialize all counters for generating statistical table summary results.
+# ==========================================================================
+sub init_summary
+{
+    $TotalHrefs = 0;                        # Total url reference count
+    $TotalNodes = 0;                        # Total unique node count
+    $TotalLocal = 0;                        # Total local node count
+
+    $HrefsTrav  = 0;                        # Traversed url reference count
+    $HrefsTest  = 0;                        # Tested url reference count
+    $HrefsReus  = 0;                        # Reused url reference count
+    $HrefsAvd   = 0;                        # Avoided url reference count
+    $HrefsUnt   = 0;                        # Untestable url reference count
+    $HrefsBroke = 0;                        # Broken url reference count
+    $HrefsRedir = 0;                        # Redirected url reference count
+    $HrefsChg   = 0;                        # Changed url reference count
+    $HrefsExp   = 0;                        # Expired url reference count
+    $HrefsLoc   = 0;                        # Local url reference count
+    $HrefsRmt   = 0;                        # Remote url reference count
+
+    $NodesTrav  = 0;                        # Unique traversed node count
+    $NodesTest  = 0;                        # Unique tested node count
+    $NodesReus  = 0;                        # Unique reused node count
+    $NodesAvd   = 0;                        # Unique avoided node count
+    $NodesUnt   = 0;                        # Unique untestable node count
+    $NodesBroke = 0;                        # Unique broken node count
+    $NodesRedir = 0;                        # Unique redirected node count
+    $NodesChg   = 0;                        # Unique changed node count
+    $NodesExp   = 0;                        # Unique expired node count
+    $NodesRmt   = 0;                        # Unique remote node count
+
+    $LocalTrav  = 0;                        # Local traversed node count
+    $LocalTest  = 0;                        # Local tested node count
+    $LocalReus  = 0;                        # Local reused node count
+    $LocalAvd   = 0;                        # Local avoided node count
+    $LocalUnt   = 0;                        # Local untestable node count
+    $LocalBroke = 0;                        # Local broken node count
+    $LocalRedir = 0;                        # Local redirected node count
+    $LocalChg   = 0;                        # Local changed node count
+    $LocalExp   = 0;                        # Local expired node count
+}
+
+# ==========================================================================
+# Determine response message and print on stdout if $node was not $reused.
+# Save any info on status of broken or redirected links, and changed nodes,
+# as appropriate. Update all direct $Hrefs* counters. The given $node has
+# been tested (with 'HEAD' method) as part of the current infostructure.
+# ==========================================================================
+sub tested
+{
+    local($node, $reused) = @_;             # Tested node, reuse flag
+    local(%headers)     = ();               # Headers info to be recalled
+    local($url)         = &get_url($node);  # Retrieve url from history
+    local($response)    = &recall($node, *headers);
+    local($respmsg);                        # Response message
+    local($is_broken)   = 0;                # Is link broken?
+    local($is_redirect) = 0;                # Is link redirected?
+    local($is_changed)  = 0;                # Is node changed?
+
+    ++$TotalHrefs;                          # Total url reference count
+    if (&is_local($node)) { ++$HrefsLoc; }  # Local url reference count
+
+    if (&was_avoided($node))                # Node was avoided
+    {
+        $respmsg = "000 Avoided";           # Replace "000 Unknown Error"
+        ++$HrefsAvd;                        # Avoided url reference count
+    }
+    elsif (&is_untestable($node))           # Node found to be untestable
+    {
+        $respmsg = "$RC_not_implemented_client Not Tested";
+        ++$HrefsUnt;                        # Untestable url reference count
+    }
+    else                                    # All other cases...
+    {
+        $respmsg = "$response $RespMessage{$response}";
+        if (!$reused) { ++$HrefsTest; }     # Tested url reference count
+
+        local($lmd)  = $headers{'last-modified'};
+        local($lmt);                        # Last-modified (secs since Epoch)
+
+        $is_broken   = ($WhatToDo{$response} == $DO_broken);
+        $is_redirect = ($WhatToDo{$response} == $DO_redirect);
+
+        $is_changed  = ($ChangeWindow                       &&
+                        defined($lmd)                       &&
+                        ($lmt = &wwwdates'get_gmtime($lmd)) &&
+                        (($lmt + $ChangeWindow) >= time));
+    }
+
+    if ($is_broken)                         # Broken link?
+    {
+        &save_broken($node, $respmsg, $url);
+        ++$HrefsBroke;                      # Broken url reference count
+    }
+    if ($is_redirect)                       # Redirected link?
+    {
+        &save_redirect($node, $respmsg, $url);
+        ++$HrefsRedir;                      # Redirected url reference count
+    }
+    if ($is_changed)                        # Changed node?
+    {
+        &save_changed($node, $respmsg, $url, $lmd);
+        ++$HrefsChg;                        # Changed url reference count
+    }
+    if (&is_traversing($node))              # Will or already traversed?
+    {
+        ++$HrefsTrav;                       # Traversed url reference count
+    }
+
+    print $respmsg if (!$reused);           # Print response message
+    print "\n";                             #   if not reused
+}
+
+# ==========================================================================
+# Determine response message and print on stdout. Save any info on status of
+# broken or redirected links, changed or expired nodes, as appropriate. The
+# given $node has been traversed (with 'GET' method) as part of the current
+# infostructure. The node was then (if possible) html-parsed for possible
+# child links. The program will next work on testing extracted child links.
+# ==========================================================================
+sub traversed
+{
+    local($node)        = @_;               # Given node that was traversed
+    local(%headers)     = ();               # Headers info to be recalled
+    local($url)         = &get_url($node);  # Retrieve url from history
+    local($response)    = &recall($node, *headers);
+    local($respmsg);                        # Response message
+    local($is_broken)   = 0;                # Is link broken?
+    local($is_redirect) = 0;                # Is link redirected?
+    local($is_changed)  = 0;                # Is node changed?
+    local($is_expired)  = 0;                # Is node expired?
+
+    if (&was_avoided($node))                # Node was avoided
+    {
+        $respmsg = "000 Avoided";           # Replace "000 Unknown Error"
+    }
+    elsif (&is_untestable($node))           # Node found to be untestable
+    {
+        $respmsg = "$RC_not_implemented_client Not Tested";
+    }
+    else                                    # All other cases...
+    {
+        $respmsg = "$response $RespMessage{$response}";
+
+        local($lmd)     = $headers{'last-modified'};
+        local($expd)    = $headers{'expires'};
+        local($lmt);                        # Last-modified (secs since Epoch)
+        local($expt);                       # Expiration (secs since Epoch)
+        local($current) = time;             # Current time
+
+        $is_broken   = ($WhatToDo{$response} == $DO_broken);
+        $is_redirect = ($WhatToDo{$response} == $DO_redirect);
+
+        $is_changed  = ($ChangeWindow                         &&
+                        defined($lmd)                         &&
+                        ($lmt = &wwwdates'get_gmtime($lmd))   &&
+                        (($lmt + $ChangeWindow) >= $current));
+
+        $is_expired  = ($ExpireWindow                         &&
+                        defined($expd)                        &&
+                        ($expt = &wwwdates'get_gmtime($expd)) &&
+                        (($expt - $ExpireWindow) <= $current));
+    }
+
+    # Save information arrays for broken or redirected links, as well
+    # as for changed or expired nodes, as appropriate
+
+    if ($is_broken)    { &save_broken  ($node, $respmsg, $url);        }
+    if ($is_redirect)  { &save_redirect($node, $respmsg, $url);        }
+    if ($is_changed)   { &save_changed ($node, $respmsg, $url, $lmd);  }
+    if ($is_expired)   { &save_expired ($node, $respmsg, $url, $expd); }
+
+    print $respmsg, "\n";                   # Print response message
+}
+
+# ==========================================================================
+# Save the given $node of broken link along with its response message
+# ($respmsg) and $url so that it can later be printed in the list of broken
+# links at the end of the infostructure traversal. In case of multiple
+# references, prefer the first one saved.
+# ==========================================================================
+sub save_broken
+{
+    local($node, $respmsg, $url) = @_;
+
+    return if $BrokenNodes{$node};          # Previously saved, just return
+
+    $BrokenNodes{$node} = <<"EOentry";      # Enter in broken nodes array
+    $url  ($respmsg)
+EOentry
+
+    ++$NodesBroke;                          # Unique broken node count
+    ++$LocalBroke if (&is_local($node));    # Local broken node count
+}
+
+# ==========================================================================
+# Save the given $node of redirected link along with its response message
+# ($respmsg) and $url so that it can later be printed in the list of
+# redirected links at the end of the infostructure traversal. In case of
+# multiple references, prefer the first one saved.
+# ==========================================================================
+sub save_redirect
+{
+    local($node, $respmsg, $url) = @_;
+
+    return if $RedirectNodes{$node};        # Previously saved, just return
+
+    $RedirectNodes{$node} = <<"EOentry";    # Enter in redirected nodes array
+    $url  ($respmsg)
+EOentry
+
+    ++$NodesRedir;                          # Unique redirected node count
+    ++$LocalRedir if (&is_local($node));    # Local redirected node count
+}
+
+# ==========================================================================
+# Save the given changed $node along with its response message ($respmsg),
+# $url and last-modified date ($lmd) so that it can later be printed in the
+# list of changed nodes at the end of the infostructure traversal. In case
+# of multiple references, prefer the first one saved.
+# ==========================================================================
+sub save_changed
+{
+    local($node, $respmsg, $url, $lmd) = @_;
+
+    return if $ChangedNodes{$node};         # Previously saved, just return
+
+    $ChangedNodes{$node} = <<"EOentry";     # Enter in changed nodes array
+    $url  ($respmsg)
+    Last-modified: $lmd
+EOentry
+
+    ++$NodesChg;                            # Unique changed node count
+    ++$LocalChg if (&is_local($node));      # Local changed node count
+}
+
+# ==========================================================================
+# Save the given expired $node along with its response message ($respmsg),
+# $url and expiration date ($expd) so that it can later be printed in the
+# list of expired nodes at the end of the infostructure traversal. In case
+# of multiple references, prefer the first one saved.
+# ==========================================================================
+sub save_expired
+{
+    local($node, $respmsg, $url, $expd) = @_;
+
+    return if $ExpiredNodes{$node};         # Previously saved, just return
+
+    $ExpiredNodes{$node} = <<"EOentry";     # Enter in expired nodes array
+    $url  ($respmsg)
+    Expires: $expd
+EOentry
+
+    ++$NodesExp;                            # Unique expired node count
+    ++$LocalExp if (&is_local($node));      # Local expired node count
+}
+
+# ==========================================================================
+# At the end of traversing an infostructure, print summary of results for
+# broken or redirected links, changed or expired nodes, as well as summary
+# statistical table, plus an epilogue. The infostructure is represented in
+# arrays @Task* indexed by $task.
+# ==========================================================================
+sub end_summary
+{
+    local($task) = @_;                      # Current index into @TaskName
+
+    if (keys %BrokenNodes)                  # Any broken links?
+    {
+        print "Broken Links:\n", values(%BrokenNodes);
+    }
+
+    if (keys %RedirectNodes)                # Any redirected links?
+    {
+        print "Redirected Links:\n", values(%RedirectNodes);
+    }
+
+    if ((keys %ChangedNodes) &&             # Any changed nodes, and
+        ($ChangeWindow > 0))                #   non-zero change window
+    {
+        print "Changed Links:\n", values(%ChangedNodes);
+    }
+
+    if ((keys %ExpiredNodes) &&             # Any expired nodes, and
+        ($ExpireWindow > 0))                #   non-zero expiration window?
+    {
+        print "Expired Documents:\n", values(%ExpiredNodes);
+    }
+
+    &update_summary;                        # Update summary table counters
+    print "\nSummary of Results:\n", &get_summary;
+
+                                            # Print infostructure epilogue
+    print 'Finished Infostructure [', $TaskName[$task], '] at ',
+           &wwwdates'wtime(time, ''), "\n\n";
+    if ($CGI) { print "</PRE>\n"; }         # HTML formatting as required
+}
+
+# ==========================================================================
+# Update counters used for collecting statistics to generate summary table.
+# ==========================================================================
+sub update_summary
+{
+    local($node);                           # Index into history arrays
+
+    foreach $node (1 .. $VisNumber)         # For each node visited
+    {
+        if ($VisInTask[$node])              # Url node is in current task?
+        {
+            ++$TotalNodes;                  # Increment total node count
+            ++$TotalLocal if (&is_local($node));
+
+            if (&was_avoided($node))        # Was url node avoided?
+            {
+                ++$NodesAvd;                # Increment avoided node count
+                ++$LocalAvd if (&is_local($node));
+            }
+            elsif (&is_untestable($node))   # Is url node untestable?
+            {
+                ++$NodesUnt;                # Increment untestable node count
+                ++$LocalUnt if (&is_local($node));
+            }
+            elsif (&was_tested($node))      # Was url node tested ('HEAD')?
+            {
+                ++$NodesTest;               # Increment tested node count
+                ++$LocalTest if (&is_local($node));
+
+                if (&was_traversed($node))  # Was url node traversed ('GET')
+                {
+                    ++$NodesTrav;           # Increment traversed node count
+                    ++$LocalTrav if (&is_local($node));
+                }
+            }
+        }
+    }
+
+    # Total count consists of reused, avoided, untestable and tested counts.
+    # Same for url references, unique url nodes and local url nodes.
+
+    $HrefsReus = $TotalHrefs - ($HrefsAvd + $HrefsUnt + $HrefsTest);
+    $NodesReus = $TotalNodes - ($NodesAvd + $NodesUnt + $NodesTest);
+    $LocalReus = $TotalLocal - ($LocalAvd + $LocalUnt + $LocalTest);
+
+    $HrefsRmt  = $TotalHrefs - $HrefsLoc;   # Total remote url reference count
+    $NodesRmt  = $TotalNodes - $TotalLocal; # Total remote node count
+}
+
+# ==========================================================================
+# Generate statistical summary of results. Return the table-formatted
+# statistical summary as an ASCII string ready to be printed out.
+# ==========================================================================
+sub get_summary
+{
+    local($th) = $TotalHrefs;               # Total url reference count
+    local($tn) = $TotalNodes;               # Total unique url node count
+    local($tl) = $TotalLocal;               # Total local url node count
+
+    if  (!$th) { $th = 1; }                 # Avoid divide by zero errors
+    if  (!$tn) { $tn = 1; }
+    if  (!$tl) { $tl = 1; }
+
+    return sprintf($SummaryFormat,          # Table-formatted summary
+                   $HrefsTrav,  (100*$HrefsTrav/$th),
+                   $NodesTrav,  (100*$NodesTrav/$tn),
+                   $LocalTrav,  (100*$LocalTrav/$tl),
+
+                   $HrefsTest,  (100*$HrefsTest/$th),
+                   $NodesTest,  (100*$NodesTest/$tn),
+                   $LocalTest,  (100*$LocalTest/$tl),
+
+                   $HrefsReus,  (100*$HrefsReus/$th),
+                   $NodesReus,  (100*$NodesReus/$tn),
+                   $LocalReus,  (100*$LocalReus/$tl),
+
+                   $HrefsAvd,   (100*$HrefsAvd/$th),
+                   $NodesAvd,   (100*$NodesAvd/$tn),
+                   $LocalAvd,   (100*$LocalAvd/$tl),
+
+                   $HrefsUnt,   (100*$HrefsUnt/$th),
+                   $NodesUnt,   (100*$NodesUnt/$tn),
+                   $LocalUnt,   (100*$LocalUnt/$tl),
+
+                   $HrefsBroke, (100*$HrefsBroke/$th),
+                   $NodesBroke, (100*$NodesBroke/$tn),
+                   $LocalBroke, (100*$LocalBroke/$tl),
+
+                   $HrefsRedir, (100*$HrefsRedir/$th),
+                   $NodesRedir, (100*$NodesRedir/$tn),
+                   $LocalRedir, (100*$LocalRedir/$tl),
+
+                   $ChangeDays,
+                   $HrefsChg,   (100*$HrefsChg/$th),
+                   $NodesChg,   (100*$NodesChg/$tn),
+                   $LocalChg,   (100*$LocalChg/$tl),
+
+                   $ExpireDays,
+                   $HrefsExp,   (100*$HrefsExp/$th),
+                   $NodesExp,   (100*$NodesExp/$tn),
+                   $LocalExp,   (100*$LocalExp/$tl),
+
+                   $HrefsLoc,   (100*$HrefsLoc/$th),
+                   $TotalLocal, (100*$TotalLocal/$tn),
+                   $TotalLocal,  100.0,
+
+                   $HrefsRmt,   (100*$HrefsRmt/$th),
+                   $NodesRmt,   (100*$NodesRmt/$tn),
+                   0,              0.0,
+
+                   $TotalHrefs,  100.0,
+                   $TotalNodes, (100*$TotalNodes/$th),
+                   $TotalLocal, (100*$TotalLocal/$th),
+                  );
+}
+
+# ==========================================================================
+1; #                              THE  END                                 #
+# ==========================================================================
+
