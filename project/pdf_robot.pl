@@ -323,7 +323,7 @@ sub grab_urls {
             
             $urls{ $link }      = 1;
             
-          if (defined $reg_text) {
+        if (defined $reg_text) {
                 $reg_text =~ s/[\n\r]/ /;
                 $reg_text =~ s/\s{2,}/ /;
 

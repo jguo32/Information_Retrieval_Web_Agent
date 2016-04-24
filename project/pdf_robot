@@ -179,7 +179,7 @@ while (@search_urls) {
     # }
 
     @search_urls = 
-  sort { $relevance{ $a } <=> $relevance{ $b }; } @search_urls;
+    sort { $relevance{ $a } <=> $relevance{ $b }; } @search_urls;
 
 }
 
@@ -210,15 +210,15 @@ sub wanted_content {
 
     # right now we only accept text/html
     #  and this requires only a *very* simple set of additions
-    # if ($content =~ m@application/postscript|application/pdf@ or $content =~ m@(text/html|text/plain)@){
-    #     push @wanted_urls, $url;
-    #     return 1;
-    # }
-
-    if ($content =~ m@application/pdf@) {
+    if ($content =~ m@application/postscript|application/pdf@ or $content =~ m@(text/html|text/plain)@){
         push @wanted_urls, $url;
         return 1;
     }
+
+    # if ($content =~ m@application/pdf@) {
+    #     push @wanted_urls, $url;
+    #     return 1;
+    # }
     
     return 0;
 
@@ -323,7 +323,7 @@ sub grab_urls {
             
             $urls{ $link }      = 1;
             
-          if (defined $reg_text) {
+            if (defined $reg_text) {
                 $reg_text =~ s/[\n\r]/ /;
                 $reg_text =~ s/\s{2,}/ /;
 
@@ -334,29 +334,29 @@ sub grab_urls {
                 # Since the url which is the more likely to contain email, phone, and address information should be searched first and 
                 # therefore we give such url smaller rel value, such as “~\w+” (which is included in faculties’ homepage url).
                 
-              if ($link =~ /~\w+$/){
-                  $rel = 1;
-              }
-              if ($link =~ /homepage/ and $reg_text =~ /homepage/){
-                  $rel = 2;
-              }
-              if ($link =~ /homepage/ or $reg_text =~ /homepage/){
-                  $rel = 3;
-              }
-              if ($link =~ /faculty/ and $reg_text =~ /faculty/){
-                  $rel = 4;
-              }
-              if ($link =~ /faculty/ or $reg_text =~ /faculty/){
-                  $rel = 5;
-              }
-              if ($link =~ /people/ and $reg_text =~ /people/){
-                  $rel = 6;
-              }
-              if ($link =~ /people/ or $reg_text =~ /people/){
-                  $rel = 7;
-              }
+                if ($link =~ /~\w+$/){
+                    $rel = 1;
+                }
+                if ($link =~ /homepage/ and $reg_text =~ /homepage/){
+                    $rel = 2;
+                }
+                if ($link =~ /homepage/ or $reg_text =~ /homepage/){
+                    $rel = 3;
+                }
+                if ($link =~ /faculty/ and $reg_text =~ /faculty/){
+                    $rel = 4;
+                }
+                if ($link =~ /faculty/ or $reg_text =~ /faculty/){
+                    $rel = 5;
+                }
+                if ($link =~ /people/ and $reg_text =~ /people/){
+                    $rel = 6;
+                }
+                if ($link =~ /people/ or $reg_text =~ /people/){
+                    $rel = 7;
+                }
           
-          }
+            }
 
             $relevance{ $link } = $rel;
             
