@@ -1,6 +1,6 @@
-# use PDF::API2;
+use PDF::API2;
 use CAM::PDF;
-# use CAM::PDF::PageText;
+use CAM::PDF::PageText;
 
 &main;
 
