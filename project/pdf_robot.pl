@@ -31,7 +31,9 @@ $| = 1;
 
 my $log_file = shift (@ARGV);
 my $content_file = shift (@ARGV);
-if ((!defined ($log_file)) || (!defined ($content_file))) {
+my $result_file = shift (@ARGV);
+
+if ((!defined ($log_file)) || (!defined ($content_file)) || (!defined ($result_file))) {
     print STDERR "You must specify a log file, a content file and a base_url\n";
     print STDERR "when running the web robot:\n";
     print STDERR "  ./robot_base.pl mylogfile.log content.txt base_url\n";
@@ -40,13 +42,7 @@ if ((!defined ($log_file)) || (!defined ($content_file))) {
 
 open LOG, ">$log_file";
 open CONTENT, ">$content_file";
-
-############################################################
-##               PLEASE CHANGE THESE DEFAULTS             ##
-############################################################
-
-# I don't want to be flamed by web site administrators for
-# the lousy behavior of your robots. 
+open RESULT, ">$result_file";
 
 my $ROBOT_NAME = 'jguo32Bot/1.0';
 my $ROBOT_MAIL = 'jguo32@cs.jhu.edu';
@@ -67,10 +63,6 @@ my $ROBOT_MAIL = 'jguo32@cs.jhu.edu';
 #
 #         $robot->delay( $ROBOT_DELAY_IN_MINUTES );
 #
-#       At any rate, if your program seems to be doing nothing, wait for
-#       at least 60 seconds (default delay) before concluding that some-
-#       thing is wrong.
-#
 
 my $robot = new LWP::RobotUA $ROBOT_NAME, $ROBOT_MAIL;
 
@@ -81,117 +73,179 @@ my @wanted_urls = ();    # URL's which contain info that we are looking for
 my %relevance   = ();    # how relevant is a particular URL to our search
 my %pushed      = ();    # URL's which have either been visited or are already
                          #  on the @search_urls array
-    
-push @search_urls, $base_url;
-$pushed{$base_url} = 1;
+my @pdf_urls    = ();    # URL for the resume we have found
+
+&main;
+
+sub main {
+    push @search_urls, $base_url;
+    $pushed{$base_url} = 1;
 
 
-while (@search_urls) {
-    my $url = shift @search_urls;
+    while (@search_urls) {
+        my $url = shift @search_urls;
 
-    #
-    # insure that the URL is well-formed, otherwise skip it
-    # if not or something other than HTTP
-    #
+        my $parsed_url = eval { new URI::URL $url; };
+        next if $@; # $@ is set to error message produced by eval{}
+        next if $parsed_url->scheme !~/http/i;
+      
+        # get header information on URL
+        # If the status is not okay or the content type is not what we are 
+        # looking for skip the URL and move on
 
-    my $parsed_url = eval { new URI::URL $url; };
-    next if $@; # $@ is set to error message produced by eval{}
-    next if $parsed_url->scheme !~/http/i;
-  
-    #
-    # get header information on URL to see it's status (exis-
-    # tant, accessible, etc.) and content type. If the status
-    # is not okay or the content type is not what we are 
-    # looking for skip the URL and move on
-    # 
+        print LOG "[HEAD ] $url\n";
+        print "Currently visiting: [HEAD] $url\n";
 
-    print LOG "[HEAD ] $url\n";
-    print "Currently visiting: [HEAD ] $url\n";
+        my $request  = new HTTP::Request HEAD => $url;
+        my $response = $robot->request( $request );
+      
+        next if $response->code != RC_OK;
+        next if ! &wanted_content( $response->content_type );
+        
+        print LOG "[GET  ] $url\n";
 
-    my $request  = new HTTP::Request HEAD => $url;
-    my $response = $robot->request( $request );
-  
-    next if $response->code != RC_OK;
-    next if ! &wanted_content( $response->content_type );
-    
-    
-    print LOG "[GET  ] $url\n";
+        $request->method( 'GET' );
+        $response = $robot->request( $request );
 
-    $request->method( 'GET' );
-    $response = $robot->request( $request );
+        next if $response->code != RC_OK;
+        next if $response->content_type !~ m@text/html@;
+        # next if ! &GET($url, $request, $response);
 
-    next if $response->code != RC_OK;
-    next if $response->content_type !~ m@text/html@;
-    
-    print LOG "[LINKS] $url\n";
+        print LOG "[LINKS] $url\n";
+        print "[LINKS] $url\n";
 
-    &extract_content ($response->content, $url);
+        &extract_content ($response->content, $url);
 
-    my @related_urls  = &grab_urls( $response->content );
+        my @related_urls  = &grab_urls( $response->content );
 
-    foreach my $link (@related_urls) {
+        foreach my $link (@related_urls) {
+            # &process_url($link, $response, $url);
+            my $full_url = eval { (new URI::URL $link, $response->base)->abs; };
 
-        my $full_url = eval { (new URI::URL $link, $response->base)->abs; };
-
-        delete $relevance{ $link } and next if $@;
+            delete $relevance{ $link } and next if $@;
 
 
-        my $base = $response->base;
-        my $domain = undef;
+            my $base = $response->base;
+            my $domain = undef;
 
-        if ( $base =~ /http:\/\/www\.([^\/]*).*/) {
-            $domain = $1;
-        }
-        elsif ($base =~ /http:\/\/([^\/]*).*/) {
-            $domain = $1;
-        }
-
-        if (!defined($domain)) {
-            print "Error: unknown domain.\n";
-        }
-
-        if (defined $full_url) {
-            if ($full_url =~ /$url#.*/) {
-               next;
+            if ( $base =~ /http:\/\/www\.([^\/]*).*/) {
+                $domain = $1;
+            }
+            elsif ($base =~ /http:\/\/([^\/]*).*/) {
+                $domain = $1;
             }
 
-            if ($full_url !~ /\.$domain/) {
-                next;
+            if (!defined($domain)) {
+                print "Error: unknown domain.\n";
             }
+
+            if (defined $full_url) {
+                if ($full_url =~ /$url#.*/) {
+                   next;
+                }
+
+                if ($full_url !~ /\.$domain/) {
+                    next;
+                }
+            }
+
+            $relevance{ $full_url } = $relevance{ $link };
+            delete $relevance{ $link } if $full_url ne $link;
+
+            push @search_urls, $full_url and $pushed{ $full_url } = 1
+                if ! exists $pushed{ $full_url };
         }
 
-        $relevance{ $full_url } = $relevance{ $link };
-        delete $relevance{ $link } if $full_url ne $link;
+        #
+        # reorder the urls base upon relevance so that we search
+        # areas which seem most relevant to us first.
+        #
 
-        push @search_urls, $full_url and $pushed{ $full_url } = 1
-            if ! exists $pushed{ $full_url };
+        @search_urls = 
+            sort { $relevance{ $a } <=> $relevance{ $b }; } @search_urls;
+        print "\n";
 
+        # print "########## CANDIDATE URL INFO ##########\n";
+
+        # foreach my $tmp_url (@search_urls) {
+        #     print "URL: ", $tmp_url, " Relevancy: ", $relevance{ $tmp_url }, "\n";
+        # }
+
+        # print "########## CANDIDATE URL INFO END ##########\n";
+
+        while (@wanted_urls) {
+            my $url = shift @wanted_urls;
+            if (defined($url) && !($url eq "")) {
+                print "Get pdf file: $url\n";
+                print RESULT "$url\n";
+            }
+        }
     }
-
-    #
-    # reorder the urls base upon relevance so that we search
-    # areas which seem most relevant to us first.
-    #
-    # foreach my $link (@search_urls) {
-    #     if (!defined $relevance{ $link }) {
-    #         $relevance{ $link } = 0;
-    #     }
-    # }
-
-    @search_urls = 
-  sort { $relevance{ $a } <=> $relevance{ $b }; } @search_urls;
-
 }
 
 close LOG;
 close CONTENT;
 
 exit (0);
+
+sub GET {
+    my $url = shift;
+    my $request = shift;
+    my $response = shift;
+
+    print LOG "[GET  ] $url\n";
+    print "[GET] $url\n";
+
+    $request->method( 'GET' );
+    $response = $robot->request( $request );
+
+    return 0 if $response->code != RC_OK;
+    return 0 if $response->content_type !~ m@text/html@;
+    return 1;
+}
     
+sub process_url {
+    my $link = shift;
+    my $response = shift;
+    my $url = shift;
+    my $full_url = eval { (new URI::URL $link, $response->base)->abs; };
+
+    delete $relevance{ $link } and return if $@;
+
+    my $base = $response->base;
+    my $domain = undef;
+
+    if ( $base =~ /http:\/\/www\.([^\/]*).*/) {
+        $domain = $1;
+    }
+    elsif ($base =~ /http:\/\/([^\/]*).*/) {
+        $domain = $1;
+    }
+
+    if (!defined($domain)) {
+        print "Error: unknown domain.\n";
+    }
+
+    if (defined $full_url) {
+        if ($full_url =~ /$url#.*/) {
+           next;
+        }
+
+        if ($full_url !~ /\.$domain/) {
+            next;
+        }
+    }
+
+    $relevance{ $full_url } = $relevance{ $link };
+    delete $relevance{ $link } if $full_url ne $link;
+
+    push @search_urls, $full_url and $pushed{ $full_url } = 1
+        if ! exists $pushed{ $full_url };
+
+}
 #
 # wanted_content
 #
-#    UNIMPLEMENTED
 #
 #  this function should check to see if the current URL content
 #  is something which is either
@@ -215,8 +269,14 @@ sub wanted_content {
     #     return 1;
     # }
 
-    if ($content =~ m@application/pdf@) {
+    if ($content =~ m@(text/html|text/plain)@) {
         push @wanted_urls, $url;
+        return 1;
+    }
+
+    if ($content =~ m@application/pdf@ ) {
+        push @pdf_urls, $url;
+        print "Find pdf url: $url \n";
         return 1;
     }
     
@@ -311,59 +371,54 @@ sub grab_urls {
             $link = $1 || $2;
             if (!defined($link)) {
               next;
+            } 
+
+            if ($link =~ /(CV|cv|resume)+\w*\.pdf/) {
+                print "## Find Resume ##: $link\n";
+                push @wanted_urls, $link;
             }
 
-            #
-            # okay, the same link may occur more than once in a
-            # document, but currently I only consider the last
-            # instance of a particular link
-            #
-            
-            my $ rel = 0;
-            
+            my $ rel = 8;
             $urls{ $link }      = 1;
             
-        if (defined $reg_text) {
+            if (defined $reg_text) {
                 $reg_text =~ s/[\n\r]/ /;
                 $reg_text =~ s/\s{2,}/ /;
 
-                #
-                # compute some relevancy function here
-                #
                 # We know that @search_urls will sort the url from the one with smallest rel value to the one with the largest rel value. 
                 # Since the url which is the more likely to contain email, phone, and address information should be searched first and 
                 # therefore we give such url smaller rel value, such as “~\w+” (which is included in faculties’ homepage url).
                 
-              if ($link =~ /~\w+$/){
-                  $rel = 1;
-              }
-              if ($link =~ /homepage/ and $reg_text =~ /homepage/){
-                  $rel = 2;
-              }
-              if ($link =~ /homepage/ or $reg_text =~ /homepage/){
-                  $rel = 3;
-              }
-              if ($link =~ /faculty/ and $reg_text =~ /faculty/){
-                  $rel = 4;
-              }
-              if ($link =~ /faculty/ or $reg_text =~ /faculty/){
-                  $rel = 5;
-              }
-              if ($link =~ /people/ and $reg_text =~ /people/){
-                  $rel = 6;
-              }
-              if ($link =~ /people/ or $reg_text =~ /people/){
-                  $rel = 7;
-              }
+                if ($link =~ /~\w+$/){
+                    $rel = 1;
+                }
+                if ($link =~ /homepage/ and $reg_text =~ /homepage/){
+                    $rel = 2;
+                }
+                if ($link =~ /homepage/ or $reg_text =~ /homepage/){
+                    $rel = 3;
+                }
+                if ($link =~ /faculty/ and $reg_text =~ /faculty/){
+                    $rel = 4;
+                }
+                if ($link =~ /faculty/ or $reg_text =~ /faculty/){
+                    $rel = 5;
+                }
+                if ($link =~ /people/ and $reg_text =~ /people/){
+                    $rel = 6;
+                }
+                if ($link =~ /people/ or $reg_text =~ /people/){
+                    $rel = 7;
+                }
           
-          }
+            }
 
             $relevance{ $link } = $rel;
             
         }
 
-        print $reg_text, "\n" if defined $reg_text;
-        print $link, "\n\n";
+        # print $reg_text, "\n" if defined $reg_text;
+        # print $link, "\n";
     }
 
     return keys %urls;   # the keys of the associative array hold all the
