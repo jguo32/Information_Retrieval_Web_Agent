@@ -1,25 +1,13 @@
-use PDF::API2;
 use FileHandle;
 use strict;
-use CAM::PDF;
-use CAM::PDF::PageText;
 
 &main;
 
 sub main {
-	my $filename = "cv - eisner.pdf";
-	# open my $fh, $filename or die $@;
-	# undef $/;
-	# my $pdf_string = <$fh>;
-	# my $line;
-	# while (defined( $line = <$fh> )) {
-	# 	print $line, "\n";
-	# }
-	# print $pdf_string;
-	# my $pdf = PDF::API2->open($filename);
-	# my $page = $pdf->openpage(1);
+	my $filename = "cv\\ -\\ eisner";
+	my $readfile = "./pdftotext ". $filename . ".pdf " . $filename . ".txt";
+	# my $readfile = "./pdftotext eisner.pdf test.txt";
+	print $readfile;
+	system($readfile);
 
-	my $pdf = CAM::PDF->new($filename);
-	my $pageone_tree = $pdf->getPageContentTree(1);
-	print CAM::PDF::PageText->render($pageone_tree);
 }
