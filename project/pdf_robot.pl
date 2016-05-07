@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl -w
+#!/usr/bin/perl -w
 
 #
 # This program walks through HTML pages, extracting all the links to other
@@ -16,6 +16,8 @@
 #       found).
 
 use strict;
+use warnings;
+use LWP::Simple;
 
 use Carp;
 use HTML::LinkExtor;
@@ -42,7 +44,7 @@ if ((!defined ($log_file)) || (!defined ($content_file)) || (!defined ($result_f
 
 open LOG, ">$log_file";
 open CONTENT, ">$content_file";
-open RESULT, ">$result_file";
+# open RESULT, ">$result_file";
 
 my $ROBOT_NAME = 'jguo32Bot/1.0';
 my $ROBOT_MAIL = 'jguo32@cs.jhu.edu';
@@ -111,12 +113,13 @@ sub main {
         next if $response->content_type !~ m@text/html@;
         # next if ! &GET($url, $request, $response);
 
+
         print LOG "[LINKS] $url\n";
         print "[LINKS] $url\n";
 
         &extract_content ($response->content, $url);
 
-        my @related_urls  = &grab_urls( $response->content );
+        my @related_urls  = &grab_urls( $response->content, $url );
 
         foreach my $link (@related_urls) {
             # &process_url($link, $response, $url);
@@ -173,13 +176,15 @@ sub main {
 
         # print "########## CANDIDATE URL INFO END ##########\n";
 
-        while (@wanted_urls) {
-            my $url = shift @wanted_urls;
-            if (defined($url) && !($url eq "")) {
-                print "Get pdf file: $url\n";
-                print RESULT "$url\n";
-            }
-        }
+
+        # Seems useless
+        # while (@wanted_urls) {
+        #     my $url = shift @wanted_urls;
+        #     if (defined($url) && !($url eq "")) {
+        #         print "Get pdf file: $url\n";
+        #         print RESULT "$url\n";
+        #     }
+        # }
     }
 }
 
@@ -247,7 +252,7 @@ sub process_url {
 # wanted_content
 #
 #
-#  this function should check to see if the current URL content
+#  this function checks to see if the current URL content
 #  is something which is either
 #
 #    a) something we are looking for (e.g. postscript, pdf,
@@ -275,9 +280,10 @@ sub wanted_content {
     }
 
     if ($content =~ m@application/pdf@ ) {
-        push @pdf_urls, $url;
-        print "Find pdf url: $url \n";
-        return 1;
+    #     push @pdf_urls, $url;
+    #     print "Find pdf url: $url \n";
+    # Skip pdf files
+        return 0;
     }
     
     return 0;
@@ -286,38 +292,36 @@ sub wanted_content {
 
 # extract_content
 #
-#  this function should read through the context of all the text/html
-#  documents retrieved by the web robot and extract three types of
-#  contact information described in the assignment
+# TODO: use this function to extract resume-like information from webpage
 
 sub extract_content {
     my $content = shift;
     my $url = shift;
 
-    my $email;
-    my $phone;
-    my $city;
+    # my $email;
+    # my $phone;
+    # my $city;
 
     # parse out information you want
     # print it in the tuple format to the CONTENT and LOG files, for example:
     
-    while($content =~ s/(\w+@\w+\.\w+(\.\w+){0,1})//){
-        $email = $1;
-        print CONTENT "($url; EMAIL; $email)\n";
-        print LOG "($url; EMAIL; $email)\n";
-    }
+    # while($content =~ s/(\w+@\w+\.\w+(\.\w+){0,1})//){
+    #     $email = $1;
+    #     print CONTENT "($url; EMAIL; $email)\n";
+    #     print LOG "($url; EMAIL; $email)\n";
+    # }
     
-    while($content =~ s/\D((\d{3}){0,1}(\(\d{3}\)){0,1}\D\d{3}\D\d{4})\D//){
-        $phone = $1;
-        print CONTENT "($url; PHONE; $phone)\n";
-        print LOG "($url; PHONE; $phone)\n";
+    # while($content =~ s/\D((\d{3}){0,1}(\(\d{3}\)){0,1}\D\d{3}\D\d{4})\D//){
+    #     $phone = $1;
+    #     print CONTENT "($url; PHONE; $phone)\n";
+    #     print LOG "($url; PHONE; $phone)\n";
     
-    }
-    while($content =~ s/([A-Za-z]+,{0,1}\s[A-Za-z]+,{0,1}\s\d{5}(.\d{4}){0,1})//){
-        $city = $1;
-        print CONTENT "($url; CITY; $city)\n";
-        print LOG "($url; CITY; $city)\n";
-    }
+    # }
+    # while($content =~ s/([A-Za-z]+,{0,1}\s[A-Za-z]+,{0,1}\s\d{5}(.\d{4}){0,1})//){
+    #     $city = $1;
+    #     print CONTENT "($url; CITY; $city)\n";
+    #     print LOG "($url; CITY; $city)\n";
+    # }
 
     return;
 }
@@ -357,8 +361,8 @@ sub extract_content {
 
 sub grab_urls {
     my $content = shift;
-    my %urls    = ();    # NOTE: this is an associative array so that we only
-                         #       push the same "href" value once.
+    my $parent_url = shift;
+    my %urls    = ();    
 
   skip:
     while ($content =~ s/<\s*[aA] ([^>]*)>\s*(?:<[^>]*>)*(?:([^<]*)(?:<[^aA>]*>)*<\/\s*[aA]\s*>)?//) {
@@ -373,9 +377,51 @@ sub grab_urls {
               next;
             } 
 
-            if ($link =~ /(CV|cv|resume)+\w*\.pdf/) {
+            # Skip those links that are impossible to contain CV or resume
+            next if ($link =~/\/publication|\/paper|\/project/);
+            
+            # Some publications on computer vision might also have substring "CV" in filename
+            if ($link =~ /(CV|cv|resume)+\w*\.pdf/ and $link !~ /publication/) {
+
+                # if ($link !~ /ddd/)
                 print "## Find Resume ##: $link\n";
+
+                # save current pdf file to local for further processing
+                my $save_path = "./resume/";
+
+                if ($link !~ /$parent_url/) {
+
+                    # Strip the last part of the link, e.g. "cv_smith.pdf"
+                    if ( $link =~ /\/(\w+\.pdf)/) {
+                        my $mod_link = $1;
+                        if (defined($mod_link)) {
+                            $link = $mod_link;
+                        }
+                    }
+                    $link = $parent_url . $link;
+                }
+                
+                my $file = get $link;
+                if (defined($file)) {
+                    # Replace "/" by "." to make the link a valid filename
+                    $link =~ tr/\//\./; 
+
+                    open( FILE, '>', $save_path . $link ) or die $!;
+                    binmode FILE;
+
+                    print FILE $file;
+
+                    
+                    close( FILE );
+                } 
+                else {
+                    print "error, failed to get remote pdf file!\n";
+                }
+
+
+
                 push @wanted_urls, $link;
+                next;
             }
 
             my $ rel = 8;
