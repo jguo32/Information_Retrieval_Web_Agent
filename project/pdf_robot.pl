@@ -132,7 +132,7 @@ sub main {
         # since we have filtered the links at the beginning of the loop,
         # so we process them separately
         if ( scalar @related_urls eq 1 and $related_urls[0] !~/$base_domain/) {
-            print "redirected\n";
+            &process_redirect($related_urls[0]);
         }
         else {
             foreach my $link (@related_urls) {
@@ -265,18 +265,8 @@ sub process_url {
 }
 
 # wanted_content
-#
-#
 #  this function checks to see if the current URL content
-#  is something which is either
-#
-#    a) something we are looking for (e.g. postscript, pdf,
-#       plain text, or html). In this case we should save the URL in the
-#       @wanted_urls array.
-#
-#    b) something we can traverse and search for links
-#       (this can be just text/html).
-
+#  is something we want
 sub wanted_content {
     my $content = shift;
     my $url = $_[1];
@@ -284,7 +274,6 @@ sub wanted_content {
     # right now we only accept text/html
     # for the pdf files we are looking for, we simply save them and
     # move on
-
     if ($content =~ m@(text/html|text/plain)@) {
         push @wanted_urls, $url;
         return 1;
@@ -361,7 +350,7 @@ sub grab_urls {
             } 
 
             # Skip those links that are impossible to contain CV or resume
-            next if ($link =~/publication|paper|project|slide|image|pub|bibtex/);
+            next if ($link =~/publication|paper|project|slide|image|pub|bibtex|seminar/);
             
             # Some publications on computer vision might also have substring "CV" in filename
             if ($link =~ /(CV|cv|resume)+(\w|-)*\.pdf/ and $link !~ /publication/) {
