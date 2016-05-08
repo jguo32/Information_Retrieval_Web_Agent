@@ -1,0 +1,371 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+            "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+<TITLE>Jason Eisner - Home Page (JHU)</TITLE>
+<META name="description" content="Home page of Jason Eisner, CS
+  professor at Johns Hopkins University who works on natural language
+  processing and machine learning.">
+<META name="keywords" content="Jason Eisner, Jason M. Eisner,
+computational linguistics, natural language processing, Johns Hopkins,
+JHU, CLSP, probabilistic NLP, statistical NLP, machine learning, ML,
+probabilistic parsing, bilexical grammar, parameterized finite-state
+machine, expectation maximization (EM) for transducer, expectation
+semirings, statistical parsing, dependency parsing, dependency
+grammar, probabilistic parsing, categorial grammar, Optimality Theory,
+OT, Primitive Optimality Theory, OTP, negative polarity items, NPI,
+natural language semantics">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<link rel="stylesheet" href="mainstyle.css" type="text/css">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+<SCRIPT LANGUAGE="JavaScript">
+function newImage(arg) {
+	if (document.images) {
+		rslt = new Image();
+		rslt.src = arg;
+		return rslt;
+	}
+}
+
+function changeImages() {
+	if (document.images && (preloadFlag == true)) {
+		for (var i=0; i<changeImages.arguments.length; i+=2) {
+			document[changeImages.arguments[i]].src = changeImages.arguments[i+1];
+		}
+	}
+}
+
+var preloadFlag = false;
+function preloadImages() {
+	if (document.images) {
+		header3_03_over = newImage("/images/header3_03-over.gif");
+		header3_05_over = newImage("/images/header3_05-over.gif");
+		preloadFlag = true;
+
+	}
+}
+
+$(document).ready(function() {
+  $(".toggleable").hide();
+  $(".toggle").click(function() {
+    $(this).next(".toggleable").slideToggle(500);
+  });
+});
+</SCRIPT>
+</head>
+<body BGCOLOR="#FFFFFF" ONLOAD="preloadImages();">
+<TABLE WIDTH=425 BORDER=0 CELLPADDING=0 CELLSPACING=0>
+	<TR>    <TD COLSPAN=5><a href="http://cs.jhu.edu"><IMG SRC="/images/header3_01.gif" WIDTH=425 HEIGHT=44 border="0" alt="Johns Hopkins Computer Science Home"></a></TD>
+	</TR>
+	<TR>
+		<TD><IMG SRC="/images/header3_02.gif" alt="" WIDTH=44 HEIGHT=16></TD>
+		<TD><A HREF="http://www.jhu.edu"
+				ONMOUSEOVER="changeImages('header3_03', '/images/header3_03-over.gif', 'header3_05', '/images/header3_05.gif'); return true;"
+				ONMOUSEOUT="changeImages('header3_03', '/images/header3_03.gif'); return true;">
+				<IMG NAME="header3_03" SRC="/images/header3_03.gif" WIDTH=157 HEIGHT=16 BORDER=0 alt="Johns Hopkins University"></A></TD>
+		<TD><IMG SRC="/images/header3_04.gif" alt="" WIDTH=27 HEIGHT=16></TD>
+		<TD><A HREF="http://www.wse.jhu.edu/"
+				ONMOUSEOVER="changeImages('header3_03', '/images/header3_03.gif', 'header3_05', '/images/header3_05-over.gif'); return true;"
+				ONMOUSEOUT="changeImages('header3_05', '/images/header3_05.gif'); return true;">
+				<IMG NAME="header3_05" SRC="/images/header3_05.gif" WIDTH=184 HEIGHT=16 BORDER=0 alt="The Whiting School of Engineering"></A></TD>
+		<TD><IMG SRC="/images/header3_06.gif" alt="" WIDTH=13 HEIGHT=16></TD>
+	</TR>
+</TABLE>
+<br />
+	<!--BEGIN PAGE CONTENT HERE-->
+
+<H1>Jason Eisner</H1>
+<P><B>Professor</B></p>
+<p><table cellspacing="10" cellpadding="2" border="0" class=smalltable>
+  <tr valign="center"><!-- Row 1 -->
+    <!-- <td><A HREF="images/self/eisner4.jpg"><img src="images/self/eisner2.jpg" alt="Jason Eisner" border="0"></A></td>-->
+    <td><A HREF="images/self/2008.clsp/0275.jpg"><img src="images/self/2008.clsp/0282-cropped.jpg" alt="Jason Eisner" border="0"></A></td>
+    <td>
+    <A HREF = "http://cs.jhu.edu">Department of Computer Science</A> 
+<BR><A HREF = "http://www.jhu.edu">Johns Hopkins University</A>  
+<BR><A HREF = "http://webapps.jhu.edu/jhuniverse/information_about_hopkins/visitor_information/how_to_get_here/homewood_campus/index.cfm">3400 N. Charles Street</A>, Hackerman 226
+<BR>Baltimore, MD 21218-2608&nbsp;&nbsp;&nbsp;U.S.A.
+<BR>
+<BR><B>Email:</B> <A HREF="mailto:jason@cs.jhu.edu"><CODE>jason@cs.jhu.edu</CODE></A> 
+<BR><B>Web:</B> <A HREF="http://cs.jhu.edu/~jason"><CODE>http://cs.jhu.edu/~jason</CODE></A> 
+<BR><B>G+:</B> <A HREF="https://plus.google.com/109118176785250321075">profile page</A>
+<BR><B>Office:</B> <A HREF="http://www.clsp.jhu.edu/about-clsp/directions/">Hackerman</A> <A HREF="Hackerman324">324C</A> 
+<!-- <BR><B>Office hours:</B> MW 4-4:30 (following class), or by appointment -->
+<BR><B>Phone:</B> (410) 516-8438 (dial 516-THETA)
+<BR><B>Skype:</B> <code>jasoneisner</code> (email me to set up a time)
+<BR><B>Fax:</B> (410) 516-6134 
+
+</P></td>
+  </tr>
+</table>
+
+<table cellspacing="0" cellpadding="0" border="0" class="smalltable">
+<!-- <tr>
+  <td><A HREF="http://nlp.cs.jhu.edu">Natural Language Processing Lab</A></td>
+  <td>&nbsp;&nbsp;<FONT SIZE=-1>(within JHU's CS department)</FONT></td>
+</tr> -->
+<tr>
+  <td><A HREF = "http://cs.jhu.edu">Department of Computer Science</A></td>
+  <td>&nbsp;&nbsp;<FONT SIZE=-1>(my primary appointment)</FONT></td>
+</tr>
+<tr>
+  <td><A HREF="http://www.clsp.jhu.edu">Center for Language and Speech Processing</A></td>
+  <td>&nbsp;&nbsp;<FONT SIZE=-1>(my major multi-departmental center at JHU)</FONT></td>
+</tr>
+<tr>
+  <td><A HREF="http://ml.jhu.edu">Machine Learning Group</A></td>
+  <td>&nbsp;&nbsp;<FONT SIZE=-1>(large community of ML researchers at JHU)</FONT></td>
+</tr>
+<tr>
+  <td><A HREF="http://web.jhu.edu/hltcoe">Human Language Technology Center of Excellence</A></td>
+  <td>&nbsp;&nbsp;<FONT SIZE=-1>(another large group I'm involved with at JHU)</FONT></td>
+</tr>
+<tr>
+  <td><A HREF="http://www.cog.jhu.edu">Department of Cognitive Science</A></td>
+  <td>&nbsp;&nbsp;<FONT SIZE=-1>(my joint appointment)</FONT></td>
+</tr>
+</table>         
+
+<!-- <p class="footer">
+	<a href="#links" class="footer">Links</a> |
+	<a href="#research" class="footer">Research</a> |
+	<a href="#courses" class="footer">Courses</a> |
+	<a href="#lab" class="footer">Lab Information</a> |
+	<a href="#academic" class="footer">Academic Interests</a> |
+	<a href="#pubs" class="footer">Publications</a> |
+	<a href="#education" class="footer">Education</a> |
+	<a href="#personal" class="footer">Personal</a>
+	</p> -->
+
+<a name="links"><IMG SRC="images/line.knot.gif" alt="---"></a>
+
+<h3>My Work</h3>
+
+<ul>
+<LI><A HREF="papers"><font size="+2"><b>Publications</b></font></A> and related materials
+<LI><A HREF="cv.pdf">Full CV</A>, <A HREF="bio.html">short bio</A>, and <A HREF="research.pdf">research summary</A>
+<LI><A HREF="#courses">Courses</A>, <A HREF="tutorials">tutorial materials</A>, <A HREF="teaching.pdf">teaching statement</A>, <A HREF="http://www.cer.jhu.edu/e-news/enews02-12.html#5">interview about teaching</A>
+<LI><A HREF="software">Code</A>, including the <A HREF="http://www.dyna.org">Dyna</A> project <!-- <A HREF="http://www.hopskip.org">Hopskip</A> -->
+<LI><A HREF="advice">Advice for research students</A> and <A HREF="advice/prospective-students.html">prospective students</A>
+<LI><A HREF="http://www.clsp.jhu.edu/user_uploads/workshops/ws14/prelim/">Workshop on Probabilistic Representations of Linguistic Meaning</A> (2014)
+</UL>
+
+<a name="research"><!-- <IMG SRC="images/line.knot.gif" alt="---">--></a>
+
+<h3>What I Work On</h3>
+
+<p>All kinds of novel methods for natural language processing:<br>
+New machine learning, combinatorial algorithms,
+probabilistic models of linguistic structure, and declarative
+specification of knowledge and algorithms.</p>
+
+<h4 class="toggle">Why? <font color=gray>[<i>click here</i>]</font></h4>
+
+<ul class="toggleable">
+<li><p><b>The question:</b> How can we appropriately
+formalize linguistic structure and discover it automatically?</p>
+
+<li><p><b>The engineering motivation:</b> Computers must learn to understand human
+language.  A huge portion of human communication, thought, and culture
+now passes through computers.  Ultimately, we want our devices to help
+us by understanding text and speech as a human would&mdash;both at the
+small scale of intelligent user interfaces and at the large scale of
+the entire multilingual Internet.</p>
+
+<li><p><b>The scientific motivation:</b> Human language is fascinatingly
+complex and ambiguous.  Yet babies are born with the incredible
+ability to discover the structure of the language around them.  Soon
+they are able to rapidly comprehend and produce that language and
+relate it to events and concepts in the world.  Figuring out how this
+is possible is a grand challenge for both cognitive science and
+machine learning.</p>
+
+<li><p><b>The disciplines:</b> My research program combines computer
+science with statistics and linguistics.  The challenge is to
+fashion <b>statistical models</b> that are nuanced enough to capture
+good intuitions about <b>linguistic structure</b>, and especially, to
+develop <b>efficient algorithms</b> to apply these models to data
+(including training them with as little supervision as possible).</p>
+
+</ul>
+
+<h4 class="toggle">What? <font color=gray>[<i>click here</i>]</font></h4>
+
+<ul class="toggleable">
+<li><p><b>Models:</b> I've developed significant modeling approaches
+for a wide variety of domains in natural language
+processing&mdash;syntax, phonology, morphology, and machine
+translation, as well as semantic preferences, name variation, and even
+database-backed websites.  The goal is to capture not just the
+structure of sentences, but also deep regularities within the grammar
+and lexicon of a language (and across languages).  My students and I
+are always thinking about new problems and better models.  Lately we
+are doing a lot of non-parametric Bayesian modeling, so that the model
+can be a linguistically plausible account of how the data arose.</p>
+
+<li><p><b>Algorithms:</b> A good mathematical model will <i>define</i>
+the best analysis of the data, but can we <i>compute</i> that
+analysis?  My students and I are constantly developing new algorithms,
+to cope with the tricky structured prediction and learning problems
+posed by increasingly sophisticated models.  Unlike many areas of
+machine learning, we have to deal with probability distributions over
+unboundedly large structured variables such as strings, trees,
+alignments, and grammars.  My favorite tools include dynamic
+programming, Markov chain Monte Carlo (MCMC), belief propagation and
+other variational approximations, automatic differentiation,
+deterministic annealing, stochastic local search, coarse-to-fine
+search, integer linear programming, and relaxation methods.  I
+especially enjoy connecting disparate techniques in fruitful new ways.</p>
+
+<li><p><b>General paradigms:</b> My students and I also work to
+pioneer general statistical and algorithmic paradigms that cut across
+problems (not limited to NLP).  We are developing a high-level
+declarative programming language, Dyna, which allows startlingly short
+programs, backed up by many interesting general efficiency tricks so
+that these don't have to be reinvented and reimplemented in new
+settings all the time.  We are also showing how to learn execution
+strategies that do fast and accurate approximate statistical
+inference, and how to properly train these essentially discriminative
+strategies in a Bayesian way.  In the past we have developed other
+machine learning techniques of general interest.</p>
+
+<li><p><b>Measuring success:</b> We implement our new methods and evaluate
+them carefully on collections of naturally occurring language.  We
+have repeatedly improved the state of the art.  While our work can
+certainly be used within today's end-user applications, such as
+machine translation and information extraction, we ourselves are generally
+focused on building up the long-term fundamentals of the field.</p>
+<!-- driven more by fundamental research questions than by applied engineering. -->
+
+<li><p>In general, I have broad interests and have worked on a wide range
+of fundamental topics in NLP, drawing on varied areas of computer
+science.  See my <A HREF="papers">papers</A>, <A HREF="cv.pdf">CV</A>,
+and <A HREF="research.pdf">research summary</A> for more information;
+see also notes on
+my <A HREF="http://cs.jhu.edu/~jason/advice/prospective-students.html#topics">advising
+style</A>.</p>
+
+</ul>
+
+<!-- OLD: A central theme in my work is <b>structured prediction</b>:
+learning to predict many interrelated variables at once.  To this end,
+my students and I have made numerous algorithmically novel
+contributions to dynamic programming, belief propagation, finite-state
+and context-free methods, variational inference, and semi-supervised
+learning.  We have applied these to natural language problems such as
+<i>parsing, machine translation, morphology, phonology,</i> and
+<i>information extraction</i>. We have also been developing an innovative high-level
+<b>declarative programming language</b>, Dyna, which encapsulates many
+interesting efficiency tricks for such methods, and thus makes it far
+easier to experiment with new algorithms and models. -->
+
+<!-- OLDER: <p>Much of my research aims (1) to formalize useful
+linguistic intuitions about syntax and phonology, and (2) to equip the
+resulting grammar formalisms with efficient algorithms for language
+generation, disambiguation, and especially learning.</p>
+
+<p>I especially work with probabilistic grammar formalisms.  By
+describing not only what is <i>possible</i> in a language but also
+what is <i>likely</i>, they enable a computer (or human?) to guess its
+way through the ambiguities that would otherwise plague even the most
+everyday communication.  Probabilities can also help a language learner guess
+the true grammar of the language.  The probability models are trained
+and evaluated on real-world data, such as newspaper articles.</p>
+
+<p>Lately I've been especially interested in declarative approaches to
+building systems for natural language processing and other AI
+problems.  We waste too much time writing code in this field.  By
+contrast, the declarative approach is to specify <i>what</i> you want
+the system to do, using a concise high-level notation, and then let
+general algorithms figure out <i>how</i> to do it.  Experimentation
+with new models becomes much faster and easier.  I've been developing
+high-level programming languages to make this possible.</p>
+-->
+
+<!-- VERY OLD: My research focuses on the role of grammars in the
+processing of human language. In syntax, I am mostly concerned with
+probabilistic models of grammar, and especially their acquisition. In
+phonology, I have been working to formalize the Optimality Theory
+grammar framework. In both domains I have developed efficient
+algorithms. -->
+
+<a name="courses"><IMG SRC="images/line.knot.gif" alt="---"></a>
+<h3>Courses</h3>
+
+<UL>
+  <LI>600.465 (fall): <A HREF="465">Natural Language Processing</A>
+  <LI>600.325/425 (spring): <A HREF="325">Declarative Methods</A>
+  <LI>600.765 (every semester): <A HREF="765">Selected Topics in Natural Language Processing</A>
+</ul>
+<ul class="smalltable">
+  <LI>LI 569 (Summer 2013): <A HREF="licl">Intro to Computational Linguistics</A> (at the LSA Linguistic Institute)
+  <LI>600.226 (Spring 2003, 2004): <A HREF="226">Data Structures</A>
+  <LI>600.665 (Spring 2002): <A HREF="665">Statistical Language Learning</A>
+  <LI>600.406 (Spring 2000): <A HREF="405">Finite-State Methods in Natural Language Processing, Part II</A>
+  <LI>600.405 (Fall 2000): <A HREF="405/old405.html">Finite-State Methods in Natural Language Processing, Part I</A>
+  <LI>CSC400 (Fall 2000): <A HREF="400-rochester">Problem Seminar</A> (at U. of Rochester)
+  <LI>CSC577 (Spring 2000): <A HREF="http://www.cs.rochester.edu/u/www/u/jason/577">Statistical Learning of Natural Language</A> (at U. of Rochester)
+  </font>
+</UL>
+
+<p>See also other <A HREF="tutorials">tutorial material</A>.</p>
+
+
+<a name="personal"><IMG SRC="images/line.knot.gif" alt="---"></a>
+<h3>Personal</h3>
+
+<p>Undergraduates are often curious about their teachers' secret lives.
+In the name of encouraging curiosity-driven research, here are a few
+photos:</p>
+<UL>
+<LI><A HREF="https://plus.google.com/u/0/109118176785250321075/posts/XDU55YPNggm">John saw Mary killed Jason</a>
+<LI><A HREF="fun/ijk/">I, Jay, and Kay</a>
+<LI><A HREF="fun/got-chocolate.html">got chocolate?</a>
+<LI>As the <A HREF="fun/fuzzo/">Astonishing Fuzzo</A>
+<LI>As <A HREF="images/self/oz-family.jpg">the Scarecrow</A> in the Wizard of Oz (with wife &amp; kids, also in the show)
+<LI>As <A HREF="images/self/vangogh.jpg">van Gogh</A>
+<LI><A HREF="fun/bike-diving.mov">Bike diving</A> on a hot day
+<LI><A HREF="images/chemlab.gif">With my grad students</A>
+<LI>My <A HREF="talia/">daughter Talia</A> and <A HREF="lev/">son Lev</A>
+<LI><A HREF="images/self/old/couch1.jpg">At the furniture store</A>
+<LI><A HREF="images/self/mohawk.jpg">Groovin'</A>
+<LI><A HREF="images/mug280x360.jpeg">Mug shot</A>
+<LI><A HREF="https://www.facebook.com/mark.dredze/posts/1033109066704913">The only boy in typing class</A> (no photo)
+<LI>My brain as of 1999 (<A
+HREF="images/self/eisnerbrain.sagittal.jpg">sagittal</a>, 
+<A HREF="images/self/eisnerbrain.axial.jpg">axial</A>) - study
+carefully and you can skip my course (well, the first half).
+</UL>
+
+<p>And some non-photos:</p>
+<ul>
+<li><A HREF="fun/unnatural-language-processing.html">First Workshop on
+  Unnnatural Language Processing</A> (see also <A HREF="http://www.flickr.com/photos/30686429@N07/sets/72157622330082619/">related work</a>)
+<li><A HREF="fun/grammar-and-the-sentence/">The Grammar and the Sentence</A> <font size=-1>(a song about parsing) (see also <A HREF="fun/malone/">All Malonely People</A>)</font> 
+<li>Read about the threat of <A HREF="fun/NLP-and-global-warming.html">NLP and global warming</A>
+<li><A HREF="fun/hamantasch.ppt">Why hamantaschen are better than latkes</A> 
+       <font size=-1>(animated PowerPoint with speaker notes; debate
+       video coming?)</font> (see
+       also <A HREF="http://seattlelocalfood.com/2011/03/20/sierpinski-hamantaschen-sierpinskitaschen/">related work</A>)
+</ul>
+
+<p>If I had a <A HREF="http://www.geekcode.com/geek.html">geek code</A>, it
+would be <A
+HREF="http://www.ebb.org/cgi-bin/ungeek.cgi?geekCode=GCS%2FO%2FM%2FMU+d-%28%2B%29+s%3A-+a%2B+C%2B%2B$+ULS%2B%28%2B%2B)+L%2B%2B+P%2B%2B+E%2B%2B%3E%2B%2B%2B+W%2B%2B+N%2B%2B+o%2B+K%2B%2B+w@+%21O+V-+PS%2B%2B+PE-+Y%2B+PGP+b%2B%2B%3E%2B%2B%2B+%21tv+G+e%2B%2B%2B%2B+h-+r%2B%2B%2B+y%2B%2B%2B
+">GCS/O/M/MU d-(+) s:- a+ C++$ ULS+(++) L++ P++ E++>+++ W++ N++ o+ K++ w@ !O
+V- PS++ PE- Y+ PGP b++>+++ !tv G e++++ h- r+++ y+++</A>, but I
+disapprove of the <A HREF="http://www.jargon.net/jargonfile/f/feepingcreaturism.html">feeping creaturism</A>
+of these things.</p>
+
+<!--END PAGE CONTENT HERE-->	
+	
+<IMG SRC="images/line.string.gif" alt="---"><br>
+
+<p class="footer">
+	Page maintainer: <a href="mailto:www@cs.jhu.edu,jason@cs.jhu.edu" class="footer">www@cs.jhu.edu, jason@cs.jhu.edu</a><BR>
+	Last Modification $Date: 2015/10/07 01:40:16 $ (GMT)
+	</p>
+</body>
+</html>
+
