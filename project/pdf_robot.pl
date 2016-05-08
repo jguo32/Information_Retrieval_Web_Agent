@@ -27,6 +27,7 @@ use HTTP::Status;
 use LWP::RobotUA;
 use URI::URL;
 use LWP::UserAgent;
+use URI;
 
 URI::URL::strict( 1 );   # insure that we only traverse well formed URL's
 
@@ -127,9 +128,11 @@ sub main {
 
         my @related_urls  = &grab_urls( $response->content, $url );
 
-
+        # Possibly the original link is redirected to somewhere else
+        # since we have filtered the links at the beginning of the loop,
+        # so we process them separately
         if ( scalar @related_urls eq 1 and $related_urls[0] !~/$base_domain/) {
-            print "redirect\n";
+            print "redirected\n";
         }
         else {
             foreach my $link (@related_urls) {
@@ -147,9 +150,6 @@ sub main {
                     if ($full_url =~ /$url#.*/) {
                        next;
                     }
-                    # Possibly the original link is redirected to somewhere else
-                    # since we have filtered the links at the beginning of the loop,
-                    # so we process them separately
                     if ($full_url !~ /$base_domain/) {
                         &process_redirect($full_url);
                         next;
@@ -366,16 +366,12 @@ sub grab_urls {
             # Some publications on computer vision might also have substring "CV" in filename
             if ($link =~ /(CV|cv|resume)+(\w|-)*\.pdf/ and $link !~ /publication/) {
 
+                # Concatenate relative urls
                 if ($link !~ /http:\/\//) {
-
-                    # Strip the last part of the link, e.g. "cv_smith.pdf"
-                    if ( $link =~ /\/(\w+\.pdf)/) {
-                        my $mod_link = $1;
-                        if (defined($mod_link)) {
-                            $link = $mod_link;
-                        }
+                    if ($parent_url !~ /\/$/) {
+                        $parent_url = $parent_url . "/";
                     }
-                    $link = $parent_url . $link;
+                    $link = URI->new_abs($link, $parent_url);
                 }
 
                 print "## Find Resume ##: $link\n";
