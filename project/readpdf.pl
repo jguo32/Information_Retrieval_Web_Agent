@@ -28,6 +28,6 @@ sub main {
 	# $mech->get($url);
 	# print $mech->response->code . " " . $mech->response->header("Location");
 # http://www.cs.jhu.edu/~micharu1/michaelrushanan.org/
-	my $abs_url = URI->new_abs('Ferraro_CV.pdf', 'http://cs.jhu.edu/~ferraro/home.html');
+	my $abs_url = URI->new_abs('CV.pdf', 'http://www.cs.jhu.edu/~andyjhma/index.html');
 	print $abs_url, "\n";
 }

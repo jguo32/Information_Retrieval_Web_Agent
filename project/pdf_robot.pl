@@ -36,9 +36,8 @@ $| = 1;
 my $ROBOT_DELAY_IN_MINUTES = 0; # could be dangerous if we set it to 0
 my $log_file = shift (@ARGV);
 my $content_file = shift (@ARGV);
-my $result_file = shift (@ARGV);
 
-if ((!defined ($log_file)) || (!defined ($content_file)) || (!defined ($result_file))) {
+if ((!defined ($log_file)) || (!defined ($content_file))) {
     print STDERR "You must specify a log file, a content file and a base_url\n";
     print STDERR "when running the web robot:\n";
     print STDERR "  ./robot_base.pl mylogfile.log content.txt base_url\n";
@@ -47,28 +46,11 @@ if ((!defined ($log_file)) || (!defined ($content_file)) || (!defined ($result_f
 
 open LOG, ">$log_file";
 open CONTENT, ">$content_file";
-# open RESULT, ">$result_file";
 
 my $ROBOT_NAME = 'jguo32Bot/1.0';
-my $ROBOT_MAIL = 'jguo32@cs.jhu.edu';
+my $ROBOT_MAIL = 'jguo32@jhu.edu';
 
-#
 # create an instance of LWP::RobotUA. 
-#
-# Note: you _must_ include a name and email address during construction 
-#       (web site administrators often times want to know who to bitch at 
-#       for intrusive bugs).
-#
-# Note: the LWP::RobotUA delays a set amount of time before contacting a
-#       server again. The robot will first contact the base server (www.
-#       servername.tag) to retrieve the robots.txt file which tells the
-#       robot where it can and can't go. It will then delay. The default 
-#       delay is 1 minute (which is what I am using). You can change this 
-#       with a call of
-#
-#         $robot->delay( $ROBOT_DELAY_IN_MINUTES );
-#
-
 my $robot = new LWP::RobotUA $ROBOT_NAME, $ROBOT_MAIL;
 $robot->delay( $ROBOT_DELAY_IN_MINUTES);
 
@@ -90,7 +72,6 @@ sub main {
     push @search_urls, $base_url;
     $pushed{$base_url} = 1;
 
-
     while (@search_urls) {
         my $url = shift @search_urls;
 
@@ -101,7 +82,6 @@ sub main {
         # get header information on URL
         # If the status is not okay or the content type is not what we are 
         # looking for skip the URL and move on
-
         print LOG "[HEAD ] $url\n";
         print "Currently visiting: [HEAD] $url\n";
 
@@ -112,14 +92,13 @@ sub main {
         next if ! &wanted_content( $response->content_type );
         
         print LOG "[GET  ] $url\n";
+        print "[GET  ] $url\n";
 
         $request->method( 'GET' );
         $response = $robot->request( $request );
 
         next if $response->code != RC_OK;
         next if $response->content_type !~ m@text/html@;
-        # next if ! &GET($url, $request, $response);
-
 
         print LOG "[LINKS] $url\n";
         print "[LINKS] $url\n";
@@ -170,25 +149,12 @@ sub main {
             sort { $relevance{ $a } <=> $relevance{ $b }; } @search_urls;
         print "\n";
 
-
-        # Seems useless
-        # while (@wanted_urls) {
-        #     my $url = shift @wanted_urls;
-        #     if (defined($url) && !($url eq "")) {
-        #         print "Get pdf file: $url\n";
-        #         print RESULT "$url\n";
-        #     }
-        # }
     }
     close LOG;
     close CONTENT;
 
     exit (0);
-
-
 }
-
-
 
 # Get the domain of the base url for later use of domain restriction
 # May not applicable if you want to use the domain of urls other 
@@ -213,17 +179,62 @@ sub get_base_domain {
     }
     
     $base_domain = $domain;
-
 }
 
 # Process the link that is redirected to somewhere with a different domain
 
 sub process_redirect {
     my $url = shift;
-    print "get url";
+    print "processing redirected page...\n";
+
+    my $request  = new HTTP::Request HEAD => $url;
+    my $response = $robot->request( $request );
+
+    return if $response->code != RC_OK;
+    return if ! &wanted_content( $response->content_type );
+
+    $request->method( 'GET' );
+    $response = $robot->request( $request );
+
+    return if $response->code != RC_OK;
+    return if $response->content_type !~ m@text/html@;
+
+    my $content = $response->content;
+
+    skip:
+        while ($content =~ s/<\s*[aA] ([^>]*)>\s*(?:<[^>]*>)*(?:([^<]*)(?:<[^aA>]*>)*<\/\s*[aA]\s*>)?//) {
+            my $tag_text = $1;
+            my $reg_text = $2;
+            my $link = "";
+
+            if ($tag_text =~ /href\s*=\s*(?:["']([^"']*)["']|([^\s])*)/i) {
+                $link = $1 || $2;
+                if (!defined($link)) {
+                  next;
+                } 
+
+                # Skip those links that are impossible to contain CV or resume
+                next if ($link =~/publication|paper|project|slide|image|pub|bibtex|seminar/);
+                
+                # Some publications on computer vision might also have substring "CV" in filename
+                if ($link =~ /(CV|cv|resume)+(\w|-)*\.pdf/ and $link !~ /publication/) {
+
+                    if ($link !~ /http:\/\//) {
+                        $link = &concat_url($link, $url);
+                    }
+
+                    print "## Find Resume ##: $link\n";
+                    &save_file($link);
+
+                    return;
+                }
+            }
+        }
 
 }
-    
+
+# support another way to restrict searching domain
+# not used currently
 sub process_url {
     my $link = shift;
     my $response = shift;
@@ -285,15 +296,12 @@ sub wanted_content {
 
 # extract_content
 #
-# TODO: use this function to extract resume-like information from webpage
-
+# Could use this function to extract resume-like information from webpage
 sub extract_content {
     my $content = shift;
     my $url = shift;
 
     # my $email;
-    # my $phone;
-    # my $city;
 
     # parse out information you want
     # print it in the tuple format to the CONTENT and LOG files, for example:
@@ -303,25 +311,10 @@ sub extract_content {
     #     print CONTENT "($url; EMAIL; $email)\n";
     #     print LOG "($url; EMAIL; $email)\n";
     # }
-    
-    # while($content =~ s/\D((\d{3}){0,1}(\(\d{3}\)){0,1}\D\d{3}\D\d{4})\D//){
-    #     $phone = $1;
-    #     print CONTENT "($url; PHONE; $phone)\n";
-    #     print LOG "($url; PHONE; $phone)\n";
-    
-    # }
-    # while($content =~ s/([A-Za-z]+,{0,1}\s[A-Za-z]+,{0,1}\s\d{5}(.\d{4}){0,1})//){
-    #     $city = $1;
-    #     print CONTENT "($url; CITY; $city)\n";
-    #     print LOG "($url; CITY; $city)\n";
-    # }
-
-
 
     return;
 }
 
-#
 # grab_urls
 #
 #   this function parses through the content of a passed HTML page and
@@ -329,8 +322,6 @@ sub extract_content {
 #
 #   Relevancy based on both the link itself and the related text 
 #   is calculated and stored in the %relevance hash
-#
-
 sub grab_urls {
     my $content = shift;
     my $parent_url = shift;
@@ -355,31 +346,13 @@ sub grab_urls {
             # Some publications on computer vision might also have substring "CV" in filename
             if ($link =~ /(CV|cv|resume)+(\w|-)*\.pdf/ and $link !~ /publication/) {
 
-                # Concatenate relative urls
                 if ($link !~ /http:\/\//) {
-                    if ($parent_url !~ /\/$/) {
-                        $parent_url = $parent_url . "/";
-                    }
-                    $link = URI->new_abs($link, $parent_url);
+                    $link = &concat_url($link, $parent_url);
                 }
 
                 print "## Find Resume ##: $link\n";
-                my $file = get $link;
-                if (defined($file)) {
-                    # Replace "/" by "." to make the link a valid filename
-                    $link =~ tr/\//\./; 
+                &save_file($link);
 
-                    open( FILE, '>', $save_path . $link ) or die $!;
-                    binmode FILE;
-
-                    print FILE $file;
-                    close( FILE );
-                } 
-                else {
-                    print "error, failed to get remote pdf file!\n";
-                }
-
-                push @wanted_urls, $link;
                 next;
             }
 
@@ -387,7 +360,6 @@ sub grab_urls {
             $relevance{ $link } = &calc_relevancy($link, $reg_text);
             
         }
-
         # print $reg_text, "\n" if defined $reg_text;
         # print $link, "\n";
     }
@@ -395,6 +367,37 @@ sub grab_urls {
     return keys %urls;   # the keys of the associative array hold all the
                          # links we've found (no repeats).
 }
+
+sub save_file {
+    my $link = shift;
+    my $file = get $link;
+    if (defined($file)) {
+        # Replace "/" by "." to make the link a valid filename
+        $link =~ tr/\//\./; 
+
+        open( FILE, '>', $save_path . $link ) or die $!;
+        binmode FILE;
+
+        print FILE $file;
+        close( FILE );
+    } 
+    else {
+        print "error, failed to get remote pdf file!\n";
+    }
+}
+
+sub concat_url {
+    my $link = shift; 
+    my $parent_url = shift;
+
+    if ($parent_url !~ /\/$/) {
+        $parent_url = $parent_url . "/";
+    }
+    $link = URI->new_abs($link, $parent_url);
+
+    return $link;
+}
+
 
 sub calc_relevancy {
     my $link = shift;
