@@ -1,0 +1,109 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Research and Work Experience</title>
+    <!--<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/prototype/1.7.0.0/prototype.js"></script>-->
+<script type="text/javascript" src="https://cs.jhu.edu/~ferraro/scripts/prototype.js"></script>
+<script type="text/javascript" src="https://cs.jhu.edu/~ferraro/scripts/init.js"></script>
+<script type="text/javascript" src="https://cs.jhu.edu/~ferraro/scripts/main.js"></script> 
+    <script type="text/javascript" src="scripts/anchorredir.js"></script>
+    <link rel="stylesheet" type="text/css" href="style/main.css" />
+    
+  </head>
+
+  <body>
+  <div class="body">
+	<div class="header table" id="nav">
+	<ul class="hlist ulcenter">
+
+		<li >
+					<a href="http://cs.jhu.edu/~ferraro/home.html" title="Home; About Me">Home</a>
+					</li>
+
+		<li >
+					<a href="http://cs.jhu.edu/~ferraro/teaching.html" title="See my teaching history">Teaching</a>
+					</li>
+
+		<li >
+					<a href="http://cs.jhu.edu/~ferraro/papers.html" title="See my publication history">Publications</a>
+					</li>
+
+		<li class="lastli">
+					<a href="http://cs.jhu.edu/~ferraro/experience.html" title="See my experience">Experience</a>
+					</li>
+	</ul>
+</div>
+	
+	<p>
+	For a condensed listing of my experience, please see my CV (<a href="Ferraro_CV.pdf" title="Link to PDF of my CV">PDF</a>).
+	</p>
+	
+	<div id="experience">
+	  	  	  <div class="experience" id="clspworkshop2010">
+	    <div class="logospot">
+	      <img src="imgs/jhulogosmall.jpg" class="floatleft" alt="Johns Hopkins University" />
+	    </div>
+	    <h2 class="nobottom expposition">
+	      Undergraduate Research Fellow
+	    </h2>
+	    <span class="explocale notop nobottom">The Center for Language and Speech Processing<br />
+	    Johns Hopkins University
+	    </span>
+	    <span class="notop expdates">Summer 2010</span>
+	    <br />
+	    <strong>Advisor</strong>:<span class="expadvisor">Evelyne Tzoukermann, Ph.D.</span>
+	    <br />
+	    <strong>Summary</strong>:<span class="expsimpsum">Extracted action-related information from text for use in an automatic video-annotation system</span>
+	    <h4 class="fakelink expandablel" id="clspworkshop2010-exsum">Extended Summary</h4>
+	    <div class="expandable experience-desc" id="clspworkshop2010-exsum-desc">
+	      <p>Coming soon!</p>
+	    </div>
+	  </div>
+	  
+	  	  <div class="experience" id="chicago2009">
+	    <div class="logospot">
+	      <img src="imgs/University-Chicago-logo.jpg" height="198px" width="167px" class="floatright" alt="The University of Chicago" />
+	    </div>
+	    
+	    <h2 class="nobottom expposition">
+	      NSF REU Student Researcher
+	    </h2>
+	    <span class="explocale notop nobottom">The Cancer Research Center<br />
+	      University of Chicago
+	    </span>
+	    <span class="notop expdates">Summer 2009</span>
+	    <br />
+	    <strong>Advisor</strong>:<span class="expadvisor">Kenji Suzuki, Ph.D.</span>
+	    <br />
+	    <strong>Summary</strong>:<span class="expsimpsum">Helped to develop a new detection scheme for colonic flat lesions</span>	   
+	    <h4 class="fakelink expandablel" id="chicago2009-exsum">Extended Summary</h4>
+	    <div class="expandable experience-desc" id="chicago2009-exsum-desc">
+	      <p>The sponsoring REU is the <a href="http://facweb.cti.depaul.edu/research/vc/medix/" title="MedIX REU">MedIX REU</a>. While I did my work that summer at the University of Chicago, the REU is head-quarted at DePaul. In this program, another intern and I developed an algorithm for detecting flat lesions in computed tomography colonography (CTC). This algorithm achieved an unprecedented 82% specificity on a flat lesion dataset.</p>
+	      <p>Computer aided detection (CADe) systems have been shown to improve radiological detections of colonic lesions; lesions can be a strong predictor of cancer, so detection of these lesions is crucial. There are two main categories of colonic lesions: polypoid and flat. Many CADe systems detect polypoid lesions with near perfect specificity and sensitivity, but very few are targeted toward detecting flat lesions. Unfortunately, those same state-of-the-art polypoid detection systems yield specificity only in the 50% area and suffer from unacceptably low sensitivity. It is necessary to improve flat lesion detection systems because even trained radiologists have a difficult time detecting flat lesions in CTC; an increase in detections could have a very large clinical impact, potentially saving many lives.</p>
+	      
+	      <p>We adapted a morphological technique in our differential geometric approach to more accurately capture the differences between flat lesions and common sources of false positive detections. The key insight was that flat lesions tend to be more crater-like (dimpled or ellipsoidal), whereas most common sources of false positive detections tend to be more valley-shaped. Our hypothesis was that a sufficiently-sized tangent line segment should never be able to lie inside a flat lesion without intersecting the colon wall. This was verified experimentally, though more work needs to be done prior to widespread clinic use.</p>
+	    </div>
+	  </div>
+
+	</div>
+	
+	<hr />
+	<p>
+	  	  Last change: May 3rd, 2016 23:11<br />
+	</p>
+	<p>
+<a href="http://validator.w3.org/check?uri=referer">
+   <img style="border:0;width:88px;height:31px" 
+   src="http://www.w3.org/Icons/valid-xhtml11-blue" alt="Valid XHTML 1.1" height="31" width="88" /></a>
+<a href="http://jigsaw.w3.org/css-validator/check/referer">
+    <img style="border:0;width:88px;height:31px"
+        src="http://jigsaw.w3.org/css-validator/images/vcss-blue"
+        alt="Valid CSS!" />
+</a>
+</p>
+
+<p>Are you having some trouble viewing/working the site? Check out some known <a href="bugs.html">bugs</a>.</p>
+  </div>
+  </body>
+</html>

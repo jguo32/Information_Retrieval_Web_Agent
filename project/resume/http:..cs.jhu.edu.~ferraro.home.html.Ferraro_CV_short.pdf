@@ -1,0 +1,220 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Frank Ferraro</title>
+<!--<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/prototype/1.7.0.0/prototype.js"></script>-->
+<script type="text/javascript" src="https://cs.jhu.edu/~ferraro/scripts/prototype.js"></script>
+<script type="text/javascript" src="https://cs.jhu.edu/~ferraro/scripts/init.js"></script>
+<script type="text/javascript" src="https://cs.jhu.edu/~ferraro/scripts/main.js"></script> 
+
+<link rel="stylesheet" type="text/css" href="style/main.css" />
+
+</head>
+
+
+<body>
+  <div class="body">
+  	<div id="introheader">
+	<div id="picr">
+	  <img src="imgs/portrait2.jpg" alt="Me!" height="200px" width="133px"/>
+		</div>
+	<h1>Francis M. O. Ferraro</h1>
+	<div id="contentarea">
+		<h5 class="contacth">Where to Find Me:</h5>
+		<p class="contactinfo">
+		Hackerman 321<br />
+		<a href="http://www.clsp.jhu.edu/" title="Center for Language and Speech Processing: My Interdepartmental Home">Center for Language and Speech Processing</a><br />
+		<a href="http://www.cs.jhu.edu/" title="Department of Computer Science: My Departmental Home">Department of Computer Science</a><br />
+		<a href="http://www.jhu.edu/" title="JHU Home">Johns Hopkins University</a>
+		</p>
+		<h5 class="contacth">Email:</h5>
+		<p class="contactinfo">
+		ferraro [at] cs [dot] jhu [dot] edu
+		</p>
+	</div>
+	</div>
+	
+	<div class="header table" id="nav">
+	<ul class="hlist ulcenter">
+
+		<li >
+					<a href="http://cs.jhu.edu/~ferraro/home.html" title="Home; About Me">Home</a>
+					</li>
+
+		<li >
+					<a href="http://cs.jhu.edu/~ferraro/teaching.html" title="See my teaching history">Teaching</a>
+					</li>
+
+		<li >
+					<a href="http://cs.jhu.edu/~ferraro/papers.html" title="See my publication history">Publications</a>
+					</li>
+
+		<li class="lastli">
+					<a href="http://cs.jhu.edu/~ferraro/experience.html" title="See my experience">Experience</a>
+					</li>
+	</ul>
+</div>
+	
+	<p>
+	  Greetings! I'm Francis (Frank) Ferraro, a senior Ph.D. candidate at Johns Hopkins University.
+	  My advisor is <a href="http://cs.jhu.edu/~vandurme" title="Benjamin Van Durme">Benjamin Van Durme</a>.
+	</p>
+	
+	<!-- <p> -->
+	<!-- 	My CV is available as a <a href="Ferraro_CV.pdf" title="Link to PDF of my CV">PDF</a>. -->
+	<!-- </p> -->
+	
+	<p>
+	  My <span id="ri">research</span> is focused on developing and evaluating probablistic models of complex events and situations.
+	  In Summer 2015, I was an intern at Microsoft Research.
+	  I've also done some work at the intersection of text and video, learning extended syntactic frames, and identifying and classifying referential language use. 
+	  I began my research career with biomedical imaging and a little bit of complexity theory.
+	  <!--  cognitively natural language understanding and knowledge representation. As a partial listing, this includes: -->
+	<!-- </p> -->
+	<!-- <ul class="squarelist"> -->
+	<!--   <li> automatically acquiring and utilizing knowledge --- both domain-specific and common sense --- for ultimate use in non-contrived domains, and</li> -->
+	<!--   <li> learning better ways to map utterances into usable semantic forms (e.g., learning sentential logical forms).</li> -->
+	<!--   <\!--<li> using implicit and explicit knowledge to plan and reason in environments.</li>-\-> -->
+	<!-- </ul> -->
+	</p>
+
+	
+	<div class="primaryblock" id="teaching_highlights">
+	<div class="header" id="home_teaching_highlights_header">
+	  Teaching Highlights</div>
+	<div id="edutoolsdiv"> 	    <ul> 	      <li>An <a href="http://cs.jhu.edu/~jason/tutorials/loglin/" 			title="Log-linear models interactive tutorial">interactive  		  tutorial</a> on log-linear models developed with Jason Eisner (see 		our <a href="papers.html#ferraro-loglin-2013">workshop  		  paper</a> for more information) 	      </li> 	      <li>An <a href="http://cs.jhu.edu/~jason/465/hw-ofst/hw-ofst.pdf">introductory  		  assignment/walkthrough tutorial</a> I cowrote with Jason Eisner that  		exposes students to (weighted) finite-state programming with OpenFST 	      </li> 	    </ul> 	  </div>	<ul>
+	  <li>I received an Outstanding Teaching Award from the Department of Computer Science at Johns Hopkins University (2013)</li>
+	</ul>
+	<div id="currentpositiondiv"> 	  </div>	</div>
+		
+	<div id="cv" class="primaryblock">
+	<div class="header">Curriculum Vitae, Service and Honors</div>
+		<p>
+	  	My <a href="Ferraro_CV.pdf" title="Link to PDF of my CV">full</a> and <a href="Ferraro_CV_short.pdf" title="Link to PDF of my CV">short</a> (two pages) CVs are available as PDFs.
+	  	</p>
+	  	<div>
+	  	<h3>Service</h3>
+	  	<div>
+	  	  <ul>
+		    <li>Primary reviewer: NAACL 2016, ICML 2015, EMNLP 2015 (semantics)</li>
+		    <li>Secondary reviewer: EMNLP 2012 (semantics), ACL 2014 (EVENTS workshop), EMNLP 2014 (semantics), WWW 2015, EMNLP 2015</li>
+	  	    <!--<li>Secondary reviewer (semantics track), <a href="http://emnlp-conll2012.unige.ch/" title="EMNLP 2012">EMNLP 2012</a></li>-->
+		    <li>CLSP Admissions Committee (2013-2016)</li>
+		    <li>Undergraduate and Graduate Teaching/Curriculum Committee (2013-2014)</li>
+		    <li>Organizer, Mid-Atlantic Student Colloquium on Speech, Language and Learning (2012)</li>
+	  	  </ul>
+	  	</div>
+	  	</div>
+	  	<div>
+	  	<h3>Select Awards and Honors</h3>
+	  	<!-- <p>I describe these in more detail <a href="awards.html" title="Award Descriptions">here</a>.</p>-->
+	  	<div>
+	  	  <ul>
+		    <li>Outstanding Teaching Award, Department of Computer Science, Johns Hopkins University; 2013</li>
+	  	    <li>NSF Graduate Fellowship: 2011</li>
+	  	    <li>NDSEG Fellowship: 2011 (Declined)</li>
+		    <li>CoSIDA Academic All-American: 2011</li>
+	  	    <li>2011 CRA Outstanding Undergraduate Researcher: Finalist</li>	  			
+	  		</ul>
+	  	</div>
+	  	</div>
+	</div>
+	
+	
+	<div class="primaryblock" id="education">
+	<div class="header">Education</div>
+	  <!--<div id="jhu" class="school">
+		<div id="jhulogodiv" class="logo">
+		  <a href="http://www.jhu.edu">
+			<img src="imgs/JHU_seal.png" height=171 width=123/></a>
+		</div>
+		
+		<div id="jhuedudiv" class="edu_desc">
+		  <p>
+			<a href="http://www.cs.jhu.edu">
+			  Department of Computer Science</a><br />
+		  </p>
+		</div>
+	  </div> <br />
+	  <br />
+	  -->
+	  <div id="rochester" class="school">
+	  	<h3>University of Rochester</h3>
+		<div id="urlogodiv" class="logo">
+		  <a href="http://www.rochester.edu">
+			<img src="imgs/urlogo.gif" alt="UR" height="100" width="123" /></a>
+		</div>
+		
+		<div id="uredudiv" class="edu_desc">
+		  <p>
+			<a href="http://www.cs.rochester.edu" title="UR CS Department Link">
+			  Department of Computer Science</a><br />
+			Honors Bachelor of Science, with Highest Research Honors<br />
+			Summa cum Laude<br />
+			With Highest Distinction<br />
+			Minor in <a href="http://www.ling.rochester.edu" title="UR Linguistics Department Link">Linguistics</a><br />
+			<em>May 2011</em>
+		  </p>
+		  <p>
+			<a href="http://www.math.rochester.edu" title="UR Math Department Link">
+			Department of Mathematics</a><br />
+			Bachelor of Science<br />
+			Summa cum Laude<br />
+			With Highest Distinction<br />
+			<em>May 2011</em>
+		  </p>
+		</div>
+		
+		<div class="eduprose">
+		<p>My senior honors thesis was titled <span class="thesistitle">"Toward Improving the Automated Classification of Metonymy in Text Corpora"</span> (<a href="ferraro_ur_thesis.pdf" title="Link to my honors thesis">PDF</a> with <a href="ferraro_ur_thesis_slides.pdf" title="Link to slides for my honors thesis">slides</a>, or find in my papers <a href="?p=p#ferraro-ur-thesis">database</a>). <a href="http://cs.rochester.edu/~schubert">Len Schubert</a>, <a href="http://cs.rochester.edu/~swift">Mary Swift</a> and <a href="http://cs.rochester.edu/~gildea">Dan Gildea</a> comprised my thesis committee.</p>
+		</div>
+	  </div>
+	  </div>
+	  
+	  <div class="primaryblock" id="bio">
+	<div class="header">About Me</div>
+	<h4>Short Bio (suitable for talk abstracts)</h4>
+	Frank Ferraro is a senior Ph.D. candidate in Computer Science at Johns Hopkins University, advised by Benjamin Van Durme.
+	His research focuses on computational event semantics, and unlabeled, structured probabilistic modeling over very large corpora.
+	He has published on a number of cross-disciplinary basic and applied projects, and has papers in areas such as multimodal processing and information extraction, latent-variable syntactic methods and applications, and the induction and evaluation of frames and scripts.
+	He holds a Bachelors in Computer Science, and Mathematics, from the University of Rochester.
+	
+	<h4>More Details</h4>
+	  <p>I am originally from Niskayuna, NY, a suburb of Schenectady
+	  which is about 30 minutes north of Albany. I went to <a href="http://www.niskayunaschools.org/" title="Niskayuna CSD">Niskayuna High School</a>, where, in addition
+	  to my studies, I swam on the varsity team and played the viola
+	  for the Orchestra and Chamber Strings ensemble. Some highlights include beating our cross-town rivals in the section championships, winning the state championships and performing as a guest at an <a href="http://www.esyo.org/" title="ESYO">Empire State Youth Orchestra</a> Playathon event. I got an opportunity to better my own skills and learn from professionals when, with my High School Orchestra, I performed with the <a href="http://www.schenectadysymphony.org/home.php" title="SSO">Schenectady Symphony Orchestra</a>.</p>
+	  
+	  <p>At the University of Rochester, I was a member of the varsity swim and dive team throughout all four years. Over those four years I swam with a lot of great people and built some great bonds. As a team, we were able to win the <a href="http://www.libertyleagueathletics.com/" title="Liberty League">Liberty League</a> Championship two times, compete against some of the best D3 athletes in the nation while still having a lot of fun at the <a href="http://www.uaa.rochester.edu/" title="UAA Website">University Athletic Associaion (UAA)</a> Championships (our primary, end-of-season championships).
+	  </p> 
+	  
+	  <!--<p>Up top, I briefly explain my <a href="#ri" title="Brief Research Interests">research interests</a>.
+	  </p>-->
+	  
+	<!-- <p>Though I've used up my NCAA eligibility, I still can continue to compete (USA Master's Swimming). While I'll probably do that eventually, I'm taking time to do more unstructured training. I'm looking toward triathlons and trying to get more into running (probably long distance: half and full marathons) and biking. I'm also learning how to build bikes. -->
+	<!-- </p> -->
+
+	<!--<p>Travels: Poland, <a href="http://www.thekf.org/" title="The Kosciuszko Foundation">The Kosciuszko Foundation</a>'s <a href="http://www.thekf.org/programs/summer/teaching_english_in_poland/" title="TEIP">Teaching English in Poland (TEIP)</a> program.</p>-->
+
+	</div>
+	
+	<hr />
+	<p>
+Last change: May 3rd, 2016 23:11<br />
+	</p>
+
+<p>
+<a href="http://validator.w3.org/check?uri=referer">
+   <img style="border:0;width:88px;height:31px" 
+   src="http://www.w3.org/Icons/valid-xhtml11-blue" alt="Valid XHTML 1.1" height="31" width="88" /></a>
+<a href="http://jigsaw.w3.org/css-validator/check/referer">
+    <img style="border:0;width:88px;height:31px"
+        src="http://jigsaw.w3.org/css-validator/images/vcss-blue"
+        alt="Valid CSS!" />
+</a>
+</p>
+
+<p>Are you having some trouble viewing/working the site? Check out some known <a href="bugs.html">bugs</a>.</p>
+</div><!--end body div-->
+</body>
+</html>

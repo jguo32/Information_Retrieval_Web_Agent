@@ -1,7 +1,7 @@
 use FileHandle;
 use strict;
 use LWP::UserAgent;
-use WWW::Mechanize;
+use URI;
 
 &main;
 
@@ -22,10 +22,12 @@ sub main {
 # 	if ( $response->is_success and $response->previous ) {
 # 	    print $request->url, ' redirected to ', $response->request->uri, "\n";
 # 	}
-	my $url = "http://www.cs.jhu.edu/~alopez/";
-	my $mech = WWW::Mechanize->new();
-	$mech->requests_redirectable([]);
-	$mech->get($url);
-	print $mech->response->code . " " . $mech->response->header("Location");
-
+	# my $url = "http://www.cs.jhu.edu/~alopez/";
+	# my $mech = WWW::Mechanize->new();
+	# $mech->requests_redirectable([]);
+	# $mech->get($url);
+	# print $mech->response->code . " " . $mech->response->header("Location");
+# http://www.cs.jhu.edu/~micharu1/michaelrushanan.org/
+	my $abs_url = URI->new_abs('Ferraro_CV.pdf', 'http://cs.jhu.edu/~ferraro/home.html');
+	print $abs_url, "\n";
 }
