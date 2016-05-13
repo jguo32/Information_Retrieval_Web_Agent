@@ -1,0 +1,212 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>The Center for Imaging Science</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<link rel="shortcut icon" type="image/x-icon" href="../../cfavicon.ico">
+<LINK REL=stylesheet HREF="/css/cis.css" TYPE="text/css">
+<LINK REL=stylesheet HREF="/css/containers.css" TYPE="text/css">
+<link href="/css/hdr_dd_mnu.css" media="all" rel="stylesheet" type="text/css" />
+<!--[if IE]>
+  <link href="../css/ie.css" media="all" rel="stylesheet" type="text/css" />
+<![endif]-->
+<script type="text/javascript">
+<!--
+function MM_swapImgRestore() { //v3.0
+  var i,x,a=document.MM_sr; for(i=0;a&&i<a.length&&(x=a[i])&&x.oSrc;i++) x.src=x.oSrc;
+}
+function MM_preloadImages() { //v3.0
+  var d=document; if(d.images){ if(!d.MM_p) d.MM_p=new Array();
+    var i,j=d.MM_p.length,a=MM_preloadImages.arguments; for(i=0; i<a.length; i++)
+    if (a[i].indexOf("#")!=0){ d.MM_p[j]=new Image; d.MM_p[j++].src=a[i];}}
+}
+
+function MM_findObj(n, d) { //v4.01
+  var p,i,x;  if(!d) d=document; if((p=n.indexOf("?"))>0&&parent.frames.length) {
+    d=parent.frames[n.substring(p+1)].document; n=n.substring(0,p);}
+  if(!(x=d[n])&&d.all) x=d.all[n]; for (i=0;!x&&i<d.forms.length;i++) x=d.forms[i][n];
+  for(i=0;!x&&d.layers&&i<d.layers.length;i++) x=MM_findObj(n,d.layers[i].document);
+  if(!x && d.getElementById) x=d.getElementById(n); return x;
+}
+
+function MM_swapImage() { //v3.0
+  var i,j=0,x,a=MM_swapImage.arguments; document.MM_sr=new Array; for(i=0;i<(a.length-2);i+=3)
+   if ((x=MM_findObj(a[i]))!=null){document.MM_sr[j++]=x; if(!x.oSrc) x.oSrc=x.src; x.src=a[i+2];}
+}
+//-->
+</script>
+<style type="text/css">
+<!--
+.style3 {color: #000000}
+-->
+</style></head>
+
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="MM_preloadImages('/images/m_menu_roll/main_menu_over_05.gif','/images/m_menu_roll/main_menu_over_06.gif','/images/m_menu_roll/main_menu_over_07.gif','/images/m_menu_roll/main_menu_over_08.gif','/images/m_menu_roll/main_menu_over_10.gif')">
+
+<!--[if IE]>
+  <script type='text/javascript' src='/css/js/ie.js'></script>
+<![endif]-->
+<div id="body_peop">
+<div id="page">
+<div id="L2_top">
+<div id="L2_top_left"><a href="/index.php"><img src="/images/level-2-page-1_02.gif" width="135" height="110" border="none" alt="CIS Logo"></a></div>
+<div id="L2_top_right"><a href="/index.php"><img src="/images/level-2-page-1_03.gif" width="740" height="72" border="none" alt="CIS Tagline"></a> 
+<div id="navbar"><ul id="nav">
+  	<li id="nav_abt"><a href="/about-cis" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('menu_about','','/images/m_menu_roll/main_menu_over_05.gif',1)"><img src="/images/m_menu_roll/main_menu_off_05.gif" alt="About" name="menu_about" width="67" height="38" border="0"></a>
+  	  <ul>
+		<li><a href="/news">News</a></li>
+        <li><p>Publications</p>
+        	<ul><li><a href="/publications/featured.php">Featured Publications</a></li>
+            <li><a href="/publications">All Publications</a></li>
+            <li><a href="/posters">Posters</a></li></ul></li>
+		<li><a href="/seminars">Seminars</a></li>
+		<li><a href="/job-openings">Job Openings</a></li>
+		<li><a href="/contact-us">Contact Us</a></li>
+	</ul>
+	</li>
+	<li id="nav_ppl"><a href="/people" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('menu_people','','/images/m_menu_roll/main_menu_over_06.gif',1)"><img src="/images/m_menu_roll/main_menu_over_06.gif" alt="People" name="menu_people" width="75" height="38" border="0"></a><ul>
+		<li><a href="/faculty">Faculty</a></li>
+		<li><a href="/staff">Staff</a></li>
+		<li><a href="/research_fellows">Research Fellows</a></li>
+		<li><a href="/graduate">Graduate Students</a></li>
+        <li><a href="/alumni">Alumni</a></li>
+	</ul>
+	</li>
+	<li id="nav_rsch">
+	  <a href="/research" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('menu_research','','/images/m_menu_roll/main_menu_over_07.gif',1)"><img src="/images/m_menu_roll/main_menu_off_07.gif" alt="Research" name="menu_research" width="93" height="38" border="0"></a>
+        <ul>
+            <li><a href="/medical-imaging">Medical Image Analysis</a></li>
+            <li><a href="/computer-vision">Computer Vision</a></li>
+            <li><a href="/computational-biology">Computational Biology</a></li>
+            <li><a href="/statistical-learning">Statistical Learning</a></li>
+        </ul>
+	</li>
+    <li id="nav_col"><a href="/collaborations" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('menu_col','','/images/m_menu_roll/main_menu_over_11.gif',1)"><img src="/images/m_menu_roll/main_menu_off_11.gif" alt="Collaborations" name="menu_col" width="129" height="38" border="0"></a>
+	<ul>
+        <li><a href="/collaborations/ncrr.php">NCRR Resource</a>
+            <!--<ul>
+                <li><a href="http://mri.kennedykrieger.org/development.html#TRD1">TRD1: fMRI</a></li>
+                <li><a href="http://mri.kennedykrieger.org/development.html#TRD2">TRD2: MRI, MRS</a></li>
+                <li><a href="http://mri.kennedykrieger.org/development.html#TRD3">TRD3: DTI</a></li>
+                <li><a href="/computationalanatomy/trd4.php">TRD4: Anatomy</a></li>
+            </ul>--></li> 
+		<li><a href="http://nbirn.net/">BIRN</a></li>
+        <li><a href="http://cvrgrid.org/">CVRG</a></li>
+        <li><a href="http://conte.wustl.edu/index.htm">Conte Center</a></li>
+        <li><a href="/collaborations/shapefrg.php">Shape Analysis FRG</a></li>
+    </ul>
+    </li>
+	<li id="nav_edu"><a href="/education" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('menu_edu','','/images/m_menu_roll/main_menu_over_09.gif',0)"><img src="/images/m_menu_roll/main_menu_off_09.gif" alt="Education" name="menu_edu" width="95" height="38" border="0"></a>
+      <ul>
+            <li><a href="/education/graduate-curriculum.php">Graduate Curriculum</a></li>
+            <li><a href="/education/course-listings.php">Course Listings</a></li>
+            <li><a href="/education/tutorials.php">Tutorials</a></li>
+      </ul>
+    </li>
+	<li id="nav_data"><a href="/downloads" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('menu_data','','/images/m_menu_roll/main_menu_over_10.gif',1)"><img src="/images/m_menu_roll/main_menu_off_10.gif" alt="Software & Data" name="menu_data" width="137" height="38" border="0"></a>
+    <ul>            <li><a href="/data.sets/">Data Sets</a></li>
+                    <li><a href="https://www.mristudio.org/">MRI Studio</a></li>
+                    <li><a href="http://www.vision.jhu.edu/data/hopkins155/">Hopkins 155 Motion<br>Segmentation Dataset</a></li>
+                    <li><a href="https://caportal.cis.jhu.edu/">CA Portal</a></li>
+                    <li><a href="/software/">CA Software</a></li>
+    </ul>
+	</li>
+	</ul>
+  </div>
+</div></div>
+<div id="L2_body" class="body">
+
+<div id="body_submenu" class="people">
+   	<ul>
+        <li class="active_page"><a href="../faculty">Faculty</a>
+        <li><a href="../staff">Staff</a></li>
+        <li><a href="../research_fellows">Research Fellows</a></li>
+        <li><a href="../graduate">Graduate Students</a></li>
+        <li><a href="../alumni">Alumni</a></li>
+    </ul>
+    </div>
+            <div id="body_profile_2col_l"><img class="illus" src="images/M-Miller_200x200px.jpg" alt="Dr. Michael I. Miller" width="200" height="200" hspace="0" vspace="0" align="default"></div>
+        	<div id="body_profile_2col_r"><h1>Michael I. Miller</h1>
+                <h3>Herschel and Ruth Seder Professor:</h3>
+                <p>Biomedical Engineering</p>
+                <h3>Professor:</h3>
+                <p>Electrical and Computer Engineering</p>
+                <h3>Director: </h3>
+                <p>Center for Imaging Science</p>
+<p>&nbsp;</p>
+            </div>
+            <div id="body_profile_2col_r">
+                <p><strong>Address: </strong><br>
+3400 N. Charles St. <br>
+Clark 301 <br>
+Baltimore, MD 21218<br>
+<strong>Phone:</strong> (410) 516-3826<br>
+                  <strong>E-mail:</strong>  <a href="mailto:mim@cis.jhu.edu">mim@cis.jhu.edu</a><br>
+              <strong>Website:</strong> <a href="../index.php">http://www.cis.jhu.edu</a><br> 
+              <strong>Curriculum Vitae:</strong> <!--<a href="cvs/CV_Miller_20130710.docx">(.docx format)</a>--> <a href="cvs/CV_Miller_2015-12-16.pdf">(.pdf format)</a></p>
+</div>
+            <div id="body_main_cnt">
+           		<span class="small-header">Research Interests</span>
+			  <ul>
+						<li>Image Understanding and Computer Vision</li>
+						<li>Medical Imaging and Computational Anatomy</li>
+						<li>Computational Neuroscience</li>
+					</ul>
+            <span class="small-header">Publications and Media</span>
+                <ul>
+					<li>Dr. Miller recognized as one of the &quot;Influential BioMedical Engineering Professors Who Teach Online&quot; ( <a href="http://www.onlineengineeringprograms.com/biomedical#college5" target="_blank">onlineengineeringprograms.com</a>)</li>
+					<li><a href="http://hub.jhu.edu/2015/10/01/kavli-neuroscience-discovery-institute" target="_blank">Johns Hopkins, Kavli Foundation create new institute dedicated to study of how the brain works</a>: Related stories: <a href="engineering.jhu.edu/news/2015/10/02/bmes-michael-miller-co-director-of-new-kavli-neuroscience-discovery-institute-at-the-johns-hopkins-university/" target="_blank">JHU WSE Release</a> | <a href="http://cis.jhu.edu/news/index.php#295" target="_blank">CIS News Release</a> | <a href="http://www.hopkinsmedicine.org/news/media/releases/team_will_use_brain_initiative_grant_to_design_next_generation_imaging_technology" target="_blank">Team Will Use BRAIN Initiative Grant To Design Next-Generation Imaging Technology</a> | <a href="http://www.kavlifoundation.org/science-spotlights/roundtable-kavli-neuroscience-discovery-institute#.VhPoXJc3l2x" target="_blank">A Roundtable with the Kavli Neuroscience Discovery Institute</a> | <a href="http://icm.jhu.edu/2015/10/the-kavli-foundation-and-johns-hopkins-announce-creation-of-neuroscience-discovery-institute/#.VhPpLJc3l2y" target="_blank">JHU ICM Release</a></li>
+					<li>Provosts Initiative - View: <a href="docs/Provost_Initiative-Miller.pdf" target="_blank">(PDF)</a><a href="docs/Provost_Initiative-Miller.docx">(DOCX)</a></li>
+					<li> MI Miller, Younes L, Ratnanather T, Brown T, Trinh H, Lee DS, Tward D, Mahon PB, Mori S, Albert M, the BIOCARD Research Team;  <em>Neurobiology of Aging.</em> (2015) 1:36 S3-S10. <a href="http://www.sciencedirect.com/science/article/pii/S019745801400551X">Amygdalar atrophy in symptomatic Alzheimer's disease based on diffeomorphometry: the BIOCARD cohort.</a></li>
+					<li>Michael I. Miller, Laurent Younes, and Alain Trouv&eacute;, <em>Technology</em> 02,36 (2014).				    <a href="http://dx.doi.org/10.1142/S2339547814500010">Diffeomorphometry and geodesic positioning systems for human anatomy</a></li>
+					<li><a href="http://scholar.google.com/citations?user=Ui8pnoIAAAAJ&hl=en" target="_blank">Google Scholar</a></li>
+					<li><a href="http://www.youtube.com/watch?v=_VOtir1G1RY">Click here to view a video interview with Dr. Michael Miller on computational anatomy</a></li>
+                	<li><a href="cvs/CBS_and_JHU_Bioinformation_Economy.pdf" target="_blank">Click here to read a discussion of &quot;Convergent Biomedical Science and the Johns Hopkins Information 
+Economy&quot;.</a></li>
+                    <li><a href="http://in-cites.com/scientists/DrMichaelIMiller.html">ISI Essential Science Indicators Interview with Dr. Michael Miller</a></li>
+                    <li><a href="http://blogs.hopkins-interactive.com/sydney/2012/10/meet-my-professor-dr-miller/">Interview with Dr. Michael Miller by Sophomore Biomedical Engineering Student Sydney R.</a></li>
+                    <li><a href="http://eng.jhu.edu/wse/magazine-summer-12/item/the-new-language-of-anatomy/">Read the Summer Whiting School of Engineering Magazine story on Dr. Miller's research, and view a video interview of his work.</a></li>
+                    <li><a href="http://hub.jhu.edu/2014/01/10/pediatric-brain-imaging-database">Read the JHU Hub story on Dr. Miller's research towards building a searchable database of children's brain scans.</a><br>
+                      This
+story has also been featured in the following news outlets: <a target="_blank" href="http://www.baltimoresun.com/health/maryland-health/bs-hs-brain-imaging-databank-20140214,0,4336832.story">Baltimore Sun</a>&nbsp;&nbsp;|&nbsp; <a target="_blank" href="http://hub.jhu.edu/2014/01/10/pediatric-brain-imaging-database">JHU Hub News</a>&nbsp;&nbsp;|&nbsp; <a href="http://www.hispanicbusiness.com/2014/2/14/image_databank_could_help_diagnose_children.htm" target="_blank">HispanicBusiness.com</a>&nbsp;&nbsp;|&nbsp; <a href="http://www.healthleadersmedia.com/content/TEC-300997/Image-databank-could-help-diagnose-childrens-brain-diseases" target="_blank">HealthLeadersMedia.com</a>&nbsp;&nbsp;|&nbsp; <a href="http://www.tmcnet.com/usubmit/2014/02/14/7678940.htm" target="_blank">TMCnet.com  News</a>&nbsp;&nbsp;|&nbsp; <a href="http://news.cnet.com/8301-11386_3-57617002-76/google-like-data-bank-of-kids-brain-scans-could-aid-docs/" target="_blank">CNET News</a>&nbsp;&nbsp;|&nbsp; <a href="http://scopeblog.stanford.edu/2014/01/13/developing-a-google-like-search-system-to-improve-diagnosis-treatment-of-pediatric-brain-disorders/" target="_blank">Scope &ndash; Published by Stanford Medicine</a>&nbsp;&nbsp;|&nbsp; <a href="http://medicalxpress.com/news/2014-01-children-brain-imaging-bank-google.html" target="_blank">Medical Xpress</a>&nbsp;&nbsp;|&nbsp; <a href="http://www.hopkinsmedicine.org/news/stories/children_brain_database.html" target="_blank">Johns Hopkins Medicine News</a>&nbsp;&nbsp;|&nbsp; <a target="_blank" href="http://hub.jhu.edu/2014/01/10/pediatric-brain-imaging-database"></a><a href="http://www.healthcare-informatics.com/news-item/johns-hopkins-researchers-build-google-search-mri-scans?page=1" target="_blank">Healthcare Informatics</a>&nbsp;&nbsp;|&nbsp; <a href="http://www.fiercemedicalimaging.com/story/johns-hopkins-researchers-developing-childrens-brain-imaging-data-bank/2014-01-11" target="_blank">Fierce Medical Imaging</a>&nbsp;&nbsp;|&nbsp; <a href="http://www.healthcaredive.com/news/johns-hopkins-creating-pediatric-mri-databank/228717/" target="_blank">Healthcare DIVE</a>&nbsp;&nbsp;|&nbsp; <a href="http://www.newswise.com/articles/children-s-brain-image-bank-could-become-a-google-tool-for-doctors" target="_blank">Newswise</a>&nbsp;&nbsp;|&nbsp; <a href="http://www.out-law.com/en/articles/2014/january/google-like-digital-library-of-brain-scans-to-help-inform-doctors-diagnoses/" target="_blank">OUT-LAW.COM</a>&nbsp;&nbsp;|&nbsp; <a href="http://www.sciencedaily.com/releases/2014/01/140109124956.htm" target="_blank">Science Daily</a>&nbsp;&nbsp;|&nbsp; <a href="http://www.thesleuthjournal.com/johns-hopkins-introduces-database-childrens-brain-scans/" target="_blank">The Sleuth Journal</a>&nbsp;&nbsp;|&nbsp; and in a web video on <a target="_blank" href="http://mashable.com/2014/02/04/digital-brain-scans">Mashable.com.</a></li>
+					<li>RSNA News story covering Dr. Michael Miller's research towards building a searchable database of children's brain scans to improve the way pediatric brain disorders are diagnosed and treated. View: <a href="docs/Database_of_Pediatric_MR_Images_Aids_DiagnosisMiller.pdf" target="_blank">(PDF)</a><a href="docs/Database_of_Pediatric_MR_Images_Aids_DiagnosisMiller.docx">(DOCX)</a></li>
+          <li>Dr. Miller is also an editorial board member of <a href="http://www.technologythejournal.com/" target="_blank">TECHNOLOGY.</a></li>
+          <li><a href="http://blogs.hopkins-interactive.com/jhuchirps/?p=100">Interview with Dr. Michael Miller on JHU Chirps "Sound bites from Hopkins Students" website.</a></li>
+                </ul>
+                      </div>
+
+
+
+</div>
+<div id="foot"> 
+	<div id="foot_left" class="footer">
+          <strong>Center for Imaging Science<br />
+          301 Clark Hall, 
+          3400 N. Charles Street<br />
+					Baltimore, MD 21218</strong><br>
+            Office: (410) 516-3826&nbsp;&nbsp;|&nbsp;&nbsp;Fax: (410) 516-4594<br>
+<a href="mailto:webmaster@cis.jhu.edu">webmaster@cis.jhu.edu</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="/contact-us">Contact us</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="/site-map">Site map</a><br><a href="https://wiki.cis.jhu.edu/" title="CIS internal area">CIS Internal Area</a>&nbsp;&nbsp;|&nbsp;&nbsp;&copy; 2016 <a href="http://www.jhu.edu/" target="_blank">Johns Hopkins University</a>
+      
+  </div>
+	 <div id="foot_right">
+   <img src="/images/JHUlogo_horiz_300x84px.png" width="300" height="84" style="border:none; float:right; padding-left:142px;">
+   <ul class="footer" style="text-align:right; text-decoration:none; list-style:none;">
+   	<li><a href="http://www.bme.jhu.edu/" target="_blank">Visit the Department of Biomedical Engineering Website</a></li>
+   	<li><a href="https://engineering.jhu.edu/ece/" target="_blank">Visit the Department of Electrical &amp; Computer Engineering Website</a></li>
+   	<li><a href="http://engineering.jhu.edu/ams/" target="_blank">Visit the Department of Applied Mathematics &amp; Statistics Website</a></li>
+   
+   
+   </ul></div>
+</div>  
+</div>  
+</div><script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-7941687-6");
+pageTracker._trackPageview();
+} catch(err) {}</script></body>
