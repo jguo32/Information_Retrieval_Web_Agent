@@ -445,6 +445,7 @@ sub process_segment {
 #  documents retrieved by the web robot and extract three types of
 #  contact information described in the assignment
 
+
 sub extract_content_contact {
 	
 	
