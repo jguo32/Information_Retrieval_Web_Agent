@@ -3,9 +3,9 @@
 #use strict;
 
 ############################################################
-##  hw1b.prl
+##  segment_classify_similarity.prl
 ##
-##  hw1b.prl < segment.data.train
+##  segment_classify_similarity.prl
 ## 
 ##  Suggestion: run in a wide window
 ############################################################
@@ -19,8 +19,6 @@ my $correct   = 0;       # number of correct classifications
 my $incorrect = 0;       # number of incorrect classifications
 my @rule_correct = ();
 my @rule_incorrect = ();
-
-
 
 my $new_file = 1;  # 1 for new file, 0 for not
 
@@ -41,9 +39,6 @@ my @doc_vector = ( );
 #   a hashes indicating a query's weight "vector".
 
 my %qry_vector = ();
-
-
-
 
 # @doc_simula
 #
@@ -72,8 +67,6 @@ my $qry_dir = './qry';
 
 
 
-
-
 foreach $term (@doc_simula){
 	print $term, "\n";
 }
@@ -82,12 +75,9 @@ push @res_vector, sort { -1 * ($doc_simula[$a] <=> $doc_simula[$b]); } 0 .. $doc
 
 print $doc_num, "\n";
 
-print $res_vector[0], "\n";
-print $res_vector[1], "\n";
-print $res_vector[2], "\n";
-
-
-
+# print $res_vector[0], "\n";
+# print $res_vector[1], "\n";
+# print $res_vector[2], "\n";
 
 sub set_empty{
 my $seg_class = "";
@@ -103,7 +93,7 @@ my $degree = "";
 sub main {
 	&read_resumes($doc_dir, "doc");
 	&read_resumes($qry_dir, "qry");
-
+	# &evaluate("classify_result_rbcv.pdf.txt", "qry/labeled_rbcv.pdf.txt");
 }
 
 
@@ -129,6 +119,10 @@ sub read_resumes {
 
 		$fp = $fp . ".txt";
 		open my $fh, "<", $fp;
+
+		my ($result_filename) = $fp =~  m/\/([\w|\.]+)$/i;
+		$result_filename = "classify_result_" . $result_filename;
+		open RESULT, '>>' . $result_filename or die "Could not open result file $fp";
 		
 		$new_file = 1;
 		@real_lines  = ( );   #  these arrays may hold old data which will
@@ -147,10 +141,13 @@ sub read_resumes {
 		&classify_tail($type);
 		
 		close $fh;
+		close RESULT;
 	}
 	return;
 }
 
+# Classify each line of the resume
+# using a method similar to hw1b
 sub classify{
 	my $type = shift;
 	my $line = shift;
@@ -163,6 +160,11 @@ sub classify{
 	
 	my $det_seg = $line_len > 0 && $line_len < 5;
 	
+	# dump the classification result to file
+	if (defined( $seg_class )) {
+		print RESULT "## " . uc $seg_class, " ##   ", $line, "\n";
+	}
+
 	if ($new_file == 1) {
 		if((lc $line) !~ /curriculum vitae/ && (lc $line) !~ /resume/ && (lc $line) !~/[0-9]/){
 			$new_file = 0;
@@ -259,13 +261,49 @@ sub classify{
 	
 	else {
 		($test_lines[ $numb_lines ]) = $line;
-		#($real_lines[ $numb_lines ]) = ($line =~ m/^([^\t]+)\t/  );
 		$numb_lines += 1;
-	}
-	
-    	
+	}   	
 }
 
+
+# Evaluate the classification result by
+# comparing the result file with label file
+sub evaluate {
+	my $result_file = shift;
+	my $label_file 	= shift;
+
+	my $correct = 0;
+	my $incorrect = 0;
+
+	open(my $result_fh, "<", $result_file) or die "Cannot open $result_file";
+	open(my $label_fh,	"<", $label_file) or die "Cannot open $label_file";
+
+	my (@results) = <$result_fh>;
+	my (@labels)   = <$label_fh>;
+
+	if (scalar @results ne scalar @labels) {
+		die "Error: inconsistent length of files";
+	}
+
+	while ( @results ) {
+		my $result_line = shift @results;
+		my $label_line	= shift @labels;
+
+		# Get the label of the line;
+		my ($result) = $result_line =~ /##\s*(\w+)\s*##/;
+		my ($label)	 = $label_line	=~ /##\s*(\w+)\s*##/;
+
+		print $result, "    ", $label_line, "\n";
+		if ( $result eq $label) {
+			$correct++;
+		}
+		else {
+			$incorrect++;
+		}
+	}
+
+	print "OVERALL CORRECT: ", $correct, " = ", $correct*100/($correct+$incorrect), "%  INCORRECT: ", $incorrect, " = ", $incorrect*100/($correct + $incorrect),"%.\n";
+}
 
 sub classify_tail{
 	
@@ -452,9 +490,6 @@ sub extract_content_education {
      
     return;
 }
-
-
-
 
 sub extract_content_skill {
 	for($cnt = 0; $cnt < scalar @test_lines ; $cnt++) {
