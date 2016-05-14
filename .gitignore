@@ -18,3 +18,5 @@ nytprof.out
 *.o
 *.bs
 /_eumm/
+resume/
+resume_backup/
