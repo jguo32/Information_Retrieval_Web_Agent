@@ -1,6 +1,7 @@
 #!/usr/local/bin/perl -w
 
 #use strict;
+use warnings;
 
 ############################################################
 ##  hw1b.prl
@@ -20,14 +21,22 @@ my $incorrect = 0;       # number of incorrect classifications
 my @rule_correct = ();
 my @rule_incorrect = ();
 
-
+my $seg_class = "";
+my $name = "";
+my $email = "";
+my $phone = "";
+my $address = "";
+my $C = "";
+my $Cpp = "";
+my $java = "";
+my $degree = "";
 
 my $new_file = 1;  # 1 for new file, 0 for not
 
 my $doc_dir = './resume';
 
 $doc_num = -1;
-
+$qry_num = -1;
 
 # @doc_vector
 #
@@ -38,24 +47,30 @@ my @doc_vector = ( );
 
 # @qry_vector
 #
-#   a hashes indicating a query's weight "vector".
+#   An array of hashes, each array index indicating a particular query's
+#   weight "vector".
 
-my %qry_vector = ();
+my @qry_vector = ( );
 
 
+# @titles_vector
+#
+# vector of the cacm journal titles. Indexed in order of apperance
+# within the corpus.
 
+my @titles_vector  = ( );
 
 # @doc_simula
 #
-# array used for storing query to document or document to document
+# array of arrays used for storing query to document or document to document
 # similarity calculations (determined by cosine_similarity, etc. )
 
 my @doc_simula = ( );
 
 # @res_vector
 #
-# array used for storing the document numbers of the most relevant
-# documents in a query to document.
+# array of arrays used for storing the document numbers of the most relevant
+# documents in a query to document or document to document calculation.
 
 my @res_vector = ( );
 
@@ -70,39 +85,24 @@ my $qry_dir = './qry';
 
 &full_similarity;
 
+# for($i=0; $i<scalar @doc_simula; $i++){
+# 	my $term = undef;
+# 	foreach $term (@doc_simula[$i]){
+# 		print $term, "\n";
+# 	}
+# }
 
-
-
-
-foreach $term (@doc_simula){
-	print $term, "\n";
-}
-
-push @res_vector, sort { -1 * ($doc_simula[$a] <=> $doc_simula[$b]); } 0 .. $doc_num;
-
-print $doc_num, "\n";
-
-print $res_vector[0], "\n";
-print $res_vector[1], "\n";
-print $res_vector[2], "\n";
-
-
-
-
-sub set_empty{
-my $seg_class = "";
-my $name = "";
-my $email = "";
-my $phone = "";
-my $address = "";
-my $Cpp = "";
-my $java = "";
-my $degree = "";
-}
+# for($i=0; $i<$qry_num+1; $i++){
+# 	print $i, "\n";
+# 	push @res_vector, sort { -1 * ($doc_simula[$i][$a] <=> $doc_simula[$i][$b]); } 0 .. $doc_num;
+# 	
+# 	print $res_vector[$i][0], "\n";
+# }
 
 sub main {
-	&read_resumes($doc_dir, "doc");
-	&read_resumes($qry_dir, "qry");
+	# &read_resumes($doc_dir, "doc");
+	# &read_resumes($qry_dir, "qry");
+	&evaluate("label_result_rbcv.pdf.txt", "qry/labeled_rbcv.pdf.txt");
 
 }
 
@@ -112,13 +112,16 @@ sub read_resumes {
 	my $type = shift;
 
 	foreach my $fp (glob("$dir/*.pdf")){
-		&set_empty;
 		
 		if($type eq "doc"){
 			push @doc_vector, { }; # a new resume
 			$doc_num +=1;
 		}
 		
+		if($type eq "qry"){
+			push @qry_vector, { }; # a new query resume
+			$qry_num +=1;
+		}
 		
 		printf "%s\n", $fp;
 
@@ -129,6 +132,11 @@ sub read_resumes {
 
 		$fp = $fp . ".txt";
 		open my $fh, "<", $fp;
+
+		my ($result_filename) = $fp =~  m/\/([\w|\.]+)$/i;
+		$result_filename = "classify_result_" . $result_filename;
+		open RESULT, '>>' . $result_filename or die "Could not open result file $fp";
+
 		
 		$new_file = 1;
 		@real_lines  = ( );   #  these arrays may hold old data which will
@@ -143,10 +151,8 @@ sub read_resumes {
 			next if $line =~ /^$/; 
 			&classify($type, $line);
 		}
-		
-		&classify_tail($type);
-		
 		close $fh;
+		close RESULT;
 	}
 	return;
 }
@@ -168,7 +174,7 @@ sub classify{
 			$new_file = 0;
 			$seg_class = "contact";
 			$name = $line;
-			print $name, "\n";
+			# print $name, "\n";
 			return;
 		}	
 	} 
@@ -178,6 +184,7 @@ sub classify{
 		&process_segment if $numb_lines;
 		
 		$seg_class = "contact";
+		print RESULT "## " . uc $seg_class, " ##   ", $line, "\n";
 		@test_lines  = ( );   # make sure that we clear memory here or else
 		$numb_lines  = 0;     #  screw up calculations of their length
 	} 
@@ -186,10 +193,9 @@ sub classify{
 		&process_segment if $numb_lines ;
 		
 		$seg_class = "education";
-		
-		
 		@test_lines  = ( );   # make sure that we clear memory here or else
 		$numb_lines  = 0;     #  screw up calculations of their length
+		print RESULT "## " . uc $seg_class, " ##   ", $line, "\n";
 
 	} 
 	elsif ($det_seg &&  ( (lc $line ) =~ /research/ || (lc $line ) =~ /field/ || (lc $line ) =~ /interest/)  ){
@@ -199,23 +205,27 @@ sub classify{
 		$seg_class = "research";
 		@test_lines  = ( );   # make sure that we clear memory here or else
 		$numb_lines  = 0;     #  screw up calculations of their length
+		print RESULT "## " . uc $seg_class, " ##   ", $line, "\n";
+
 	}
-	elsif ($det_seg &&  ( (lc $line ) =~ /position/ || (lc $line ) =~ /employment/ || (lc $line ) =~ /profession/ ||(lc $line ) =~ /appointment/ ||(lc $line ) =~ /service/ ) && (lc $line ) !~ /skill/){
+	elsif ($det_seg &&  ( (lc $line ) =~ /position/ || (lc $line ) =~ /employment/ || (lc $line ) =~ /profession/ ||(lc $line ) =~ /appointment/ ||(lc $line ) =~ /service/ ) ){
 		&init_vectors($type) if  ($numb_lines && $seg_class !~/contact/);
 		&process_segment if $numb_lines ;
 		
 		$seg_class = "employment";
 		@test_lines  = ( );   # make sure that we clear memory here or else
 		$numb_lines  = 0;     #  screw up calculations of their length
+		print RESULT "## " . uc $seg_class, " ##   ", $line, "\n";
 	}
 	
-	elsif ($det_seg &&  ( (lc $line ) =~ /teach/ || (lc $line ) =~ /tutorial/  ) ){
+	elsif ($det_seg &&  (lc $line ) =~ /teach/ ){
 		&init_vectors($type) if  ($numb_lines && $seg_class !~/contact/);
 		&process_segment if $numb_lines ;
 		
 		$seg_class = "teaching";
 		@test_lines  = ( );   # make sure that we clear memory here or else
 		$numb_lines  = 0;     #  screw up calculations of their length
+		print RESULT "## " . uc $seg_class, " ##   ", $line, "\n";
 	}
 	
 	elsif ($det_seg &&  ( (lc $line ) =~ /abstract/ ||  (lc $line ) =~ /presentation/ ||  (lc $line ) =~ /seminar/ ||  (lc $line ) =~ /publication/ ||  (lc $line ) =~ /journal/ ||  (lc $line ) =~ /conference/ ||  (lc $line ) =~ /book/ ||  (lc $line ) =~ /paper/ ||  (lc $line ) =~ /patent/ ||  (lc $line ) =~ /report/ ||  (lc $line ) =~ /grant/ ) ){
@@ -225,6 +235,7 @@ sub classify{
 		$seg_class = "publication";
 		@test_lines  = ( );   # make sure that we clear memory here or else
 		$numb_lines  = 0;     #  screw up calculations of their length
+		print RESULT "## " . uc $seg_class, " ##   ", $line, "\n";
 	}
 	
 	elsif ($det_seg &&  (lc $line ) =~ /student/ ){
@@ -234,48 +245,78 @@ sub classify{
 		$seg_class = "student";
 		@test_lines  = ( );   # make sure that we clear memory here or else
 		$numb_lines  = 0;     #  screw up calculations of their length
+		print RESULT "## " . uc $seg_class, " ##   ", $line, "\n";
 	}
 	
-	elsif ($det_seg &&  ( (lc $line ) =~ /award/ ||  (lc $line ) =~ /honor/   ||  (lc $line ) =~ /fellowship/) ){
-		
+	elsif ($det_seg &&  ( (lc $line ) =~ /award/ ||  (lc $line ) =~ /honor/  ) ){
 		&init_vectors($type) if  ($numb_lines && $seg_class !~/contact/);
 		&process_segment if $numb_lines ;
 		
 		$seg_class = "award";
 		@test_lines  = ( );   # make sure that we clear memory here or else
 		$numb_lines  = 0;     #  screw up calculations of their length
+		print RESULT "## " . uc $seg_class, " ##   " . $line, "\n";
 	}
 	
 	
 	elsif ($det_seg &&  (lc $line ) =~ /skill/ ){
-		
 		&init_vectors($type) if  ($numb_lines && $seg_class !~/contact/);
 		&process_segment if $numb_lines ;
 		
 		$seg_class = "skill";
 		@test_lines  = ( );   # make sure that we clear memory here or else
 		$numb_lines  = 0;     #  screw up calculations of their length
+		print RESULT "## " . uc $seg_class, " ##   ", $line, "\n";
 	}
-	
 	else {
 		($test_lines[ $numb_lines ]) = $line;
 		#($real_lines[ $numb_lines ]) = ($line =~ m/^([^\t]+)\t/  );
 		$numb_lines += 1;
+		print RESULT "## " . uc $seg_class, " ##   ", $line, "\n";
 	}
 	
-    	
-}
-
-
-sub classify_tail{
-	
-	my $type = shift;
 	if ($numb_lines){
 		&init_vectors($type) if  $seg_class !~/contact/;
 		&process_segment;
-	}
+	}	
 }
 
+sub evaluate {
+	my $result_file = shift;
+	my $label_file 	= shift;
+
+	my $correct = 0;
+	my $incorrect = 0;
+
+
+	open(my $result_fh, "<", $result_file) or die "Cannot open $result_file";
+	open(my $label_fh,	"<", $label_file) or die "Cannot open $label_file";
+
+	my (@results) = <$result_fh>;
+	my (@labels)   = <$label_fh>;
+
+	while ( @results ) {
+		my $result_line = shift @results;
+		my $label_line	= shift @labels;
+
+		# Get the label of the line;
+		my ($result) = $result_line =~ /##\s*(\w+)\s*##/;
+		my ($label)	 = $label_line	=~ /##\s*(\w+)\s*##/;
+
+		print $result, "    ", $label_line, "\n";
+		if ( $result eq $label) {
+			$correct++;
+		}
+		else {
+			$incorrect++;
+		}
+	}
+
+	print "OVERALL CORRECT: ", $correct, " = ", $correct*100/($correct+$incorrect), "%  INCORRECT: ", $incorrect, " = ", $incorrect*100/($correct + $incorrect),"%.\n";
+
+
+
+}
 
 
 ############################################################
@@ -299,12 +340,11 @@ sub init_vectors {
     				$doc_vector[$doc_num]{ $words[$i] } += 1;
     			}
     			if($type eq "qry"){
-    				$qry_vector{ $words[$i] } += 1;
+    				$qry_vector[$qry_num]{ $words[$i] } += 1;
     			}
     		}
     	}	
 	}
-     
     return;
 }
 
@@ -360,8 +400,12 @@ sub cosine_sim_a {
 
 sub full_similarity {
 	
-	for ($j =0; $j < scalar @doc_vector; $j++){
-		push @doc_simula, &cosine_sim_a(\%qry_vector, $doc_vector[$j]);
+	for ($i =0; $i < scalar @qry_vector; $i++){
+		my @temp = ();
+		for ($j =0; $j < scalar @doc_vector; $j++){
+			push @temp, &cosine_sim_a($qry_vector[$i], $doc_vector[$j]);
+		}
+		push @doc_simula, @temp;
 	}
 
 }
@@ -382,6 +426,9 @@ sub process_segment {
     }
     elsif	 ( $seg_class eq "education" ) {
 		&extract_content_education;
+	}
+	elsif	 ( $seg_class eq "research" ) {
+		&extract_content_research;
 	}
 	elsif	 ( $seg_class eq "skill" ) {
 		&extract_content_skill;
@@ -405,21 +452,20 @@ sub extract_content_contact {
 		# parse out information you want
     	# print it in the tuple format to the CONTENT and LOG files, for example:
     	
-    	
     
     	while($test_lines[$cnt] =~ s/(\w+@\w+\.\w+(\.\w+){0,1})//){
         	$email = $1;
-        	print "EMAIL: ", $email, "\n";
+        	# print "EMAIL: ", $email, "\n";
     	}
     
     	while($test_lines[$cnt] =~ s/\D((\d{3}){0,1}(\(\d{3}\)){0,1}\D\d{3}\D\d{4})\D//){
     	
         	$phone = $1;
-        	print "PHONE: ", $phone, "\n";
+        	# print "PHONE: ", $phone, "\n";
     	}
     	while($test_lines[$cnt] =~ s/([0-9]*,{0,5}\s[A-Za-z]+,{0,1}\s[A-Za-z]+,{0,1}\s\d{5}(.\d{4}){0,1})//){
         	$address = $1;
-        	print "Address: ", $address, "\n";
+        	# print "Address: ", $address, "\n";
     	}
 			
 	}
@@ -428,23 +474,18 @@ sub extract_content_contact {
 }
 
 sub extract_content_education {
-
 	for($cnt = 0; $cnt < scalar @test_lines ; $cnt++) {
-		
-		#print $test_lines[$cnt], "\n";
-		
 		# parse out information you want
     	# print it in the tuple format to the CONTENT and LOG files, for example:
     
     	
-    	if($test_lines[$cnt] =~ /Ph\.D/ ){
+    	if($test_lines[$cnt] =~ /Ph.*D/){
         	$degree = "Ph.D.";
-        	print "Degree; ", $degree, "\n";
+        	# print "Degree; ", $degree, "\n";
     	}
-    	
-    	if($test_lines[$cnt] =~ /M\.S/  && $degree ne "Ph.D."){
+    	elsif($test_lines[$cnt] =~ /M.*S/){
     		$degree = "M.S.";
-        	print "Degree; ", $degree, "\n";
+        	# print "Degree; ", $degree, "\n";
     	}
     
 	}
@@ -453,33 +494,64 @@ sub extract_content_education {
 }
 
 
-
+sub extract_content_research { # ????
+	for($cnt = 0; $cnt < scalar @test_lines ; $cnt++) {
+		# parse out information you want
+    	# print it in the tuple format to the CONTENT and LOG files, for example:
+    	
+    	#print $test_lines[$cnt], "\n"; ????
+	}
+     
+    return;
+}
 
 sub extract_content_skill {
 	for($cnt = 0; $cnt < scalar @test_lines ; $cnt++) {
-		#print $test_lines[$cnt], "\n";
-		
 		# parse out information you want
     	# print it in the tuple format to the CONTENT and LOG files, for example:
     	
     	
-    	my @words = (split /\s+|,|;/, $test_lines[$cnt]);
+    	my @words = (split /\s+/, $test_lines[$cnt]);
     	
     	for($i =0; $i<scalar @words; $i++){
-    		#$words[$i] =~ s/[[:punct:]]//g;   #remove punctuation
-    		#print $words[$i], "\n";
-    		if($words[$i] eq "C++" && $Cpp eq ""){
-    			$Cpp = "Y";
-        		print "Cpp ", $Cpp, "\n";
+    		if ($words[$i] =~ /[a-zA-Z]/){
+    			$words[$i] =~ s/[[:punct:]]//g;   #remove punctuation
+    			
+    			# if($words[$i] eq "C"){
+    			# 	$C = "Y";
+       #  			print "C language; ", $C, "\n";
+    			# }
+    			# if($words[$i] eq "C++"){
+    			# 	$Cpp = "Y";
+       #  			print "Cpp; ", $Cpp, "\n";
+    			# }
+    			# if($words[$i] eq "java"){
+    			# 	$java = "Y";
+       #  			print "Java; ", $java, "\n";
+    			# }		
     		}
-    		if((lc $words[$i]) eq "java" && $java eq ""){
-				$java = "Y";
-				print "Java ", $java, "\n";
-			}		
-    		
     	}    
 	}
      
     return;
+}
+
+sub ret {
+
+    my $rule       = shift;   # which rule did I use here
+    my $trueclass  = shift;   # what is the true sentence class ('NEOS','EOS')
+    my $givenclass = shift;   # what is the sentence class my rule gives
+    my $line       = shift;   # the actual line tested
+
+    if ($trueclass eq $givenclass) {
+		# printf(".. (%2d) %s\t%s\t%s\n",$rule,$givenclass,$trueclass,$line);
+		$correct++;
+		$rule_correct[$rule]++;	
+    }
+    else {
+		printf("XX (%2d) %s\t%s\t%s\n",$rule,$givenclass,$trueclass,$line);
+		$incorrect++;
+		$rule_incorrect[$rule]++;
+    }
 }
 
