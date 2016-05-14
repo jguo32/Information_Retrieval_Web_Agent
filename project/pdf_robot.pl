@@ -9,7 +9,7 @@
 #
 # Example:
 #
-#    robot_base.pl mylogfile.log content.txt http://www.cs.jhu.edu/
+#    pdf_robot.pl mylogfile.log content.txt http://www.cs.jhu.edu/
 #
 # Note: you must use a command line argument of http://some.web.address
 #       or else the program will fail with error code 404 (document not
