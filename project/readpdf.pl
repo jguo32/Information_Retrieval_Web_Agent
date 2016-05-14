@@ -2,6 +2,7 @@ use FileHandle;
 use strict;
 use LWP::UserAgent;
 use URI;
+use Net::Domain qw(hostname hostfqdn hostdomain domainname);
 
 &main;
 
@@ -30,4 +31,8 @@ sub main {
 # http://www.cs.jhu.edu/~micharu1/michaelrushanan.org/
 	my $abs_url = URI->new_abs('CV.pdf', 'http://www.cs.jhu.edu/~andyjhma/index.html');
 	print $abs_url, "\n";
+
+	my $url = URI->new( "http://www.cs.jhu.edu/" );
+	my $domain = $url->host;
+	print $domain;
 }

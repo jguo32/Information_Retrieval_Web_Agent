@@ -1,0 +1,332 @@
+contact Department of Computer Science The Johns Hopkins University 224 New Engineering Building Baltimore, MD 21218 410.493.6312
+skill randal@cs.jhu.edu
+employment Current Position
+employment Associate Professor, Department of Computer Science, Johns Hopkins University
+education Education
+education Ph.D. 2000
+education University of California, Santa Cruz, Computer Science Advisor: Professor Darrell D. E. Long Dissertation: Data Management in a Distributed File System for Storage Area Networks.
+skill M.S. 1997
+skill University of California, Santa Cruz, Computer Science Advisor: Professor Darrell D. E. Long Thesis: Differential Compression: A Generalized Solution for Binary Files.
+skill B.S. 1993 Stanford University, Geophysics Conferred with honors and distinction
+employment Employment History
+employment 2008­present 2001­2008 1999­2001 2000­2001 1996­1999 1994­1995
+employment Johns Hopkins University, Associate Professor, Department of Computer Science, Baltimore, MD. Johns Hopkins University, Assistant Professor, Department of Computer Science, Baltimore, MD. International Business Machines, Research Staff, Almaden Research Center, San Jose, CA. University of California, Lecturer and Research Fellow, Santa Cruz, CA. International Business Machines, Research Associate, Almaden Research Center, San Jose, CA. Dialogic Corporation, Software Engineer, Sunnyvale, CA.
+employment Professional Memberships
+employment USENIX, ACM (Senior Member), IEEE (Senior Member)
+award Awards and Honors
+award 2012 2009 2009 2003 2003 2002 2001 2001
+award Member of the Defense Science Study Group, Class of 2012-2013 Johns Hopkins University Dean's Leadership Award Best Paper Award, Conference on File and Storage Technologies IBM Outstanding Innovation Award National Science Foundation CAREER Award Department of Energy Early Career Principal Investigator Award IBM Corporate Accomplishment for Adaptive Differential Backup in the Tivoli Storage Manager IBM Third Plateau Invention Award
+skill Curriculum Vitae
+skill Randal Burns
+skill 2000 2000 1998 1997 1995
+skill IBM Interoperability in Heterogeneous Environments Special Patent Incentive Award IBM Second Plateau Invention Award IBM First Plateau Invention Award IBM Internet/Network Computing Special Incentive Award University of California Regents Fellowship
+publication Publications
+publication Journals
+publication J-1 R. Burns, J. Vogelstein, and A. S. Szalay. From cosmos to connectomes: the evolution of data-intensive science. Neuron (to appear) 2014.
+publication J-2 G. Eyink, E. Vishniac, C. Lalescu, H. Aluie, K. Kanov, K. Bu¨rger, R. Burns, C. Meneveau, and A. Szalay. Flux-freezing breakdown in high-conductivity magnetohydrodynamic turbulence. Nature, 497(7450), 466­ 469, 2013. DOI 10.1038/nature12128.
+publication J-3 H. Yu, K. Kanov, E. Perlman, J. Graham, E. Frederix, R. Burns, A. Szalay, G. Eyink, C. Meneveau. Studying Lagrangian dynamics of turbulence using on-demand fluid particle tracking in a public turbulence database. Journal of Turbulence, DOI 10.1080/14685248.2012.674643, 13(12), 1­29, 2012.
+publication J-4 G. Ateniese, R. Burns, R. Curtmola, J. Herring, O. Khan, L. Kissner, Z. Peterson, and D. Song. Remote Data Checking Using Provable Data Possession. ACM Transactions on Information and Systems Security, DOI 10.1145/1952982.1952994, 14(1), 2011.
+publication J-5 R. Burns and Z. Peterson. Security Constructs for Regulatory-Compliant Storage. Communications of the ACM, 53(1), 126­130, 2010.
+publication J-6 R. Musaloiu-E., J. Cogan, K. Szlavecz, A. Szalay, J. Gray, S. Ozer, C.-J. M. Liang, J. Gupchup, and R. Burns. Wireless Sensor Networks for Soil Science. International Journal of Sensor Networks, 7(1-2), 53­70, 2010.
+publication J-7 A. Batsakis, R. Burns, A. Kanevsky, J. Lentini, and T. Talpey. CA-NFS: A Congestion-Aware Network File System. ACM Transactions on Storage, 5(4), 15:1­15:24, DOI 10.1145/1629080.1629085, 2009.
+publication J-8 Y. Li, E. Perlman, M. Wang, Y. Yang, C. Meneveau, R. Burns, S. Chen, A. Szalay, and G. Eyink. A Public Turbulence Database Cluster and Applications to Study Lagrangian Evolution of Velocity Increments in Turbulence. Journal of Turbulence, 9(31), 1­29, 2008.
+publication J-9 B. Ball, D. Brady, M. Brooks, R. Burns, B. Cuker, D. DiToro, T. Gross, M. Kemp, L. Murray, R. Murphy, E. Perlman, M. Piasecki, J. Testa and I. Zaslavsky. A Prototype System for Multi-Disciplinary Shared Cyberinfrastructure--Chesapeake Bay Environmental Observatory. Journal of Hydrologic Engineering, 13(10), 960­970, October 2008.
+publication J-10 A. Batsakis and R. Burns. NFS-CD: Write-Enabled Cooperative Caching in NFS. IEEE Transactions on Parallel and Distributed Systems, 19(3), 323­333, 2008.
+publication J-11 Z. Peterson and R. Burns. Ext3cow: A Time-Shifting File System for Regulatory Compliance. ACM Transactions on Storage, 1(2), 190­212, 2005.
+publication J-12 C. Wu and R. Burns. Adaptive and Tunable Randomization for Load Management in Shared-Disk Clusters. ACM Transactions on Storage, 1(1), 108­131, 2005.
+publication J-13 R. Burns, L. Stockmeyer, and D. Long. In-Place Reconstruction of Version Differences. IEEE Transactions on Knowledge and Data Engineering, 15(1), 973­984, 2003.
+publication J-14 M. Ajtai, R. Burns, R. Fagin, D. Long, and L. Stockmeyer. Compactly Encoding Unstructured Inputs with Differential Compression. Journal of the ACM, 49(3), 318­367, 2002.
+publication J-15 R. Burns, R. Rees, and D. Long. Efficiently Distributing Data in a Web Server Farm. IEEE Internet Computing, 5(4), 56­65, 2001.
+publication J-16 R. Burns, R. Rees, L. Stockmeyer, and D. Long. Scalable Session Locking for a Distributed File System. Cluster Computing Journal, 4(4), 295­306, 2001.
+publication J-17 B. Reed, E. Chron, D. Long, and R. Burns. Authenticating Network Attached Storage. IEEE Micro, 20(1), 49­57, January 2000.
+publication 2
+skill Curriculum Vitae
+skill Randal Burns
+publication Refereed Conferences
+publication C-1 C-2
+publication C-3
+publication C-4 C-5
+publication C-6 C-7 C-8 C-9
+publication C-10 C-11 C-12 C-13 C-14 C-15
+publication C-16 C-17 C-18 C-19 C-20
+publication D. Zheng, R. Burns, and A. S. Szalay. Toward Millions of File-System IOPS on Low-Cost, Commodity Hardware. Supercomputing (SC) IEEE, ACM 2013.
+publication R. Burns, W. Gray Roncal, D. Kleissas, K. Lillaney, P. Manavalan, E. Perlman, D. Berger, D. D. Bock, K. Chung, K. Deisseroth, L. Grosenick, N. Kasthuri, M. Kazhdan, J. Lichtman, R. C. Reid, A. S. Szalay, J. T. Vogelstein, R. J. Vogelstein. The Open Connectome Project Data Cluster: Scalable Analysis and Vision for High-Throughput Neuroscience. Scientific and Statistical Databases Management Conference (SSDBM), 2013.
+publication D. Crankshaw, B. Falck, A. S. Szalay, R. Burns, T. Budava´ri, and J. Wang. Inverted Indices for Particle Tracking in Petascale Cosmological Simulations Scientific and Statistical Databases Management Conference (SSDBM), 2013.
+publication K. Kanov, R. Burns, G. Eyink, C. Meneveau, and A. Szalay. Data-Intensive Spatial Filtering in Large Numerical Simulation Datasets. Supercomputing (SC) IEEE, ACM 2012.
+publication O. Khan, R. Burns, J. Plank, and C. Huang. Rethinking Erasure Codes for Cloud File Systems: Minimizing I/O for Recovery and Degraded Reads. Conference on File and Storage Technologies (FAST), USENIX, 2012.
+publication K. Kanov, E. Perlman, R. Burns, Y. Ahmad, and R. Burns. I/O Streaming Evaluation of Batch Queries for Data-Intensive Computational Turbulence. Supercomputing (SC), IEEE, ACM, 2011.
+publication X. Wang, A. Das, C. Olston, and R. Burns. CoScan: Cooperative Scan Sharing in the Cloud. Symposium on Cloud Computing (SOCC), ACM, 2011.
+publication E. Givelberg, A. S. Szalay, K. Kanov, and R. Burns. MPI-DB, A Parallel Database Services Software Library for Scientific Computing. EuroMPI, 2011.
+publication X. Wang, E. Perlman, R. Burns, T. Malik, T. Budava´ri, C. Meneveau, and A. Szalay. JAWS: Job-Aware Workload Scheduling for the Exploration of Turbulence Simulations. Supercomputing (SC), IEEE, ACM, 2010.
+publication E. Perlman, R. Burns, M. Kazhdan, R. Murphy, and B. Ball. Organization of Data in Non-Convex Spatial Domains. Scientific and Statistical Databases Management Conference (SSDBM), 2010.
+publication A. Batsakis, R. Burns, A. Kanevsky, J. Lentini, and T. Talpey. CA-NFS: A Congestion-Aware Network File System. (Best Paper Award at) Conference on File and Storage Technologies (FAST), USENIX, 2009.
+publication X. Wang, R. Burns, and T. Malik. LifeRaft: Data-Driven, Batch Processing for the Exploration of Scientific Databases. Conference on Innovative Data Systems Research (CIDR), ACM, 2009.
+publication M. Bolitho, M. Kazdhan, R. Burns, and H. Hoppe. Parallel Surface Reconstruction. International Symposium on Visual Computing (ISVC), 2009.
+publication T. Malik, X. Wang, D. Dash, A. Chaudhary, R. Burns, and A. Ailamaki. Adaptive Physical Design for Curated Archives. Scientific and Statistical Database Management Conference (SSDBM), 2009.
+publication A. S. Szalay, G. Bell, J. Vandenberg, R. Burns, D. Fay, J. Heasley, T. Hey, M. Nieto-Santisteban, A. Thakar, C. Van Ingen, R. Wilton, and A. Wonders. GrayWulf: Scalable Clustered Architecture for Data Intensive Computing. Hawai'i International Conference on Systems Sciences (HICSS), 2009.
+publication T. Malik and R. Burns. Workload-Aware Histograms for Remote Applications. International Conference on Data Warehousing and Knowledge Discovery (DaWaK), 2008.
+publication R. Curtmola, O. Khan, R. Burns, and G. Ateniese. MR-PDP: Multiple-Replica Provable Data Possession. International Conference on Distributed Computing Systems (ICDCS), IEEE, 2008.
+publication A. Batsakis, R. Burns, A. Kanevsky, J. Lentini, and T. Talpey. AWOL: An Adaptive Write Optimizations Layer. Conference on File and Storage Technologies (FAST), USENIX, 2008.
+publication X. Wang, R. Burns, A. Terzis, and A. Deshpande. Network-Aware Join Processing in Global-Scale Database Federations. International Conference on Data Engineering (ICDE), IEEE, 2008.
+publication G. Ateniese, R. Burns, R. Curtmola, J. Herring, L. Kissner, Z. Peterson, and D. Song. Provable Data Possession at Untrusted Stores. Computer and Communication Security (CCS), ACM, 2007.
+publication 3
+skill Curriculum Vitae
+skill Randal Burns
+skill C-21 C-22 C-23
+skill C-24 C-25 C-26 C-27 C-28 C-29 C-30 C-31 C-32 C-33 C-34 C-35
+skill C-36 C-37 C-38
+skill C-39 C-40 C-41 C-42 C-43 C-44
+skill E. Perlman, R. Burns, Y. Li, and C. Meneveau. Data Exploration of Turbulence Simulations using a Database Cluster. Supercomputing (SC), ACM, IEEE, 2007. M. Bolitho, M. Kazhdan, R. Burns, and H. Hoppe. Multilevel Streaming for Out-of-Core Surface Reconstruction. Eurographics Symposium on Geometry Processing (SGP), ACM, 2007. X. Wang, T. Malik, R. Burns, S. Papadomanolakis, and A. Ailamaki. A Workload-Driven Unit of Cache Replacement for Mid-Tier Database Caching. Database Systems for Advanced Applications (DASFAA), IEEE, 2007. Z. Peterson, R. Burns, G. Ateniese, and S. Bono. Design and Implementation of Verifiable Audit Trails for a Versioning File System. Conference on File and Storage Technologies (FAST), USENIX, 2007. T. Malik, R. Burns, and N. Chawla. A Black-Box Approach to Query Cardinality Estimation. Conference on Innovative Data Systems Research (CIDR), ACM, 2007. T. Malik, R. Burns, N. Chawla, and A. Szalay. Estimating Query Result Sizes for Proxy Caching in Scientific Database Federations. Supercomputing Conference (SC), Best Student Paper Nominee, ACM, IEEE, 2006. C. Wu and R. Burns. Improving the I/O Performance of Clustered Storage Systems with Adaptive Request Distribution. High-Performance Distributed Computing (HPDC), IEEE, 2006. Z. Peterson, R. Burns, J. Herring, A. Stubblefield, and A. Rubin. Secure Deletion for a Versioning File System. Conference on File and Storage Technologies (FAST), USENIX, 2005. A. Batsakis and R. Burns. Cluster Delegation: High-Performance, Fault-Tolerant Data Sharing in NFS. HighPerformance Distributed Computing (HPDC), IEEE, 2005. T. Malik, R. Burns, and A. Chaudhary. Bypass Caching: Making Scientific Databases Good Network Citizens. International Conference on Data Engineering (ICDE), 94-105, ACM, 2005. R. Burns. Fastpath Optimizations for Cluster Recovery in Shared-Disk Systems. Supercomputing Conference (SC), Best Paper Nominee, ACM, IEEE, 2004. C. Wu and R. Burns. Achieving Performance Consistency in Shared-Disk Clusters. High-Performance Distributed Computing (HPDC), 140-149, IEEE, 2004. D. Rasch and R. Burns. In-Place Rsync: File Synchronization for Mobile and Wireless Devices. USENIX Annual Technical Conference, FREENIX track, 91-100, USENIX, 2003. C. Wu and R. Burns. Handling Heterogeneity in Shared-Disk File Systems. Supercomputing Conference (SC), ACM, IEEE, 2003. G. Whittle, J.-F. Paris, A. Amer, D. Long, and R. Burns. Using Multiple Predictors to Improve the Accuracy Using Multiple Predictors to Improve the Accuracy of File Access Predictions. Mass Storage Conference, 230-240, NASA, IEEE, 2003. A. Amer, D. Long, and R. Burns. Group-Based Management of Distributed File Caches. International Conference on Distributed Computing Systems (ICDCS), 525-532, IEEE, 2002. A. Amer, D. Long, J.-F. Paris, and R. Burns. File Access Prediction with Adjustable Accuracy. International Performance, Computing and Communication Conference (IPCCC), IEEE, 2002. R. Burns and W. Hineman. A Bit-Parallel Search Algorithm for Allocating Free Space. International Symposium on Modeling, Analysis, and Simulation in Computer and Telecommunication Systems (MASCOTS), 302-310, IEEE, 2001. R. Burns, R. Rees and D. Long. An Analytical Study of Opportunistic Lease Renewal. International Conference on Distributed Computing Systems (ICDCS), 146-153, IEEE, 2001. R. Burns, R. Rees, and D. Long. Safe Caching in a Distributed File System for Network Attached Storage. International Parallel and Distributed Processing Symposium (IPDPS), 155-162, IEEE, 2000. R. Burns, R. Rees, and D. Long. Semi-Preemptible Locks for a Distributed File System. International Performance, Computing and Communication Conference (IPCCC), IEEE, 2000. R. Burns and D. Long. In-Place Reconstruction of Delta Compressed Files, (Extended Abstract). Conference on the Principles of Distributed Computing (PODC), 267-275, ACM, 1998. R. Burns, and D. Long. Efficient Distributed Backup and Restore with Delta Compression. I/O in Parallel and Distributed Systems (IOPADS), 27-36, ACM, 1997. R. Burns, and D. Long. A Linear Time, Constant Space Differencing Algorithm. International Performance, Computing and Communications Conference (IPCCC), IEEE, 1997.
+skill 4
+skill Curriculum Vitae
+skill Randal Burns
+skill Refereed Workshop and Short Papers
+skill W-1 W-2 W-3 W-4 W-5 W-6 W-7 W-8 W-9 W-10
+skill W-11 W-12 W-13 W-14 W-15 W-16 W-17
+skill W-18
+skill W-19 W-20 W-21 W-22
+skill D. Zhang, R. Burns, and A. Szalay. A Parallel Page Cache: IOPS and Caching for Multicore Systems. Workshop on Hot Topics in Storage (HotStorage), USENIX, 2012.
+skill P. Stanton and R. Burns. APR-Quad: An Update Efficient Authenticated Dictionary for Spatial Data. Workshop on Security and Privacy in GIS and LBS, ACM, 2011.
+skill E. Givelberg, A. S. Szalay, K. Kanov, and R. Burns. An Architecture for a Data-Intensive Computer. Workshop on Network-Aware Data Management, IEEE, ACM, 2011.
+skill R. Burns. Forget Locality (The Radio Edit). Workshop on High-Performance Transaction Processing Systems (HPTS), 2011.
+skill O. Khan, R. Burns, J. Plank, and C. Huang. In Search of I/O Optimal Recovery from Disk Failures. Workshop on Hot Topics in Storage (HotStorage), USENIX, 2011.
+skill P. Stanton and R. Burns. I/O Efficient Search of Large Social Networks. Network Science Workshop, Network Science Center, United States Military Academy, 2010.
+skill B. Hong, R. Curmola, G. Ateniese, and R. Burns. Remote Data Checking for Network Coding-based Distributed Storage Systems. Cloud Computing Security Workshop, ACM, 2010.
+skill N. Walfield, P. Stanton, and R. Burns. Practical Protection for Personal Storage in the Cloud. EUROSEC: European Workshop on System Security, ACM, 2010.
+skill P. Stanton, B. McKeown, R. Burns, G. Ateniese. FastAD: An Authenticated Directory for Billions of Objects. Workshop on Hot Topics in Storage and File Systems (HotStorage), ACM, USENIX, 2009.
+skill S. Richardson, B. Olson, J. Dymond, R. Burns, S. Chandrasegaran, J. Boeke, A. Shehu and J. Bader. Automated Design of Assemblable, Modular, Synthetic Chromosomes. Workshop on Parallel Computational Biology, 2009.
+skill E. Perlman, R. Burns, and M. Kazhdan. Organizing and Indexing Non-Convex Regions. Demonstration Paper in International Conference on Very Large Data Bases (VLDB), 2008.
+skill R. Curtmola, O. Khan, and R. Burns. Robust Remote Data Checking. Workshop on Storage Security and Survivability (StorageSS), ACM, 2008.
+skill R. Burns and G. Ateniese. Currency and Correctness of Content in Object Storage Networks. Whitepaper at the DARPA Distributed Object Storage and Retrieval Workshop, 2008.
+skill X. Wang, T. Malik, R. Burns, D. Dash, and A. Ailamaki. Automated Physical Design in Database Caches. Workshop on Self-Managing Database Systems (SDBM), IEEE, 2008.
+skill J. Gupchup, R. Burns, A. Terzis, and A. Szalay, Model-Based Event Detection in Wireless Sensor Networks. Workshop on Data Sharing and Interoperability on the World-Wide Sensor Web (DSI), ACM/IEEE, 2007.
+skill X. Wang, R. Burns, and A. Terzis. Throughput-Optimized, Global-Scale Join Processing in Scientific Federations. Workshop On Networking Meets Databases (NetDB), USENIX, 2007.
+skill A. Batsakis, R. Burns, T. Talpey, A. Kanevsky, and J. Lentini. Enhancing the Linux Memory Architecture to Support File Systems over Heterogeneous Devices. Position paper, Linux File Systems and IO Workshop, USENIX, 2007.
+skill S. Ozer, A. Szalay, J. Gray, A. Terzis, R. Musaloiu-E., K. Szlavecz, J. Cogan, and R. Burns. Data Analysis Tools for Sensor-Based Science. Demonstration paper, Conference on Embedded Networked Sensor Systems (SenSys), ACM, 2006.
+skill R. Burns, A. Terzis, and M. Franklin. Design Tools for Sensor-Based Science. Workshop on Embedded Networked Sensors (EmNetS), IEEE, 2006.
+skill Z. Peterson and R. Burns. Building Regulatory-Compliant Storage Systems. Refereed project highlight, Conference on Digital Government Research (dg.o), 2006.
+skill R. Burns, Z. Peterson, G. Ateniese, and S. Bono. Verifiable Audit Trails for a Versioning File Systems. International Workshop on Storage Security and Survivability (SSS), ACM, 2005.
+skill Z. Peterson and R. Burns. Limiting Liability in a Federally Compliant File System. PORTIA Workshop on Sensitive Data in Medical, Financial, and Content Distribution Systems, 2004.
+skill 5
+skill Curriculum Vitae
+skill Randal Burns
+skill W-23 W-24
+skill W-25
+skill A. Batsakis and R. Burns. NFSv4 as the Building Block for Fault Tolerant Applications. Workshop on NFS Extensions for Parallel Storage (NEPS), 2003.
+skill R. Burns, R. Rees, and D. Long. Consistency and Locking for Distributing Updates to Web Servers Using a File System. Performance Evaluation Review, 28(2), 15-21, Workshop on the Performance and Architecture of Web Servers (PAWS), ACM, 2000.
+skill R. Burns and I. Narang. Version Management and Recoverability for Large Object Data. Workshop on Multimedia Database Management Systems (MMDBMS), 12-19, IEEE, 1998.
+publication Invited Papers
+publication I-1 D. Mhembere. W. G. Roncal, D. Sussman, C. E. Priebe, R. Jung, S. Ryman, R. J. Vogelstein, J. T. Vogeltstein, and R. Burns. Computing Scalabal Multiavriate Global Invariants of Large (Brain-) Graphs. IEEE Global Conference on Signal and Information Processing (GlobalSIP), 2013.
+publication I-2 W.. Gray Roncal, Z. H. Koterba, D. Mhemebere, D. M. Kleissas, J. T. Vogelstein, R. Burns, A. R. Bowles, D .K. Donavos, S. Ryman, R. E. Jung, L. Wu, V. Calhoun, and R. J. Vogelstein. MIGRAINE: MRI Graph Reliability Analysis and Inference for Connectomics. IEEE Global Conference on Signal and Information Processing (GlobalSIP), 2013.
+publication I-3 Y. Ahmad, R. Burns, M. Kazhdan, A. Szalay, and A. Terzis. Scientific Data Management at the Johns Hopkins Institute for Data Intensive Engineering and Science. SIGMOD Record, 39(3), 18­23, 2010.
+publication I-4 J. Gupchup, A. Sharma, A. Terzis, R. Burns, and A. Szalay. The Perils of Detecting Measurement Faults in Environmental Monitoring Networks. International Conference on Distributed Computing in Sensor Systems (DCoSS), IEEE, 2008.
+publication I-5 R. Burns, L. Stockmeyer, and D. Long. Experimentally Evaluating In-Place Delta Reconstruction. IEEE Mass Storage Conference, NASA, IEEE, 2002.
+publication I-6 B. Reed, E. Chron, D. Long, and R. Burns. Authenticating Network Attached Storage. IEEE Symposium on High Performance Interconnects, IEEE, 1999.
+publication Abstracts
+publication A-1 S. Sikka, B. Cheung, R. Khanuja, S. Ghosh, C. Yan, Q. Li, J. Vogelstein, R. Burns, S. Colcombe, C. Craddock, M. Mennes, C. Kelly, A. Dimartino, F. Castellanos and M. Milham. Towards automated analysis of connectomes: the configurable pipeline for the analysis of connectomes (C-PAC). Front. Neuroinform. Conference Abstract: 5th INCF Congress of Neuroinformatics, 2014.
+publication A-2 W. Gray-Roncal et al., Large-scale computational connectomics using the Open Connectome Project. Conference on Neuronal Circuits, Cold Spring Harbor Laboratory, 2014.
+publication A-3 P. J. Manavalan et al., A memory caching architecture with integrated visualization and annotation tools for high resolution neural data. Conference on Neuronal Circuits, Cold Spring Harbor Laboratory, 2014.
+publication A-4 J. Graham, K. Kanov, E. Givelberg, R. Burns, G. Eyink, A. Szalay, C. Meneveau, M. K. Lee, N. Malaya, and R. D. Moser. A Web-Services accessible database for channel flow turbulence at Re = 1000. Bulletin of the American Physical Society. 58(18), 2013.
+publication A-5 C. Lalescu, G. Eyink, K. Kanov, R. Burns, C. Meneveau, A. Szalay, E. Vishniac, H. Aluie and K. Bu¨rger. Flux Freezing Breakdown Observed in in High-Conductivity Magnetohydrodynamic Turbulence. Bulletin of the American Physical Society. 58(4), 2013.
+publication A-6 G. Eyink, E. Vishniac, C. Lalescu, H. Aluie, K. Kanov, R. Burns, C. Meneveau, and A. Szalay. Indeterminism in Classical Dynamics of Particle Motion. Bulletin of the American Physical Society, 58(1), 2013
+publication A-7 E. T. Vishniac and H. Aluie and R. Burns and G. Eyink and K. Kanov and C. Lalescu and C. Meneveau and A .S. Szalay. The Breakdown of Flux Freezing in High-Conductivity Magnetohydrodynamic Turbulence. American Astronomical Society, AAS Meeting #221, Abstract #415.03. 2013.
+publication 6
+skill Curriculum Vitae
+skill Randal Burns
+skill A-8 A-9 A-10 A-11 A-12 A-13 A-14 A-15 A-16 A-17
+skill D. J. Lurie, S. Sikka, R. Khanuja, B. Cheung, Q. Li, J. T. Vogelstein, C.-G. Yan, R. Burns, S. Colcombe, M. Mennes, C. Kelly, A. D. Martino, F. X. Castellanos, M. P. Milham, and C. Craddock. The Configurable Pipeline for the Analysis of Connectomes (C-PAC). Journal of Cognitive Neuroscience, 231, 2013.
+skill D. M. Kleissas, W. R. Gray, J. M. Burck, J. T. Vogelstein, E. Perlman, P. M. Burlina, R. Burns, and R. J. Vogelstein. CAJAL3D: Toward A Fully Automatic Pipeline for Connectome Estimation from High-Resolution EM Data. Neuroinformatics, 2012.
+skill D. S. Crankshaw, B. Falck, T. Budavari, L. Dobos, A. Szalay, and R. Burns. Database Architecture for the Indra Cosmological Simulations. American Astronomical Society Meeting Abstracts, Volume 219, 2012.
+skill H. Yu, K. Kanov, E. Perlman, R. Burns, A. Szalay, G. Eyink, and C. Meneveau. Studying Lagrangian dynamics of turbulence using on-demand fluid particle tracking in the JHU turbulence database. APS Division of Fluid Dynamics, 56(18), 2011.
+skill J. .T Vogelstein, E. Perlman, D. Bock, W.-C. Lee, M. Chuang, B. Kasthuri, M. Kazhdan, C. Reid, J. Lichtman, R. Burns, and R. J. Vogelstein. Open Connectome Project: collectively reverse engineering the brain one synapse at a time. Neuroinformatics, 2011.
+skill J. T. Vogelstein, C. E. Priebe, R. Burns, R. J. Vogelstein, and J. Lichtman. Measuring and Reconstructing the Brain at the Synaptic Scale: Toward a Biofidelic Human Brain in silico. DARPA Neural Engineering, Science and Technology Forum, 2010.
+skill C. Meneveau, Y. Li, E. Perlman, M. Wan, Y. Yang, R. Burns, S. Chen, G. Eyink, and A. Szalay. Analysis of Turbulence Datasets using a Database Cluster: Requirements, Design, and Sample Applications. APS-DPD meeting, Abstract BS.00004, 2007.
+skill R. Burns. Using Databases to Store the Space-Time Histories of Turbulent Flows. Abstract, Microsoft eScience Workshop, 2006.
+skill B. Ball, R. Burns, B. Cuker, D. Di Toro, T. Gross, M. Kemp, L, Murray, M. Piasecki, and I. Zaslavsky. Conceptual Design of a Chesapeake Bay Environmental Observatory (CBEO). Eos Trans. AGU, 87(52), Fall Meet. Suppl., Abstract H21F-1427, 2006.
+skill K. Szlavecz, A. Szalay, A. Terzis, R. Musaloiu-E., S. Small, J. Cogan. R. Burns, J. Gray, and S. Ozer. Building an end-to-end system for soil monitoring. Eos Trans. AGU, 87(36), Jt. Assem. Suppl., Abstract H32B-02, 2004.
+skill Other
+skill O-1 A. S. Szalay et al. (23 authors). GrayWulf: Scalable Clustered Architecture for Data Intensive Computing. Supercomputing, Winner of the HPC Storage Challenge, 2008.
+skill O-2 A. S. Szalay, G. Bell, J. Vandenberg, A. Wonders, R. Burns, D. Fay, J. Heasley, T. Hey, M. Nieto-SantiSteban, A. Thakar, C. van Ingen, and R. Wilton. GrayWulf: Scalable Clustered Architecture for Data Intensive Computing. Microsoft Research Technical Report MSR-TR-2008-187, 15 September 2008.
+skill O-3 R. Burns. Data Management in a Distributed File System for Storage Area Networks. Ph.D. Dissertation, University of California, Santa Cruz, 2000.
+skill O-4 R. Burns. Differential Compression: A Generalized Solution for Binary Files. Masters Thesis, University of California, Santa Cruz, 1997.
+skill Software Artifacts
+employment Scientific Web Services
+employment S-1 Open Connectome Project (http://openconnecto.me), 2011. Co-Authors: J. Vogelstein, J. Vogelstein, E. Perlman, M. Kazhdan, and M. Chuang. Provides community access to more than 50TB of connectome data. This includes high-resolution electromagnetic imaging of the mouse visual cortex and over 1000 magnetic resonance (functional and diffusion) scans of the human brain. openconnecto.me provides visualization and analytics through a variety of programmable Web services.
+employment 7
+skill Curriculum Vitae
+skill Randal Burns
+skill S-2 The JHU Turbulence Database Cluster (http://turbulence.pha.jhu.edu), 2007. Co-Authors: E. Perlman and the JHU Turbulence Research Group. This service provides community access to more that 30 terabytes of high-resolution turbulence simulations using C, MatLab, and Fortran interfaces. It has served more than 100 billion point query requests.
+skill S-3 The Chesapeake Bay Environmental Observatory Testbed, 2007. Co-Authors: E. Perlman, R. Murphy, B. Ball. This service integrates more than 15 model-generated and observational data sets from the Chesapeake Bay. It allows scientists to explore, compare, and correlate data from buoys, cruises, over-flight, satellites, shallowwater monitoring, and high-resolution hydrodynamic and water-quality models.
+skill Open-Source
+skill S-4 The ext3cow file system (http://www.ext3cow.com), 2004. Co-Author: Z. Peterson. The ext3cow file system provides an open-source implementation of continuous file versioning and file system snapshot. ext3cow builds upon the popular ext3 file system--the base file system for most Linux distributions. Ext3cow provides a time-shifting interface that permits a real-time and continuous view of data in the past.
+skill Our release of ext3cow for the Linux 2.6 kernel was reported on both slashdot.org and on digg.com on May 2, 2007. This resulted in over 23,000 visits to the Website in a single day. The software has been downloaded over 2,000 times. The ext3cow mailing list for developers and users includes over 50 active members, and four programmers from the open-source community have contributed to its source. Additionally, research projects at UC Berkeley, Columbia, Utah, and UC Santa Cruz build on the versioning features of ext3cow and a startup uses ext3cow as the disk file system in an object-based storage device.
+skill S-5 In-Place Rsync, 2003. Co-Author: D. Rasch. In-Place Rsync is an open-source implementation of the rsync protocol for remote file synchronization suitable for resource-constrained devices and storage systems. It updates a file in the memory/storage it currently occupies, requiring no scratch space. It was originally intended for use on handhelds, cellphones, etc. In practice, it is used more often to synchronize large files, avoiding the I/O costs of maintaining two copies. The in-place feature has been merged into the rsync source code and, thus, is part of the standard Linux distribution and available on all platforms that support GNU tools.
+education Educational
+education S-6 The Aries Database Project (http://hssl.cs.jhu.edu/~randal/aries/), 2002. The ARIES project is a semester-long team programming task for students in EN 600.416 Transaction Processing Systems. The project provides a simple runtime environment in which teams implement the Algorithms for Recovery and Isolation Exploiting Semantics (ARIES) protocol for transactions, write-ahead logging, and restart recovery. ARIES is the fundamental principle in logging and recovery for commercial systems such as IBM DB/2 and Microsoft's SQL server. The software is listed on C. Mohan's ARIES impact Webpage http://www.almaden.ibm.com/u/mohan/ARIES_Impact.html. The project has been used in undergraduate/graduate courses three times at Johns Hopkins by Randal Burns and in an undergraduate/graduate course at the University of Toronto. The free software has been downloaded over 50 times.
+skill Commercial
+skill S-7 IBM TotalStorage SAN File System, 2002. Co-Authors: R. Rees, W. Hineman, D. Pease, D. Long, and J. Menon. The IBM TotalStorage SAN File System (SFS) is the centerpiece of IBM's TotalStorage family of data management products. SFS provide data sharing across Linux, Windows, and AIX operating systems using iSCSI and Fibre-Channel storage networks. Randal Burns served as the Chief Scientist of the research project at Almaden Research Center in San Jose, CA that led to SFS. SFS employed over 250 engineers at IBM in 2004 and has been deployed at CERN (Switzerland) and Price-Waterhouse-Coopers (USA).
+skill S-8 Adaptive Differencing, IBM Tivoli Storage Manager, 1999.
+skill 8
+skill Curriculum Vitae
+skill Randal Burns
+skill Adaptive Differencing adds differential backup--the ability to backup a file using a small description of the changes made to that file from a previous version--to IBM's Tivoli Storage Manager (TSM). This technology reduces network transfer and backup time by an order of magnitude, enabling backup over low-bandwidth links for mobile computers. TSM has been IBM's backup and restore solution for over fifteen years and runs on over 15 clients platforms and 5 servers platforms. More than 1,000,000 seats of Adaptive Differencing have been deployed.
+publication Patents
+publication P-1 Producer/consumer locking system for efficient replication of file data (with A. Goal, W. Hineman, and R. Rees), US6925515, 02 August 2005.
+publication P-2 System for dynamically evaluating locks in a distributed data storage system (with R. Rees), US6917942, 12 July 2005.
+publication P-3 System and method for managing authentication and coherency in a storage area network (with D. Long), US6792424, 14 September 2004.
+publication P-4 Lease based safety protocol for distributed system with multiple networks (with A. Goel, D. Long, and R. Rees) US6775703, 10 August 2004.
+publication P-5 Data placement and allocation using virtual contiguity (with D. Long and R. Rees) US6651147, 18 November 2003.
+publication P-6 System for managing asset access in a distributed storage system (with A. Goel and R. Rees), US6571276, 27 May 2003.
+publication P-7 System and method for allocating storage space using bit-parallel search of bitmap (with W. Hineman), US6510505, 21 January 2003.
+publication P-8 Decentralized remotely encrypted file system (with E. Chron, D. Long and B. Reed), US6405315, 11 June 2002.
+publication P-9 System and method for differential compression of data from a plurality of sources (with M. Ajtai, R. Fagin, D. Long, and L. Stockmeyer), US06374250, 14 April 2002.
+publication P-10 Continuous availability and efficient backup for externally referenced files (with I. Narang), US06088694, 7 October 2000.
+publication P-11 Method for generating and reconstructing in-place delta files (with D. Long), US06018747, 25 January 2000. P-12 Secure array of remotely encrypted storage devices (with E. Chron, D. Long, and B. Reed), US05931847, 3
+skill August 1999.
+publication Contracts and Grants
+publication DARPA. "Scalable Brain Graph Analyses using Big-Memory, High-IOPS Compute Architectures." PI with J. Vogelstein, C. Priebe, and A. Szalay. DARPA N66001-14-1-4028 $435,226, 05/01/2014­11/31/2015.
+publication National Science Foundation. "CIF21 DIBBs: Long Term Access to Large Scientific Data Sets: The SkyServer and Beyond." Co-PI with PI A. Szalay, S. Salzberg, A. Thakar, and C. Meneveau. ACI-1261715, $7,603,720, 10/1/2013­ 09/30/2018.
+publication National Institutes of Health. "BIGDATA: Small DCM: ESCA DA Computational infrastructure for massive neuroscience image stacks." co-PI with P. Mitra, J. T. Vogelstein, and R. J. Vogelstein. NIDA 1R01DA036400-01, $907,194, 03/15/2013­03/14/2016.
+publication National Institutes of Health. "CRCNS Data Sharing: The EM Open Connectome Project." PI with G. Hager, M. Kazhdan, J. Lichtman (Harvard), J. T. Vogelstein, and R. J. Vogelstein. NIBIB 1RO1EB016411-01, $830,128, 09/01/2012­08/31/2015.
+publication National Science Foundation. "Interdisciplinary Scientific Data Management." co-PI with PI A. Szalay, C. Meneveau, K. Svalecz, and A. Terzis. OCI-1244820. $1,000,000, 10/01/2012­09/31/2014
+publication 9
+skill Curriculum Vitae
+skill Randal Burns
+skill National Science Foundation. Amendment to AST-0428325 "Exploring the Lagrangian Structure of Complex Flows with 100 Terabyte Datasets." co-PI with PI A. Szalay, G. Eyink, and S.-Y. Chen. AST-0939767, $432,478, 9/1/2009­ 8/31/2012.
+skill National Science Foundation Cyber-Enabled Discovery and Innovation (CDI) Type-II. Database enabled multiscale simulations and analysis of fluid turbulence. Co-PI with PI C. Meneveau, S. Chen, G. Eyink, and A. Szalay. CMMI0941530, $1,899,469, 09/01/2009­08/31/2013.
+skill National Science Foundation. High-End Computing University Research Activity (HECURA). "CRAM: A CongestionAware Resource and Allocation Manager for Data-Intensive High-Performance Computing." PI with J. Griffin. CCF0937810, $495,000, 12/15/09­12/14/12.
+skill National Science Foundation. Major Research Instrumentation (MRI). Acquisition of 100TF Graphics Processor Laboratory for Multiscale/Multiphysics Modeling. Co-PI with PI M. Robbins, L. Graham-Brady, A. Szalay, and R. Dalrymple. CMMI-0923018, $381,518, 08/01/09­07/31/12.
+skill National Science Foundation. Sustainable Digital Data Preservation and Access Network Partner (DataNet). "Data Conservancy: A Digital Research and Curation Virtual Organization." NSF OCI-0830876, Co-PI with PI S. Choudhury and 12 others. $20M, 09/04/09­09/03/14.
+skill Johns Hopkins University. Provost's Discovery Grant. "Data Intensive Scalable Computing at JHU (JH-DISC)." Co-PI with PI A. Szalay and 6 others. $505,914, 11/2008­10/2011.
+skill National Science Foundation. National Science, Mathematics, Engineering and Technology Education Digital Library (NSDL), NSF 07-538. "Archival Introspection and Maintenance Metadata." PI with S. Choudhury, T. DiLauro, and J. L. Griffin, DUE-0734862, $99,075, 12/15/2007­11/30/2008.
+skill National Science Foundation. Cyberinfrastructure for Environmental Observatories: Prototype Systems to Address Cross-Cutting Needs (CEO:P), NSF 06-505. "A Prototype System for Multi-Disciplinary Shared Cyberinfrastructure-- Chesapeake Bay Environmental Observatory (CBEO)." co-PI with William P. Ball, Dominic M. Di Toro, Thomas Gross (PI), William M. Kemp, Michael Piasecki, ATM-0618986, $2,149,906, 10/1/2006­9/31/2009.
+skill Library of Congress (administered by the National Science Foundation). Digital Archives, NSF 04-592. "Securely Managing the Lifetime of Versions in Digital Archives." PI with A. Rubin and G. Ateniese, IIS-0456027, $300,000, 7/1/2005­6/31/2008.
+skill National Science Foundation. Information Technology Research, NSF 04-12. "Exploring the Lagrangian Structure of Complex Flows with 100 Terabyte Datasets." co-PI with E. Vishniac (PI), G. Eyink, S.-Y. Chen, and A. Szalay, AST-0428325, $2,165,860, 9/1/2004­8/31/2009.
+skill National Science Foundation. Science and Engineering Information Integration and Informatics, NSF 04-528. "BypassYield Caching for Large-Scale Scientific Database Workloads in the World-Wide Telescope." PI with A. Thakar, IIS0430848, $631,863, 10/01/2004­9/30/2007. Linked award: IIS-0431008, PI Anastassia Ailamaki, Carnegie Mellon University, $298,000.
+skill National Science Foundation. Concept Development Toward a Collaborative Large-Scale Engineering Analysis Network (CLEANER), NSF 03-607. "CLEANER with focus on the Chesapeake Bay." co-PI with Y. Amir and B. Ball, BES-0414372, $22,783, 8/1/2004­7/31/2005. Linked awards: BES-0414429, PI Dominic Di Toro, University of Delaware, $9,999. BES-0414347, PI William Kemp, University of Maryland Center for Environmental Sciences, $5,245. BES-0414214, PI Thomas Gross, Chesapeake Research Consortium, $31,932.
+skill National Science Foundation. Faculty Early Career Development (CAREER) Program, NSF 02-111. Advanced Computer Research Program, Division of Advanced Computer Infrastructure. "CAREER: Interoperation among Heterogeneous Global-Scale Storage Systems." PI, CCF-0238305, $406,973, 5/1/2003­4/30/2008.
+skill Department of Energy. Early Career Investigator Program, Notice 02-16. "Global-Scale File Sharing for HighPerformance Cluster Computing." PI, DE-FG02-02ER25524, $318,227, 4/15/2002­4/14/2005.
+skill 10
+skill Curriculum Vitae
+skill Randal Burns
+publication Other Grant Activity
+publication Subcontract of "National Center for Applied Neuroscience (NCAN)." Johns Hopkins University Applied Physics Labs, PI J. Vogelstein. $34,912, 06/01/2013­09/30/2013.
+publication Child Mind Institute Endeavour Training Fellowship. Mentor for Awardee Joshua Vogelstein. $75,000. 02/11/2014­ 02/11/2015.
+publication National Institutes of Health. "CLARITY: Fully-Assembled Biology" Consultant to PI K. Deisseroth (Stanford). NIMH 1R01MH09964701 , $150,000 of $5.65M, 08/31/2012­08/31/2017.
+publication Subcontract of "Reverse Engineeering Neural Microcircuits." Internal Research and Development Grant, Johns Hopkins University Applied Physics Labs, PI J. Vogelstein. $19,304.
+publication National Science Foundation. CI-Fellows Sub-Award for Ragib Hasan. PI R. Hasan and R. Burns (mentor), $140,000, 10/02/09­10/01/10.
+publication National Science Foundation Major Research Instrumentation (MRI). "Development of Data-Scope--A Multi-Petabyte Generic Data Analysis Environment for Science." Senior personnel with PI A. Szalay, OCI-1040114, $2,087,760. 01/01/2011­12/31/2012.
+publication Corporate Grants and Gifts
+publication Amazon Web Services. Education grants for AWS cloud compute resources.
+publication ·EN 600.423 Data Intensive Computing, $3200, September 2013. ·EN 600.420 Parallel Programming, $9800, February 2013. ·EN 600.423 Data Intensive Computing, $1600, September 2012. ·EN 600.420 Parallel Programming, $5400, February 2012. ·EN 600.420 Parallel Programming, $7500, September 2011.
+publication nVidia CUDA Center of Excellence at Johns Hopkins University, Co-PI with PI Szalay, August 2011.
+publication NetApp. "Reducing Memory and I/O Interference for Virtualized Systems and Cloud Computing." Research Gift. Randal Burns, $40,000, 8/30/2010.
+publication NetApp. "Server-Directed Adaptive Data Destaging for NFS (on High-Performance Interconnects)." Research Gift. Randal Burns, $45,000, 11/13/2008.
+publication Network Appliance. " Optimizing Client-Server Data Transfer through Memory Management." Research Gift. Randal Burns, $29,192, 10/19/2006.
+publication International Business Machines. Shared University Research (SUR) program. Randal Burns, $362,000 (Equipment), 2002.
+skill Program Committees
+skill 2015 2014 2013
+skill Conference on File and Storage Technologies (FAST), USENIX Conference on Innovative Data Systems Research (CIDR), ACM Program Chair, Systems and Storage Conference (Systor), ACM Programmable File Systems Workshop (PFSW), ACM Conference on Very Large Data Bases (VLDB), ACM Conference on Innovative Data Systems Research (CIDR), ACM Scientific and Statistical Database Management Conference (SSDBM), LNCS
+skill 11
+skill Curriculum Vitae
+skill Randal Burns
+skill 2012
+skill 2011
+skill 2010 2009 2008 2007 2006 2005 2004 2003 2002 2001
+skill Symposium on Cloud Computing (SOCC), ACM, IEEE, USENIX Conference on Mass Storage Systems and Technology (MSST), IEEE Parallel Data Storage Workshop (PDSW), ACM,IEEE Conference on File and Storage Technologies (FAST), USENIX Conference on Very Large Data Bases (VLDB), ACM International Conference on Data Engineering (ICDE), IEEE Scientific and Statistical Database Management Conference (SSDBM), LNCS International Systems and Storage Conferfence (SYSTOR), ACM, IEEE, USENIX Workshop on Hot Topics in Storage Systems (HotStorage), USENIX Workshop on Management of Big Data Systems (MBDS), IEEE Conference on Mass Storage Systems and Technology (MSST), IEEE Conference on Very Large Data Bases (VLDB), ACM Conference on Innovative Data Systems Research (CIDR), ACM Scientific and Statistical Database Management Conference (SSDBM), LNCS International Systems and Storage Conferfence (SYSTOR), ACM, IEEE, USENIX International Workshop on Storage Network Architecture and Parallel I/O (SNAPI), IEEE Program Chair, Conference File and Storage Technologies (FAST), USENIX Storage Challenge Committee, Supercomputing (SC), ACM, IEEE
+skill Conference on Innovative Data Systems Research (CIDR), ACM Scientific and Statistical Database Management Conference (SSDBM), LNCS
+skill Workshop on Computing with Massive and Persistent Data (CMPD), IEEE File System and Storage Technology Conference (FAST), USENIX International Workshop on Storage Security and Survivability (StorageSS), ACM
+skill File System and Storage Technology Conference (FAST), USENIX Conference on Mass Storage Systems and Technology (MSST), IEEE
+skill Conference on Mass Storage Systems and Technology (MSST), IEEE
+skill Supercomputing Conference (SC), ACM, IEEE Security in Storage Workshop, IEEE Conference on Mass Storage Systems and Technology (MSST), IEEE
+skill Conference on Mass Storage Systems and Technology (MSST), IEEE
+skill Security in Storage Workshop, IEEE Conference on Mass Storage Systems and Technology (MSST), IEEE
+skill File System and Storage Technology Conference (FAST), USENIX Security in Storage Workshop, IEEE Conference on Mass Storage Systems and Technology (MSST), IEEE
+skill International Conference on Distributed Computing Systems (ICDCS), IEEE Conference on Mass Storage Systems and Technology (MSST), IEEE
+skill 12
+skill Curriculum Vitae
+skill Randal Burns
+employment External Professional Activities
+employment Big Data Session Chair, Chinese-American Kavli Frontiers of Science Symposium, National Academies of Science, 2014. Defense Science Study Group, Class of 2012­2013. Program Chair, International Systems and Storage Conference (SysStor), ACM, 2014. Steering Committee, USENIX Conference on File and Storage Technologies, 2010­present. Editorial Board, ACM Transactions on Storage, 2004­2012. Program Chair, Conference on File and Storage Technologies, USENIX, 2010. Agency for Science Technology and Research (A*STAR) Visitor, Singapore, September, 2010. Academic Advisory Board, Association for Computing Machinery, Washington DC Chapter, 2008­present. Academic Advisory Board, StorageNetworking.org, 2003­2008. Participant, Institute for Information Infrastructure Protection Forum on Technology for Cyber-Physical Systems, Committee on Homeland Security and Governmental Affairs, United States Senate, Chairman: Joseph Lieberman. Panel Organizer and Moderator. "Scientific Data Management: An Orphan in the Database Community?" International Conference on Data Engineering (ICDE), IEEE, 2008. Panelist, National Science Foundation, 2002,2003,2003,2004,2005,2005,2007,2008, 2009, 2009, 2010, 2010. Panelist, National Archives, 2007. Vice Program Chair, International Performance, Communications, and Computing Conference, IEEE, 2002. Moderator of Usenet newsgroup for operating systems research, comp.os.research, 1996-2002.
+employment Internal Professional Activities
+employment Steering Committe, Science of Learning Institute, 2012­present. Oversight Committee for the Moore Foundation Integrated ICU Project, 2012­present. Leveraging Data to Knowledge Strategic Committee, Whiting School of Engineering, 2012. Steering Committee, Insitute for Data Intensive Science and Engineering (IDIES), 2009-present. Homewood High Performance Compute Cluster Committee, 2008-present. Chair, Faculty Search Committee, Department of Computer Science, Johns Hopkins University, 2008-2013. High Dimensional Data and Intensive Computing Campaign Group, 2011. eScience Task Force, 2007. WSE/KSAS Academic Computing Advisory Committee, 2005-present. Director of IT, Dept. of Computer Science, Johns Hopkins University, 2004-present. Committee Member, Dept. of Computer Engineering, Johns Hopkins University, 2004-present. Curriculum Committee, Dept. of Computer Science, Johns Hopkins University, 2004-2012. Faculty Search Committee, Johns Hopkins University, 2002-2004, 2006-2007. Library Advisory Committee, IBM Research, 1999-2001. Liaison, Sponsored University Research (SUR) Grant, IBM Corp., 1999-2001. Organizer, Storage Software Seminar Series, IBM Almaden Research Center, 2000-2001.
+skill Consulting
+skill 2012-2013 2011-2013 2006-2007 2002-2003 2002 2001-2002
+skill Axiom Law, Technology and Analysis Consultant. Institute for Defense Analyses, Member of the Defense Sciences Study Group. Sterne, Kessler, Goldstein, and Fox, Intellectual Property: Expert Witness. Keysec Corp., Bethesda, MD. Technical Consultant, Storage Architecture and Security. Jenner and Block, Intellectual Property: Expert Witness. Mintz, Levin, Cohn, Ferris, Glovsky, and Popeo, Intellectual Property: Expert Witness.
+skill 13
+skill Curriculum Vitae
+skill Randal Burns
+skill Course Instruction
+skill Parallel Programming, EN 600.320 and EN 600.420, Johns Hopkins University Spring 2012 (45 enrolled: 22 undergraduate and 23 graduate) Fall 2011 (69 enrolled: 25 undergraduate and 44 graduate) Fall 2010 (78 enrolled: 34 undergraduate and 44 graduate) Fall 2009 (35 enrolled: 9 undergraduate and 26 graduate) Fall 2008 (69 enrolled: 18 undergraduate and 51 graduate)
+skill Data-Intensive Computing, EN 600.423, Johns Hopkins University Fall 2013 (23 enrolled) Fall 2012 (13 enrolled)
+skill Data Organization: Storage and External Memory Systems, EN 600.427, Johns Hopkins University Spring 2011 (18 enrolled)
+skill External Memory Algorithms and Data Structures, EN 600.620, Johns Hopkins University Spring 2010 (8 enrolled: 8 graduate)
+skill Storage Systems, EN 600.319 and EN 600.419, Johns Hopkins University Fall 2007 (22 enrolled: 6 undergraduate and 16 graduate) Spring 2006 (41 enrolled: 17 undergraduate and 24 graduate) Fall 2004 (42 enrolled: 23 undergraduate and 19 graduate) Fall 2002 (56 enrolled: 30 undergraduate and 26 graduate)
+skill Transaction Processing Systems, EN 600.416, Johns Hopkins University Spring 2009 (11 enrolled: 1 undergraduate and 10 graduate) Spring 2007 (18 enrolled: 7 undergraduate and 11 graduate) Spring 2005 (21 enrolled: 6 undergraduate and 15 graduate) Fall 2003 (21 enrolled: 8 undergraduate and 13 graduate)
+skill Distributed Database Systems, EN 600.419, Johns Hopkins University Spring 2002 (22 enrolled: 6 undergraduate and 16 graduate)
+skill Intermediate Programming, EN 600.120, Johns Hopkins University Spring 2005 (40 enrolled) Spring 2004 (48 enrolled)
+skill Advanced Storage and Transaction Processing, EN 600.619, Johns Hopkins University Fall 2006 (6 enrolled) Spring 2003 (11 enrolled)
+skill Database Systems, CS 180, University of California, Santa Cruz Winter 2001 (80 enrolled)
+skill Advanced Operating Systems, CS 221, University of California, Santa Cruz Spring 2000 (14 enrolled)
+skill Other Course Instruction (Seminars, Lecture Series, Co-Teaching)
+skill Digital Preservation, EN 600.409, Johns Hopkins University Spring 2008 (8 enrolled, 4 lectures, 4 panels)
+skill M&Ms (the freshman CS experience), EN 600.105, Johns Hopkins University Fall 2004 (8 enrolled, 4 lectures) Fall 2005 (13 enrolled, 4 lectures)
+skill Seminar in Systems, EN 600.743, Johns Hopkins University, Spring 2004, Fall 2004.
+skill Keynote Lectures
+skill Aug. 2013 Apr. 2013
+skill "Data-Intensive Computing for Neuroscience: The Open Connectome Project." INCF NeuroInformatics Congress. "Big Data Computing for Connectomics: Spatial Databases, Scalable Analytics, HPC, NoSQL, Cloud, and Much Much More." Stanford Cracking the Neural Code (CNC) Annual Symposium.
+skill 14
+skill Curriculum Vitae
+skill Randal Burns
+publication Invited Seminars
+publication July 2013 Feb. 2012 June 2011 Feb. 2011 Sep. 2010 Sep. 2010 Sep. 2010 Apr. 2010 Sept. 2009 Mar. 2008 Feb. 2008 Oct. 2007 Sept. 2007 Nov. 2006 May 2006 Feb. 2006 Dec. 2005 May 1998
+publication "The Open Connectome Project: A Big Data Architecture for the BRAIN Initiative." Information Science and Technology Seminar, Los Alamos National Lab, Host: Jim Ahrens.
+publication High-Throughput Data-Intensive Computing: Shared Scans in Scientific Databases and the Cloud, Computer Science Seminar, George Washington University, Host: Howie Huang.
+publication High-Throughput Data-Intensive Computing: Shared Scans in Scientific Databases and the Cloud, Seminar, Microsoft Research, Host: Cheng Huang.
+publication "Democratizing Data Intensive Computing", Applied Physics Laboratory, Johns Hopkins University, Host: Jacob Vogelstein.
+publication "Congestion-Aware Resource Management," Data Storage Insitute, Agency for Science Technology and Research (A*STAR), Singapore, Host: Khin Mi Mi Aung..
+publication "NFS-CD: Write-Enabled Cooperative Caching in NFS," Data Storage Insitute, Agency for Science Technology and Research (A*STAR), Singapore, Host: Khin Mi Mi Aung..
+publication "Engineering the Billion-Object Authenticated Dictionary," Data Storage Insitute, Agency for Science Technology and Research (A*STAR), Singapore, Host: Khin Mi Mi Aung..
+publication "Engineering the Billion-Object Authenticated Dictionary," Computer Science Seminar, Brown University, Host: Ugur Cetintemel.
+publication "Engineering the Billion-Object Authenticated Directory," Database Seminar, University of Waterloo, Host: Ken Salem.
+publication "Querying the Cosmos across the Globe: A Reduction in Scale?" Purdue University, Computer Science Seminar, Host: Ahmed Elmagarmid.
+publication "Querying the Cosmos across the Globe: A Reduction in Scale?" University of California, Santa Cruz, Computer Science Seminar. Host: Neokolis Polyzotis.
+publication "Auditing Long-Term Archives Built on Untrusted Storage Systems," University of Massachusetts, Computer Science Seminar. Host: Gerome Miklau.
+publication "Network-Aware Join Processing in Global-Scale Database Federations," University College Cork, Computer Science Seminar. Host: Cormac Sreenan.
+publication "Caching and Result-Size Estimation for Scientific Database Federations," University of California Berkeley, Database Group Seminar, Host: Joe Hellerstein.
+publication "Securely Implementing Regulatory Policy in Versioning File Systems," Department of Computer Science, University of Maryland, Host: Peter Keleher.
+publication "Bypass-Yield Caching: Making Scientific Databases Good Network Citizens," Computer Science Seminar, University of Notre Dame, Host: Douglas Thain.
+publication "Securely Implementing Regulatory Policy," Library of Congress, Host: Bill Lefurgy.
+publication "An Algorithm for Delivering Software to Network Attached Devices," Graduate Engineering Seminar, Department of Computer Engineering, Santa Clara University. Host: Linda Seiter.
+skill Invited Lectures
+skill May 2014 Feb 2013 Nov. 2013 Oct. 2012
+skill "FlashGraph: Processing Billion Node Graphs on an Array of SSDs." DARPA GRAPHS JHU Kickoff Meeting. Host: Reza Ghanadan.
+skill "BIG Data Computing for MICrONS: Storage Management and Analysis Engines." IARPA Machine Intelligence from Cortical Networks (MICrONs) Workshop. Host: Jacob Vogelstein.
+skill "Open-Science, Data-Intensive Computing Architectures foor Vision and Analysis of Brain Data." DARPA Collaborative Brain Data Exploitation Workshop, Host: Reza Ghanadan.
+skill "EM Open Connectome Project Volume Databases." Workshop on Scaling Up EM Connectomics, HHMI Janelia Farm Research Campus, Host: Davi Bock.
+skill 15
+skill Curriculum Vitae
+skill Randal Burns
+skill Oct. 2012 Mar. 2011 Feb. 2011 Sep. 2010 Sep. 2010 Sep. 2010 Oct. 2009 Aug. 2009
+skill Sept. 2008 July 2008 June 2008 July 2007 June 2006 Aug. 2005 July 2005 June 2005 July 2004 Nov. 2003 Mar. 2003 Aug. 2002 July 2001 April 2001 June 2000 July 1998 May 1998
+skill "EM Open Connectome Project: Overview and Architecture." Lichtmab Lab, Neuroscience Seminar, Harvard, Host: Jeff Lichtman. "The Open Connectome Project", Data-Intensive Research: Statistical Databases Workshop, Johns Hopkins University, Host: Alex Szalay. "Democratizing Data Intensive Computing", Applied Physics Laboratory, Johns Hopkins University, Host: Jacob Vogelstein. "Congestion-Aware Resource Management," Data Storage Insitute, Agency for Science Technology and Research (A*STAR), Singapore, Host: Khin Mi Mi Aung. "NFS-CD: Write-Enabled Cooperative Caching in NFS," Data Storage Insitute, Agency for Science Technology and Research (A*STAR), Singapore, Host: Khin Mi Mi Aung. "Engineering the Billion-Object Authenticated Dictionary," Data Storage Insitute, Agency for Science Technology and Research (A*STAR), Singapore, Host: Khin Mi Mi Aung. "TurbulenceDB: A Data-Intensive Architecture for the Analysis of Multiscale Fluid Simulations", Los Alamos Computer Science Symposium, Host: Francis Alexander. "CRAM: A Congestion-Aware Resource and Allocation Manager for Data-Intensive High-Performance Computing," Report on NSF HECURA funded project at the High-End Computing File System and I/O Workshop (HEC FSIO). "Remote Data Checking: Auditing the Preservation Status of Massive Digital Data Sets on Untrusted Stores," Mass Storage Technology Conference, Host: Jean-Jacques Bedet. "Remote Data Checking: Toward Verifying Remote Computation," DARPA Distributed Object Storage and Retrieval Workshop, Host: Joshua Alspector. "The Store Everything Model for High-Performance Computing," JASON Summer Study, Host: Dan Meiron. "Securely Auditing the Contents of Untrusted Storage Systems," Network Appliance, Seminar. Host: James Lentini. "Design Tools for Sensor-Based Science," Baltimore Ecosystem Study, Quarterly Research Meeting, University of Maryland, Baltimore County, Host: Claire Welty "Building a Virtual Observatory: Lessons Learned from the NVO," Chesapeake CLEANER Design Workshop, Host: Thomas Gross. "Managing the Lifetime of Versions in Digital Archives," dg.o 2005 DIGARCH PI's Meeting, Host: Lawrence Brandt. "Data Federation and Network Design: Issues for a Chesapeake CLEANER," Chesapeake CLEANER Workshop, Host: William P. Ball. "Caching in Large-Scale, Scientific Database Federations," JHU Data Intensive Science Conference, Host: Alex Szalay. "Applying the TotalStorage SAN File System at Johns Hopkins University," IBM Analyst Conference, Host: Harish Krishnamurthy. "Modern Topics in Data Management," Panelist and Presentation, IBM Research Offsite, Host: Jai Menon. "The Role of Object Storage Devices in File Management Systems," SNIA Object Storage Device Working Group, Applications and File Systems Subgroup, Host: Erik Riedel. "Parallel Data Access in Heterogeneous Environments," Lawrence Livermore National Lab, Host: Terry Jones. "Implementing Concurrency Control in the Storage Tank Distributed File System," Hewlett-Packard Labs, Research Seminar, Host: Erik Riedel. "Storage as the Application: Modern Topics in Data Storage," Bay Area Research Labs Summer Student Colloquium, Host: Joe Gordon. "Differential Compression for Internet Applications," IBM Research/Digital Research Labs Technology Show and Tell, Host: Ashok Chandra. "Security in Distributed Operating Systems,"Advanced Operating Systems, (CMPS 221), University of California, Santa Cruz, Host: Darrell Long.
+skill 16
+skill Curriculum Vitae
+skill Randal Burns
+skill Postdoctoral Fellows
+skill 2009
+skill Ragib Hasan, PhD, University of Illinois Urbana-Champaign. Assistant Professor, University of Alabama Birmingham
+student PhD Students
+student 2013 2012 2011 2011 2009 2007 2006 2006
+student Osama Khan, PhD, Johns Hopkins University Twitter, San Francisco, CA
+student Eric Perlman, PhD, Johns Hopkins University Howard Hughes Medical Institute, Janelia Farm Research Campus, Ashburn, VA.
+student Paul Stanton, PhD, Johns Hopkins University United States Army, Fort Meade, MD
+student Xiaodan Wang, PhD, Johns Hopkins University Salesforce, San Francisco, CA
+student Alexandros Batsakis, PhD, Johns Hopkins University TeraData, Sunnyvale, CA
+student Tanu Malik, PhD, Johns Hopkins University Research Assistant Professor, University of Chicago
+student Zachary Peterson, PhD, Johns Hopkins University Assistant Professor, California State University, San Luis Obispo, CA
+student Changxun Wu, PhD, Johns Hopkins University Google, Mountain View, CA
+student current current current current current current current
+student Alexander Baden, PhD, Johns Hopkins University Stephen Hamilton, PhD, Johns Hopkins University Kalin Kanov, PhD, Johns Hopkins University Kunal Lillaney, PhD, Johns Hopkins University Priya Manavalan, PhD, Johns Hopkins University Disa Mhembere, PhD, Johns Hopkins University Da Zheng, PhD, Johns Hopkins University
+student 17
+student 

@@ -177,7 +177,7 @@ sub get_base_domain {
     if (!defined($domain)) {
         print "Error: unknown domain.\n";
     }
-    
+
     $base_domain = $domain;
 }
 

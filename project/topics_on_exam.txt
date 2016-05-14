@@ -1,0 +1,145 @@
+Final Examination:   Monday, May 11, 2-5 PM, our classroom
+
+Exam is closed book/closed note. However, students may bring a 
+single, double sided piece of 8.5x11 inch paper with anything
+written on it that you wish. This may include notes and formulas
+of any kind, and the act of preparing the sheet is helpful in the
+review process.
+
+
+Topics for Exam:
+---------------
+
+*  PAT trees, suffix arrays
+  Inverted files (creation and use), indexing
+  Signature files
+
+  Goals and methods of document representation compression in IR
+  = pros cons
+  = 
+
+  Boolean IR models (including extensions to basic Boolean models)
+  = what want to do
+  = pro & con 
+
+  Vector-based IR models in detail
+     including term weighting, similarity measures, ...
+
+  Bayesian IR models (Naive Bayes, hierarchical Bayes)
+  = pro & con ; why bayes? 
+
+Evaluation metrics
+     precision, recall, F-measure, normalized recall, accuracy
+     methods for computation, P_25, P_50, interpolation issues,
+     understanding of issues and challenges in IR evaluation
+  = If have a position of relevant document (similar to hw2)
+
+  Query expansion vs. Term clustering
+  = pro con
+  = how to extend? how to do better
+
+
+*  Clustering algorithms, including Salton's greedy method,
+       hierarchical agglomerative clustering (including algorithm details such 
+       as minimal/maximal/average linkage variants, dendograms, etc.)
+  = pros cons
+
+  SVD (singular value decomposition)/LSI (Latent semantic indexing)
+
+  Relevance Feedback  (and sources of obtaining it)
+      Roccio algorithm and its variants
+  = source obtain it 
+  = what if people are reluctant to give feedback? how to get?
+  = pros cons
+
+  User and group modelling, 
+      other features for relevance classification besides term overlap
+
+  Document routing/filtering/topic-classification
+  = things in common 
+  
+
+  Information Extraction - named entity recognition/tagging
+         person/place classification,
+         sense tagging - including algorithm comparison and understanding of 
+                         relation to IR algorithms
+  = relationship between
+
+  Expectation Maximization (EM) algorithm (e.g. for person/place classification)
+  = like bayes????
+
+  Information visualization - Dotplot and Hearst's TileBars
+       (and uses for text segmentation, detection of version differences and 
+        repetition)
+
+  HTTP protocols in *detail* (including HTTP/1.0 and HTTP/1.1)
+  SOIF headers, their motivation and potential uses
+  = access
+  = 
+
+  Web robot libraries and techniques, robot exclusion protocols,
+     queuing strategies (know HW4 in detail)
+
+  Harvest architecture in detail
+     (including Gather, broker system, caching and replication subsystems)
+
+  Hierarchy of web agents (from blind web crawlers through intelligent shopping bots)
+
+  collection fusion, search-engine merger (e.g. Metacrawler)
+    including detailed analysis of the issues, scale normalization
+
+  collaborative filtering
+
+  PageRank algorithm and link analysis approaches
+
+  future directions and visions
+
+
+
+
+  --Probability
+
+  Dear class:
+
+0. I anticipate the final exam being about 12 questions long (about 1.5-2 hours in length).
+
+1. The final exam will follow the in-class and on-line notes for the course given concentrating
+   primarily on the material from chapter 4 onward, but some questions from chapters 1, 2, 3 as
+   well.  The break-down should be (roughly) 8 questions from chapters 4 and 5; 2 questions
+   from chapter 3; 1 question from chapter 2; 1 question from chapter 1.
+
+2. You are expected to know formulas and definitions (but not the forms of named distributions
+   - a sheet will be provided with these pdfs and pmfs).  For example, you need to know how to 
+   compute an expected value, a variance, an n-th moment, a covariance/correlation coefficient
+   and how to use a joint pdf to compute a marginal pdf, etc. and these formulas for doing so
+   will not be given to you.
+
+3. The final exam will cover (roughly) the following parts of our course textbook
+     Chapter 1 (1 question)
+     Chapter 2 (1 question)
+     Chapter 3 (2 questions)
+      3.1 Continuous random variables
+      3.2 Cumulative distribution functions
+      3.3 The normal distribution
+      3.4 Joint probability density functions
+      3.5 Conditional pdfs and using conditional pdfs.
+     Chapters 4 and 5 (8 questions)
+      4.1 Derived distributions (the cdf method and convolution formulas)
+      4.2 Covariance and correlation and their properties
+      4.4 Moment-generating functions
+      5.1 The Markov and Chebyshev inequalities
+      5.2 The Weak Law of Large numbers
+      5.4 The central limit theorem
+     Possible bonus question on the Jacobian method/transformation of variables technique.
+
+4. You will also be responsible for practice problems given in 
+     (a) the 'Other exercises' tab in the course blackboard,
+     (b) the homework assignments from the semester,
+     (c) your old midterms from this semester
+     (d) the posted old midterms and final exam from last semester.
+
+5. You will be allowed a calculator, but I usually try to write the exams so the arithmetic stays relatively
+     simple.  A standard normal distribution table will be provided as well as our sheet of named
+     distributions with means, variances and moment-generating functions.
+
+

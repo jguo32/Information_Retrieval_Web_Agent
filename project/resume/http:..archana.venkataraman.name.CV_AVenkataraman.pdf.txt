@@ -1,0 +1,172 @@
+Archana Venkataraman
+
+300 Cedar Street, Room TAC-N303 New Haven, CT 06511, United States
+
+archana.venkataraman@yale.edu http://archana.venkataraman.name
+
+Education
+
+Massachusetts Institute of Technology, Cambridge, MA
+Ph.D., Electrical Engineering Thesis Title: Generative Models of Brain Connectivity for Population Studies Thesis Supervisor: Prof. Polina Golland GPA: 5.0/5.0
+
+Sept 2007 ­ Aug 2012
+
+M. Eng., Electrical Engineering Thesis Title: Signal Approximation using the Bilinear Transform Thesis Supervisor: Prof. Alan V. Oppenheim GPA: 5.0/5.0
+
+Sept 2006 ­ Sept 2007
+
+S.B., Electrical Engineering Concentration: Communications, Controls and Signal Processing GPA: 5.0/5.0
+
+Sept 2003 ­ June 2006
+
+Research and Professional Experience
+Yale Image Processing & Analysis Group, New Haven CT Faculty Supervisor: Prof. James S. Duncan
+· Characterizing Functional Networks in Autism · Multi-modal EEG/fMRI Image Analysis
+MIT Medical Vision Group, Cambridge MA Faculty Supervisor: Prof. Polina Golland
+· Identifying Foci of a Neurological Disorder · Generative Models for Combined Analysis of fMRI and DWI Data · Robust Feature Selection in fMRI for Patient Classification · Data-Driven Functional Connectivity Analysis
+MIT Digital Signal Processing Group, Cambridge MA Faculty Supervisor: Prof. Alan V. Oppenheim
+· Signal Approximation using the Bilinear Transform
+MIT Lincoln Laboratory, Lexington MA Advanced Sensor Techniques Group Supervisor: Dr. Andrew McKellips
+· Adaptive IIR Nulling Solution for a Sparse Non-Commutative Environment
+MIT Microsystems Technology Laboratory, Cambridge MA Faculty Supervisor: Prof. Anantha P. Chandrakasan
+· A Low-Power Integrated Switched-Capacitor DC-DC Power Converter · A Low-Power Sensing Front End (w/Naveen Verma)
+Xerox Corporation, Rochester NY XCEL Summer Internship Program
+· Developed software additions for an online hardware management tool
+MIT Nanostructures Laboratory, Cambridge MA Faculty Supervisor: Prof. Henry I. Smith
+· Fabrication of a 2D Photonic Crystal (w/Minghao Qi)
+
+Jan 2014 ­ Present Jan 2008 ­ Dec 2013
+Jan 2006 ­ Sept 2007 June 2006 ­ Aug 2006 Sept 2004 ­ Jan 2006 June 2004 ­ Aug 2004 Sept 2003 ­ June 2004
+
+Teaching Experience
+
+Teaching Assistant, Information & Inference (6.437, MIT) · Graduate-level course satisfying TQE (technical qualifying evaluation) requirement · TA Responsibilities: teaching weekly recitation, writing and grading exams, compiling and distributing HW assignments, office hours
+
+Feb 2011 ­ May 2011
+
+Instructor, Eta Kappu Nu (MIT) · Co-developed an introductory signals and systems course for underclassmen · Taught four classes, each one lasting for three hours
+
+Jan 2006
+
+Journal Articles
+A. Venkataraman, J. Wu, S. van Noordt, M.J. Larson, M. South, M.J. Crowley. Medial Frontal Theta Oscillations Linked to Differential Feedback Processing in High-Functioning Autism. In Preparation for Brain & Cognition, 2015.
+A. Venkataraman, D. Yang, K.A. Pelphrey and J.S. Duncan. Bayesian Community Detection in the Space of Group-Level Functional Differences. Under Revision for IEEE Trans Medical Imaging, pp. 1-19, 2015.
+A. Venkataraman, J.S. Duncan, D. Yang and K.A. Pelphrey. An Unbiased Bayesian Approach to Functional Connectomics Implicates Social-Communication Networks in Autism. NeuroImage Clin, 8:356-366, 2015.
+A. Venkataraman, M. Kubicki and P. Golland. From Brain Connectivity Models to Region Labels: Identifying Foci of a Neurological Disorder. IEEE Transactions on Medical Imaging, 32(11):2078-2098, 2013.
+A. Venkataraman, T.J. Whitford, C-F. Westin, P. Golland and M. Kubicki. Whole Brain Resting State Functional Connectivity Abnormalities in Schizophrenia. Schizophrenia Research, 139(1-3):7-12, 2012.
+A. Venkataraman, Y. Rathi, M. Kubicki, C-F. Westin and P. Golland. Joint Modeling of Anatomical and Functional Connectivity for Population Studies. IEEE Trans on Medical Imaging, 31(2):164-182, 2012.
+K.R.A. Van Dijk, T.Hedden, A. Venkataraman, K.C. Evans, S.W. Lazar and R.L. Buckner. Intrinsic Functional Connectivity As a Tool For Human Connectomics: Theory, Properties, and Optimization. Journal of Neurophysiology, 103(1):297-321, 2010.
+
+Peer-Reviewed Conference Publications
+A. Venkataraman, D. Yang, K.A. Pelphrey and J.S. Duncan. Community Detection in the Space of Functional Abnormalities Reveals both Heightened and Reduced Brain Synchrony in Autism. In Proc. Bayesian and Graphical Models for Biomedical Imaging, pp. 1-12, 2015.
+A. Sweet, A. Venkataraman, S.M. Stufflebeam, H. Liu, N. Tanaka and P. Golland. Detecting Epileptic Regions Based on Global Brain Connectivity Patterns. In Proc. MICCAI: International Conference on Medical Image Computing and Computer Assisted Intervention, LNCS 8149:98-105, 2013.
+A. Venkataraman, M. Kubicki and P. Golland. From Brain Connectivity Models to Identifying Foci of a Neurological Disorder. In Proc. MICCAI: International Conference on Medical Image Computing and Computer Assisted Intervention, LNCS 7510:697-704, 2012.
+A. Venkataraman, Y. Rathi, M. Kubicki, C-F. Westin and P. Golland. Joint Generative Model for fMRI/DWI and its Application to Population Studies. In Proc. MICCAI: International Conference on Medical Image Computing and Computer Assisted Intervention, LNCS 6361:191-199, 2010.
+A. Venkataraman, M. Kubicki, C-F. Westin and P. Golland. Robust Feature Selection in Resting-State fMRI Connectivity Based on Population Studies. In Proc. MMBIA: IEEE Computer Society Workshop on Mathematical Methods in Biomedical Image Analysis: 63-70, 2010.
+A. Venkataraman, K.R.A Van Dijk, R.L. Buckner and P. Golland. Exploring Functional Connectivity in fMRI via Clustering. In Proc. ICASSP: IEEE International Conference on Acoustics, Speech and Signal Processing, 441-444, 2009.
+
+P. Golland, D. Lashkari and A. Venkataraman. Spatial Patterns and Functional Profiles for Discovering Structure in fMRI Data. Invited paper. In Proc. Asilomar Conference on Signals, Systems and Computers, 1402-1409, 2008.
+A. Venkataraman and A.V. Oppenheim, Signal Approximation using the Bilinear Transform, In Proc. ICASSP: IEEE International Conference on Acoustics, Speech and Signal Processing, 3729-3732, 2008.
+
+Conference Abstracts
+A. Venkataraman, James S. Duncan, Daniel Y.-J. Yang and Kevin A. Pelphrey. Abnormal Functional Communities in Autism. Submitted to IMFAR: Intl Meeting For Autism Research, 2016.
+G. Rosenblau, A. Venkataraman, B. Vander Wyk and Kevin A. Pelphrey. Developmental Trajectories of Social and Nonsocial Cooperation. Submitted to IMFAR: Intl Meeting For Autism Research, 2016.
+A. Venkataraman, James S. Duncan, Daniel Y.-J. Yang and Kevin A. Pelphrey. An Unbiased Bayesian Approach to Functional Connectomics Implicates Social-Communication Networks in Autism. ISBI: International Symposium on Biomedical Imaging, 2015.
+Sinan Zhao, Archana Venkataraman, Peipeng Liang and Gopikrishna Deshpande. Investigating the Role of Brain Stem in Alzheimers Disease using Directional Brain Networks derived from Resting State fMRI, 23rd Annual Meeting of ISMRM, May 2015.
+A. Venkataraman, M. Kubicki and P. Golland. From Brain Connectivity Models to Identifying Foci of a Neurological Disorder. 3rd Biennial Conference on Resting State Brain Connectivity, Sept 2012.
+A. Venkataraman, K.R.A Van Dijk, R.L. Buckner and P. Golland. Exploring Functional Connectivity in fMRI via Clustering, Annual Meeting of the Organization of Human Brain Mapping, June 2009.
+
+Research Funding
+
+R21 MH109880
+
+PI: Venkataraman
+
+Deciphering Autism Spectrum Disorder via Multimodal Image Fusion
+
+Agency: National Institute of Mental Health
+
+Total Funding Amount: $275,000 over 2 years
+
+Under Review by CPDD Study Section
+
+R01 HD083881
+
+Joint PI: Sukhodolsky, Pelphrey
+
+Neural Mechanisms of CBT for Anxiety in Autism
+
+Agency: National Institute of Child Health and Human Development
+
+Total Funding Amount: $2,033,960 over 5 years
+
+Role: Co-Investigator (20% effort)
+
+Awaiting Advisory Council Notification
+
+K99 MH105590 (Mentored Award)
+
+PI: Venkataraman
+
+Deciphering Autism Spectrum Disorder via Multimodal Image Fusion
+
+Agency: National Institute of Mental Health
+
+Total Funding Amount: $983,200 over 5 years
+
+Impact Score: 37 ­ Resubmitted as Independent R21
+
+04/01/16 ­ 03/31/18 12/01/2015 ­ 11/30/2020
+Release Date: 04/01/15
+
+Awards and Honors
+
+CHDI Grant, Network Models of Brain Connectivity for Huntington's Disease MIT Lincoln Lab Campus Collaboration Award Advanced Multimodal Neuroimaging Training Program (NIH) National Defense Science and Engineering Graduate Fellowship (NDSEG) MICCAI Student Travel Award ($500) Siebel Scholarship ($20,000) MIT Provost Presidential Fellowship Morris Joseph Levin Award, Best Thesis Presentation (M.Eng.)
+
+2013 ­ 2014 2012 ­ 2014 2011 ­ 2012 2007 ­ 2010 Sept 2010 2007 ­ 2008 2006 ­ 2007 May 2007
+
+Asssociation of MIT Alumnae, Senior Academic Achievement Award ($500) Xerox Technical Minority Scholarship ($10,000) Maletta Foundation Scholarship, Rochester Engineering Society ($2500) Semiconductor Research Corporation Undergraduate Research Award ($18,000) Xerox Technical Minority Scholarship ($2,500) National Merit Scholarship ($2,500)
+
+May 2006 Jan 2006 Jan 2005 2004 ­ 2005 Dec 2004 Sept 2003
+
+Technical Presentations
+Invited Talks
+· International Symposium on Biomedical Imaging, Brooklyn NY (April 2015) An Unbiased Bayesian Approach to Functional Connectomics Implicates Soc-Comm Networks in Autism
+· Image Processing Conference at SPIE Medical Imaging, San Diego CA (Feb 2014) Johns Hopkins, MIT IMES, UT Austin, MIT Lincoln Laboratory (Jan-June 2013) Characterizing Abnormal Brain Networks
+· Laboratory for Mathematical Imaging, Harvard & Rising Stars Workshop, MIT (Nov 2012) From Brain Connectivity Models to Identifying Foci of a Neurological Disorder
+· MIT Lincoln Laboratory, Martinos Center for Biomedical Imaging, Yale University (Oct-June 2012) Generative Models of Brain Connectivity for Population Studies
+· Neurospin, Paris, France (July 2011) Joint Modeling of Anatomical and Functional Connectivity for Population Studies
+Conference and Workshop Oral Presentations
+· Bayesian and grAphical Models for Biomedical Imaging (Oct 2015) Comm Detection in the Space of Functional Abnormalities Reveals Abnormal Brain Synchrony in Autism
+· International Conference on Medical Image Computing and Computer Assisted Intervention (Sept 2013) Detecting Epileptic Regions Based on Global Brain Connectivity Patterns
+· International Conference on Medical Image Computing and Computer Assisted Intervention (Oct 2012) From Brain Connectivity Models to Identifying Foci of a Neurological Disorder
+· International Conference on Medical Image Computing and Computer Assisted Intervention (Sept 2010) Joint Generative Model for fMRI/DWI and it Application to Population Studies
+· Masterworks Symposium, MIT (May 2007) Won Best Thesis Presentation Award M.Eng. Thesis Work: Signal Approximation Using the Bilinear Transform
+Poster Presentations
+· 3rd Biennial Conference on Resting State Brain Connectivity (Sept 2012) From Brain Connectivity Models to Identifying Foci of a Neurological Disorder
+· IEEE Computer Society Workshop on Mathematical Methods in Biomedical Image Analysis (June 2010) Robust Feature Selection in Resting-State fMRI Connectivity Based on Population Studies
+· Annual Meeting of the Organization of Human Brain Mapping (June 2009) IEEE International Conference on Acoustics, Speech and Signal Processing (April 2009) Exploring Functional Connectivity in fMRI via Clustering
+· IEEE International Conference on Acoustics, Speech and Signal Processing (April 2008) Signal Approximation Using the Bilinear Transform
+· Interconnect Focus Center Design Review, Atlanta, GA (Nov 2005) An Integrated Low-Power Switched-Capacitor DC-DC Power Converter
+
+Professional Activities
+Editor for "Computational Diffusion MRI & Brain Connectivity" (Springer Mathematics & Visualization, 2013) Organizer for "Mathematical Models for Brain Connectivity" (MICCAI Workshop, 2013) Reviewer for the IEEE Transactions on Medical Imaging, NeuroImage, the International Conference on Medical
+Image Computing and Computer Assisted Intervention, the IEEE Conference on Computer Vision and Pattern Recognition, the European Conference on Computer Vision and Neuroinformatics Siebel Scholar (2007 ­ Present) IEEE Member (2006 ­ Present)
+
+MICCAI Society Member (2008 ­ Present) Tau Beta Pi, Engineering Honor Society (2006 ­ Present) Eta Kappa Nu, EE Honor Society (2006 ­ Present) National Society of Collegiate Scholars (2006 ­ Present)
+
+Non-Professional Activities and Leadership Roles
+Ashdown Residential Scholar Coordinator (MIT) President, Ashdown House Executive Committee (MIT) Living Things Officer, Ashdown House (MIT) Boston Open Committee, International Badminton Tournament (Cambridge, MA) Honor Society Chair Positions (MIT) Treasurer and Co-Captain, MIT Badminton Club
+
+June 2009 ­ June 2010 June 2008 ­ June 2009 Jan 2006 ­ June 2008 Sept 2004 ­ June 2008 Feb 2006 ­ Apr 2007 June 2005 ­ June 2006
+
+References
+Polina Golland Associate Professor of Electrical Engineering and Computer Science Massachusetts Institute of Technology polina@csail.mit.edu (617) 253-8005
+James Duncan Professor of Biomedical & Electrical Engineering and Diagnostic Radiology Yale University james.duncan@yale.edu (203) 785-6322
+Kevin Pelphrey Harris Professor in the Child Study Center & Professor of Psychology Yale School of Medicine kevin.pelphrey@yale.edu (203) 785-3486
+William Wells Professor of Radiology Harvard Medical School sw@bwh.harvard.edu (617) 899-3772
+Hemant D. Tagare Professor of Biomedical & Electrical Engineering and Diagnostic Radiology Yale University hemant.tagare@yale.edu (203) 737-4271
+Martin Styner Associate Professor of Psychiatry and Computer Science University of North Carolina, Chapel Hill styner@cs.unc.edu (919) 843-1092 or (919) 590-6209
+Bertrand Thirion Research Director of the Parietal Team Neurospin, Gif sur Yvette, France bertrand.thirion@inria.fr +33 (0)1 6908 7992
+
+

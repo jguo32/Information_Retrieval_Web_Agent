@@ -1,0 +1,144 @@
+EMPLOYMENT JKL Capital Management, LLC CEO
+Campbell & Co Senior Researcher
+PlusFunds Senior Managing Director
+World Bank Principal Investment Officer
+Carlyle Asset Management Group Vice-President
+Morgan Stanley Quantitative Strategist
+
+JIM K. LIEW, Ph.D. Mobile: 917-733-1150, E-mail: jimkliew@gmail.com
+
+Woodstock, Maryland
+
+March 2009 to present
+
+Multi-Strategy hedge fund that allocates across event, idiosyncratic, value, and
+
+quant strategies. Markets traded include global stocks, etfs, futures, and fx.
+
+Manage a team of five financial engineers who are currently building different
+
+aspects of the business.
+
+Towson, Maryland
+
+Feb 2007 to Feb 2009
+
+Researched and implemented systematic global futures trading strategies.
+
+Strategies trade futures markets across equities, bonds, FX, energies, and
+
+commodities. Hired with mandate to build large capacity (+$1billion) models.
+
+Contributed significantly to development of and revisions to transaction cost
+
+and trade impact model. Built sector rotation multi-factor model trading across
+
+US GIC sectors, employing PCA/ICA extracted from US sector prices,
+
+European sector prices, macro variables, and fundamental variables.
+
+New York, New York
+
+Nov 2005 to May 2006
+
+Created customized solutions for institutional clients to tailor-fit their investment objectives: "Best-Ideas-Portfolio," "Pure-Dynamic-Alpha," and "Hedge Fund Beta: Merger Arbitrage Index." Led the effort in sourcing and
+
+adding new managers to the Manager Access Program a separately managed
+
+account platform with over sixty hedge fund managers across nine different
+
+strategies. Managed team of five people.
+
+Washington, D.C.
+
+July 2003 to April 2004
+
+Co-managed $750 million investment portfolio of hedge funds with capacity to
+
+investments up to $1.2 billion. Built proprietary I-PAM model to evaluate
+
+incremental changes to existing portfolio and assembled state-of-the-art risk
+
+management platform.
+
+Washington, D.C.
+
+December 2001 to June 2003
+
+Built and implemented the proprietary alternative investment allocation model
+
+that combines asset allocation with hedge fund component investing. The
+
+model provides factor exposures and risk analytics for the resultant portfolio.
+
+Performed due diligence on event driven arbitrage, fixed income arbitrage,
+
+convertible arbitrage, long/short, statistical arbitrage, volatility arbitrage, and
+
+equity market neutral managers. Third hire at CAMG that grew to a $600
+
+million fund before departure.
+
+New York and Hong Kong
+
+September 1998 to February 2000
+
+Solely responsible for providing quantitative support for equity derivative traders and clients. Constructed and re-balanced clients' global portfolios
+
+optimized to track MSCI indices using Basket Link. Experienced with
+
+employing Barra models in the rebalancing process. Educated and trained
+
+clients on creating and interpreting portfolio analytic reports: Attribution,
+
+Tracking Error, Exposures, etc. Created optimal hedging strategies using Monte Carlo simulations, constructed dynamic portfolio "alpha" strategies,
+
+built industry/sector neutral optimal tracking portfolios for index arbitrage
+
+strategies, and worked on transaction cost models for program traders.
+
+Responsible for quantitative modeling and research. Examined macro and
+
+inter/intra-industry fundamental factors in US equity markets. Wrote articles in the monthly QS derivative publications.
+
+ACADEMIC POSITIONS AND OTHERS
+
+Columbia University
+Johns Hopkins NYU's Stern
+
+New York, New York
+
+Summer 2005, 2006, 2010
+
+Adjunct Professor
+
+Taught Statistical Arbitrage, first time offered at Columbia and Johns Hopkins. Taught Topics in Hedge Fund Strategies at NYU's Stern School of Business.
+
+Editorial Advisory Board Journal of Portfolio Management Faculty Advisor to Stern Investment Management & Research's Langone Student Run
+Investment Fund
+Chairman of the Board of Directors of the NYU Stern Hedge Fund Association
+
+Goldman Sachs & Co. Instructor
+
+New York, New York
+
+Summer 1998
+
+Taught bond mathematics and statistics to incoming analysts in the asset management
+
+division.
+
+EDUCATION Columbia Business School
+University of Chicago
+
+Ph.D. (1999) and M.Phil. (1998) in Finance and Economics Advisors: Franklin Edwards and Maria Vassalou Columbia Graduate School of Business Doctoral Fellowship
+B.A. (1991) in Mathematics General Honors, Member of Sigma Xi
+
+PUBLISHED PAPERS AND OTHERS
+
+"Investing Under Inflation Risk," 2012, Working Paper SSRN.
+Member of Editorial Advisory Board, Journal of Portfolio Management, November 2011 to present "Institutional-Grade Risk Management Policy: Is it Possible in Practice?," Forthcoming as Invited Editorial
+Journal of Portfolio Management, Spring 2012. "US Mean-Reversion Examined," Working Paper, 2010. "Quantitative Topics in Hedge Fund Investing," Journal of Portfolio Management, 2005. "Hedge Fund Index Investing Examined," Journal of Portfolio Management, 2003. "Bifurcated Fund Analysis Model," MFA Reporter, November 2002. "Can Book-to-Market, Size and Momentum Be Risk Factors That Predict Economic Growth?," Journal of
+Financial Economics, Volume 57, Issue 2, August 2000. "Hedge Funds versus Managed Futures as Asset Classes," Summer 1999. "Managed Commodity Funds," Journal of Futures Markets, Volume 19, No. 4, 1999.
+
+

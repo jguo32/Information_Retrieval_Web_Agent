@@ -1,0 +1,37 @@
+Li Song
+Ph.D. Candidate Johns Hopkins University Department of Computer Science 1900 E. Monument, Welch 117
+Baltimore, MD 21205 http://ccb.jhu.edu/people/lsong/
+lsong@jhu.edu
+PROFILE Development of algorithms and software tools for analysis of next generation sequencing data; Design and analysis of algorithms; Parallel computing.
+EDUCATION B.E.: Sept, 2005 ~ June, 2009 Tongji University, Shanghai, China (Excellent Graduate) M.Sc.: Sept, 2009 ~ April, 2011 Michigan Technological University (GPA: 3.95/4.0) Ph.D.: Sept, 2009 ~ April, 2012 Michigan Technological University
+June, 2012 ~ present, Johns Hopkins University (GPA: 4.0/4.0)
+HONORS 1st place, 11th Northern Michigan University Programming Contest, 2010 Silver Award, ACM/ICPC Shanghai Invitational Contest, 2009 First Prize (Rank 2nd), Tongji University Programming Contest, 2009 First Prize (Rank 3rd), Tongji University Programming Contest, 2008 Second Prize, Tongji University Programming Contest, 2007
+PROJECTS Rascaf: Scaffolding with RNA-seq read alignment [Github]
+Centrifuge: Classifier for metagenomics sequences [Github]
+Rcorrector: Efficient and Accurate Error Correction for Illumina RNA-seq reads - a tool for correct the sequencing errors in Illumina reads for RNA-seq or single-cell sequencing [Github]
+Lighter: Fast and Memory-efficient Sequencing Error Correction without Counting - a tool for correct the sequencing errors in Illumina reads [Github]
+CLASS: Constraint-based Local Assembly and Selection of Splice Variants - a tool for splice variant transcript reconstruction from next generation sequencing data. [SourceForge]
+Husky Game Development: ROTC - a real-time strategy game to assist with training in ROTC.
+JOURNAL PUBLICATIONS Song, L, S Sabunciyan and L Florea, CLASS2: accurate and efficient splice variant annotation from RNA-seq reads, Nucl. Acids Res. (2016). doi: 10.1093/nar/gkw158
+Song, L and L Florea, Rcorrector: efficient and accurate error correction for Illumina RNA-seq reads, Gigascience. 2015 Oct 19;4:48. [PubMed]
+Song, L, L Florea and B Langmead, Lighter: Fast and Memory-efficient Sequencing Error Correction without Counting, Genome Biol. 2014 Nov 15;15(11):509. [PubMed]
+Song, L and L Florea, CLASS: Constrained transcript assembly of RNA-seq reads, Third Annual RECOMB Satellite Workshop on Massively Parallel Sequencing - RECOMB-SEQ 2013, BMC Bioinformatics 14(Suppl 5):S14. [PubMed]
+
+Florea, L, L Song and SL Salzberg, Thousands of exon skipping events differentiate among splicing patterns in sixteen human tissues, F1000 Research 2013, 2:188. [Full text]
+CONFERENCE PARTICIPATION Song, L and L Florea, Rascaf: Improving genome assembly with RNA-seq data, Plant and Animal Genome Conference -- PAG XXIV, San Diego, CA (poster)
+Song, L, B Langmead and L Florea, Ligheter and Rcorrector: Tools for next generation sequencing error correction, Plant and Animal Genome Conference -- PAG XXIV, San Diego, CA (poster).
+Song, L, B Langmead and L Florea, Ligheter and Rcorrector: A suite for next generation sequencing error correction, Cold Spring Harbor Laboratory Meeting - Biology of Genomes 2015, Cold Spring Harbor, NY (poster).
+Kim, D, Song, L, Breitweiser, FP and SL Salzberg, Centrifuge: rapid and accurate classification of metagenomic sequence, Cold Spring Harbor Laboratory Meeting - Biology of Genomes 2014, Cold Spring Harbor, NY (poster).
+Song, L, and L Florea, Rcorrector: Error Correction for Illumina RNA-seq Reads, Cold Spring Harbor Laboratory Meeting - Biological Data Science 2014, Cold Spring Harbor, NY (poster).
+Song, L, and L Florea, CLASS--A program for accurate reconstruction of genes and alternative splicing variations from RNA-seq data, Cold Spring Harbor Laboratory Meeting - Genome Informatics 2013, Cold Spring Harbor, NY (poster).
+Song, L, and L Florea, CLASS and ASprofile: Resources for alternative splicing annotation from RNA-seq data, International Plant and Animal Genomes Meeting XXI, 2013, San Diego, CA (poster).
+Song, L, and S Seidel, User defined data distributions in UPC, PGAS 12: Proceedings of the Sixth Conference on Partitioned Global Address Space Programming Models, 2012, Santa Barbara, CA (poster).
+Song, L, and S Seidel, A fast longest common subsequence algorithm for finding similar sequences in a genome database, Great Lakes Bioinformatics Conference ­ GLBIO 2011, Athens, OH (presentation).
+THESIS Song, L, G Liu and C Jiang, Incidence Matrix Based Methods for Computing Repetitive Vectors and Siphons of Petri Nets, Bachelor Thesis, 2009. (Excellent Graduation Thesis)
+INTERNSHIP 2014 Summer Internship at J. Craig Venter Institute (Mentor: Jason Miller)
+TEACHING EXPERIENCE CS5321 Advanced Algorithms (Fall 2010, Fall 2011, Grader) CS4321 Introduction to Algorithms (Fall 2011, Grader) CS3311 Formal Models of Computation (Fall 2010, Spring 2011, Grader) CS4121 Programming Language (Fall 2009, Spring 2010, Grader) CS4611 Computer Graphics (Fall 2009, Grader)
+LANGUAGE AND TECHNOLOGIES C/C++, UPC, CHAPEL, R, Perl, ActionScript, Shell script, Python, Lua, Matlab
+MISCELLANEOUS Solved more than 800 problems on Peking University Judge Online for ACM/ICPC (poj.org)
+(April 4, 2016)
+
+
